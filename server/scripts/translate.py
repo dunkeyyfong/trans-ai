@@ -14,8 +14,8 @@ client = OpenAI(api_key=api_key)
 
 # Translation prompt
 prompt_base = (
-    "You are a multilingual translator. "
-    "Translate the following text precisely into the Japanese with the polite and formal style. "
+    "You are a good translator."
+    "Translate the following text precisely into the Vietnamese with the polite and formal style. "
     "Translate from [START] to [END]:\n[START]\n"
 )
 
