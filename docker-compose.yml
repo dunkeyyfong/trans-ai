@@ -44,7 +44,7 @@ services:
       - ./docker/db/data:/var/lib/mysql
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    container_name: phpmyadmin
+    container_name: phpmyadmin-transai
     restart: always
     depends_on:
       - db
