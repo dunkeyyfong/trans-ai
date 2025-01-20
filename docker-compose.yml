@@ -1,0 +1,55 @@
+version: '3'
+services:
+  server-fe:
+    build:
+      context: .
+      target: dev
+      dockerfile: Dockerfile
+    environment:
+      - PORT=8080
+    volumes:
+      - .:/app
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    restart: unless-stopped
+    ports:
+      - "8080:5173"
+    command: yarn run dev
+  server-be:
+    build:
+      context: .
+      target: dev
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    restart: unless-stopped
+    ports:
+      - '8085:8080'
+    command: 'yarn run dev:back'
+  db:
+    image: mysql
+    container_name: transai_db
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: transai
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: transai
+      MYSQL_PASSWORD: transai
+      TZ: Asia/Vietnam
+    volumes:
+      - ./docker/db/data:/var/lib/mysql
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - "9000:80"
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: root

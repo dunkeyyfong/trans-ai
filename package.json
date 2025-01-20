@@ -4,8 +4,12 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "in-package": "yarn && cd server && yarn",
     "dev": "vite",
+    "dev:back": "cd server && yarn run dev",
     "build": "tsc -b && vite build",
+    "build:back": "cd server && yarn run build",
+    "prd:serve": "node server/dist/index.js",
     "lint": "eslint .",
     "preview": "vite preview"
   },
