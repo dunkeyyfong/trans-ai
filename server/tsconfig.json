@@ -9,9 +9,17 @@
     "skipLibCheck": true /* Skip type checking all .d.ts files. */,
     "baseUrl": ".", // Đường dẫn base cho các import
     "paths": {
-      "~/*": ["src/*"] // Đường dẫn tương đối cho các import (alias)
+      "~/*": ["src/*", "*"] // Đường dẫn tương đối cho các import (alias)
     }
   },
   "files": ["src/type.d.ts"], // Các file dùng để defined global type cho dự án
-  "include": ["src/**/*"] // Đường dẫn include cho các file cần build
+  "include": [
+    "src/**/*", // Bao gồm toàn bộ thư mục src
+    "*.ts", // Bao gồm các file TypeScript ngoài src
+    "**/*.ts" // Bao gồm tất cả các file TypeScript trong toàn dự án
+  ],
+  "exclude": [
+    "node_modules",
+    "dist" // Loại trừ thư mục build
+  ] // Đường dẫn include cho các file cần build
 }
