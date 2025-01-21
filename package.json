@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "in-package": "yarn && cd server && yarn",
+    "in-package": "yarn install --ignore-platform && cd server && yarn",
     "dev": "vite",
     "dev:back": "cd server && yarn run dev",
     "build": "tsc -b && vite build",
