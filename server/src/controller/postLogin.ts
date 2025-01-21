@@ -1,6 +1,6 @@
 import { Response, Request } from 'express'
 import { PrismaClient } from '@prisma/client'
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs'
 import { generateToken } from '~/util/jwt'
 
 export const postLogin = async (req: Request, res: Response): Promise<void> => {

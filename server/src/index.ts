@@ -4,6 +4,7 @@ import dotenv from 'dotenv'
 import cors from 'cors'
 import path from 'path'
 import { postLogin } from './controller/postLogin'
+import { postRegister } from './controller/postRegister'
 
 const app = express()
 const server = http.createServer(app)
@@ -29,4 +30,7 @@ app.get(/^(?!\/api\/)/, function (req, res) {
   res.sendFile(path.join(__dirname, '..', '..', 'dist', 'index.html'))
 })
 
+//Authenicate
 app.post('/api/login', postLogin)
+
+app.post('/api/register', postRegister)
