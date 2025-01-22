@@ -1,56 +1,52 @@
-# React + TypeScript + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-});
-```
-
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from "eslint-plugin-react";
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: "18.3" } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs["jsx-runtime"].rules,
-  },
-});
-```
-
 # Các Lệnh chạy khi mới clone source code về
 
-yarn install --ignore-platform && cd server && yarn install
+yarn run in-package
 
 yarn run build && yarn run build:back
+
+# Server
+
+Khi thay đổi bất cứ điều gì trong schema.prisma, phải chạy lệnh
+
+```
+npx prisma migrate dev --name {thay_đổi gì_đó}
+```
+
+Ví dụ: Thêm trường title vào model History
+
+```js
+model History {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  content   String?
+  title     String? //Đây
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+```
+
+Thì phải chạy như sau
+
+```bash
+npx prisma migrate dev --name update-history-title
+```
+
+Nhớ phải `cd server` trước khi chạy lệnh đó.
+
+- Nếu có xảy ra lỗi này
+
+```
+dunkeyyfong@dunkeyyongsMini server % npx prisma migrate dev --name update-history-title
+Environment variables loaded from .env
+Prisma schema loaded from prisma/schema.prisma
+Datasource "db": MySQL database "transai" at "transai_db:3306"
+
+Error: P1001: Can't reach database server at `transai_db:3306`
+
+Please make sure your database server is running at `transai_db:3306`.
+```
+
+Thì vào file `.env`
+
+chỉnh phần `transai_db:3306` thành `localhost:3306`. Chạy xong thì phải nhớ đổi lại từ `localhost:3306` thành `transai_db:3306`
