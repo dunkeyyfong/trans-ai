@@ -4,6 +4,31 @@ yarn run in-package
 
 yarn run build && yarn run build:back
 
+# Hướng dẫn để chạy lên docker
+
+Đầu tiên, vào vscode, phần extension tải Docker về (trên máy cũng phải tải Docker)
+
+Bật Docker trên máy lên
+
+Nếu máy có yếu, thì khi bật máy lên sẽ có phần `Reopen in container`, ấn nó
+
+ở file `docker-compose.yml`, ấn chuột phải và chọn các thứ sau
+
+- db
+- prisma-studio
+- server-be
+- server-fe
+
+Danh sách các cổng localhost:
+
+- ở FE dùng cổng 8080 (http://localhost:8080)
+- ở BE dùng cổng 8085 (http://localhost:8085)
+- ở db dùng cổng 3306 (Cổng này không truy cập được. Phải sử dụng prisma studio hoặc phpmyadmin)
+- ở prisma studio dùng cổng 5553 (http://localhost:5553)
+- ở phpmyadmin dùng cổng 9000 (http://localhost:9000) - tài khoản: root - mật khẩu: root
+
+Hãy nhớ toàn bộ cổng này và chỉ cần chạy docker là xong, không phải chạy bất cứ lệnh gì như yarn run dev hay gì cả.
+
 # Server
 
 Khi thay đổi bất cứ điều gì trong schema.prisma, phải chạy lệnh
