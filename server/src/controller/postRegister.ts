@@ -8,7 +8,7 @@ export const postRegister = async (req: Request, res: Response): Promise<void> =
   const prisma = new PrismaClient()
 
   try {
-    const { email, password } = req.body as { email: string; password: string }
+    const { name, email, password } = req.body as { name: string; email: string; password: string }
 
     const user = await prisma.user.findFirst({
       where: { email }
@@ -25,6 +25,7 @@ export const postRegister = async (req: Request, res: Response): Promise<void> =
 
     const newUser = await prisma.user.create({
       data: {
+        name: name,
         email,
         password: hashedPassword,
         role: 'USER',
@@ -34,7 +35,7 @@ export const postRegister = async (req: Request, res: Response): Promise<void> =
 
     const accessToken = generateToken(newUser)
 
-    res.status(200).json({ accessToken, id: newUser.id, email: newUser.email, role: newUser.role })
+    res.status(200).json({ accessToken, id: newUser.id, name: newUser.name, email: newUser.email, role: newUser.role })
   } catch (error) {
     res.sendStatus(500)
     console.log(error)
