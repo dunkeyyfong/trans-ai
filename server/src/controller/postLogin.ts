@@ -18,8 +18,15 @@ export const postLogin = async (req: Request, res: Response): Promise<void> => {
       return
     }
 
+    if (!user.isActive) {
+      res.status(401).send('User is not active, please verify your email')
+      return
+    }
+
     const accessToken = generateToken(user)
-    res.status(200).json({ accessToken, id: user.id, email: user.email, role: user.role })
+    res
+      .status(200)
+      .json({ accessToken, id: user.id, email: user.email, role: user.role, verifyToken: user.verifyToken })
   } catch (error) {
     res.sendStatus(500)
     console.log(error)

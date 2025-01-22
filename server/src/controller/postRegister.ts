@@ -2,6 +2,7 @@ import { Response, Request } from 'express'
 import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 import { generateToken } from '~/util/jwt'
+import { generateTokenVerify } from '~/util/generateTokenVerify'
 
 export const postRegister = async (req: Request, res: Response): Promise<void> => {
   const prisma = new PrismaClient()
@@ -20,11 +21,14 @@ export const postRegister = async (req: Request, res: Response): Promise<void> =
 
     const hashedPassword = await bcrypt.hash(password, 10)
 
+    const tokenVerify = await generateTokenVerify(email)
+
     const newUser = await prisma.user.create({
       data: {
         email,
         password: hashedPassword,
-        role: 'USER'
+        role: 'USER',
+        verifyToken: tokenVerify
       }
     })
 

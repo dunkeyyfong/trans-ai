@@ -5,6 +5,9 @@ import cors from 'cors'
 import path from 'path'
 import { postLogin } from './controller/postLogin'
 import { postRegister } from './controller/postRegister'
+import { postVerifyEmail } from './controller/postVerifyEmail'
+import { authenicateToken } from './middleware/authenicateToken'
+import { postSendMail } from './controller/postSendMail'
 
 const app = express()
 const server = http.createServer(app)
@@ -32,5 +35,10 @@ app.get(/^(?!\/api\/)/, function (req, res) {
 
 //Authenicate
 app.post('/api/login', postLogin)
-
 app.post('/api/register', postRegister)
+
+//Verify email
+app.post('/api/verify-email/:token', postVerifyEmail)
+
+//Send email
+app.post('/api/send-mail', authenicateToken, postSendMail)

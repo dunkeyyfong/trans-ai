@@ -6,16 +6,14 @@ async function main() {
   // Tạo một user mới
   const newUser = await prisma.user.create({
     data: {
-      name: 'John Doe',
-      email: 'johndoe@example.com',
-      password: 'password'
+      name: 'Admin',
+      email: 'admin@transai.site',
+      password: '$2a$12$.KE88GSEPuO5x.XGeG8qh.XL3ittFwN3ndGUDqqZ62ZWZFlh2d/P2',
+      isActive: true,
+      role: 'ADMIN'
     }
   })
   console.log('New User:', newUser)
-
-  // Lấy danh sách tất cả users
-  const users = await prisma.user.findMany()
-  console.log('All Users:', users)
 }
 
 main()
