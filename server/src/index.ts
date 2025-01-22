@@ -3,6 +3,7 @@ import http from 'http'
 import dotenv from 'dotenv'
 import cors from 'cors'
 import path from 'path'
+import cookieParser from 'cookie-parser'
 import { postLogin } from './controller/postLogin'
 import { postRegister } from './controller/postRegister'
 import { postVerifyEmail } from './controller/postVerifyEmail'
@@ -14,6 +15,7 @@ const server = http.createServer(app)
 app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+app.use(cookieParser())
 dotenv.config()
 
 app.use((req, res, next) => {

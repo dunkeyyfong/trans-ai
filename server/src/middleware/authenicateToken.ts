@@ -11,14 +11,9 @@ export const authenicateToken = async (req: Request, res: Response, next: NextFu
 
   try {
     const authHeader = req.headers['authorization']
-    const token = authHeader?.split(' ')[1]
+    const token = authHeader?.split(' ')[1] || req.cookies['auth-token']
 
-    if (!token) {
-      res.sendStatus(401)
-      return Promise.resolve()
-    }
-
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET || 'secret', async (err, user) => {
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET || 'secret', async (err: any, user: any) => {
       if (
         err ||
         !(await prisma.user.findFirst({
