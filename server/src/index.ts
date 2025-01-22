@@ -7,7 +7,7 @@ import { postLogin } from './controller/postLogin'
 import { postRegister } from './controller/postRegister'
 import { postVerifyEmail } from './controller/postVerifyEmail'
 import { authenicateToken } from './middleware/authenicateToken'
-import { postSendMail } from './controller/postSendMail'
+import { postDeleteAccount } from './controller/postDeleteAccount'
 
 const app = express()
 const server = http.createServer(app)
@@ -40,5 +40,5 @@ app.post('/api/register', postRegister)
 //Verify email
 app.post('/api/verify-email/:token', postVerifyEmail)
 
-//Send email
-app.post('/api/send-mail', authenicateToken, postSendMail)
+//Delete account
+app.post('/api/delete-account', authenicateToken, postDeleteAccount)

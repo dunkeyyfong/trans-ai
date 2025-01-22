@@ -1,12 +1,22 @@
+import { PrismaClient } from '@prisma/client'
 import { Request, Response } from 'express'
 import { sendMail } from '~/service/mailService'
 
-export const postSendMail = async (req: Request, res: Response): Promise<void> => {
-  const to = req.body.to
+export const postDeleteAccount = async (req: Request, res: Response): Promise<void> => {
+  const prisma = new PrismaClient()
 
-  const subject = 'Verify your email'
+  const { email } = req.body as { email: string }
 
-  const html = `<!DOCTYPE html>
+  try {
+    await prisma.user.delete({
+      where: {
+        email: email
+      }
+    })
+
+    const to = email
+
+    const contentMail = `<!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
@@ -43,14 +53,14 @@ export const postSendMail = async (req: Request, res: Response): Promise<void> =
       display: inline-block;
       margin-top: 20px;
       padding: 12px 25px;
-      background-color: #4CAF50;
+      background-color:rgb(224, 254, 146);
       color: #ffffff;
       text-decoration: none;
       border-radius: 5px;
       font-size: 16px;
     }
     .btn:hover {
-      background-color: #45a049;
+      background-color:rgb(178, 175, 20);
     }
     .footer {
       margin-top: 30px;
@@ -63,13 +73,13 @@ export const postSendMail = async (req: Request, res: Response): Promise<void> =
 <body>
   <div class="container">
     <div class="header">
-      <h1>Verify Your Email</h1>
+      <h1>Account Deleted</h1>
     </div>
     <div class="content">
-      <p>Hello ${req.body.name}</p>
-      <p>Thank you for signing up. Please verify your email address to complete your registration.</p>
-      <a href="http://localhost:8080/verify-email/${req.body.token}" class="btn">Verify Email</a>
-      <p>If you didn’t create an account, you can safely ignore this email.</p>
+      <p>We noticed that you did not verify your email address within the required time frame.</p>
+      <p>As a result, your account has been deleted from our system. If this was a mistake and you would like to use our services, please feel free to sign up again.</p>
+      <a href="http://localhost:8080/signup" class="btn">Sign Up Again</a>
+      <p>If you have any questions, please contact our support team.</p>
     </div>
     <div class="footer">
       <p>&copy; 2025 Kotoba AI. All rights reserved.</p>
@@ -78,10 +88,10 @@ export const postSendMail = async (req: Request, res: Response): Promise<void> =
 </body>
 </html>`
 
-  try {
-    await sendMail(to, subject, html)
-    res.status(200).send('Email sent')
+    await sendMail(to, 'Delete your email', contentMail)
+
+    res.status(200).json({ message: 'Deleted account successfully' })
   } catch (err) {
-    res.status(500).send('Error sending email')
+    res.status(500).json({ error: 'Internal Server Error' })
   }
 }
