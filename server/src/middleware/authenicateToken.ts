@@ -6,7 +6,7 @@ export interface Request extends ExpressRequest {
   user?: User
 }
 
-export const authenicateToken = (req: Request, res: Response, next: NextFunction) => {
+export const authenicateToken = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const prisma = new PrismaClient()
 
   try {
@@ -14,7 +14,8 @@ export const authenicateToken = (req: Request, res: Response, next: NextFunction
     const token = authHeader?.split(' ')[1]
 
     if (!token) {
-      return res.sendStatus(401)
+      res.sendStatus(401)
+      return Promise.resolve()
     }
 
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET || 'secret', async (err, user) => {
@@ -31,7 +32,8 @@ export const authenicateToken = (req: Request, res: Response, next: NextFunction
           } as User
         }))
       ) {
-        return res.sendStatus(403)
+        res.sendStatus(403)
+        return
       }
 
       req.user = user as User
