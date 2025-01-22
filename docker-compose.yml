@@ -28,6 +28,19 @@ services:
     ports:
       - '8085:8080'
     command: 'yarn run dev:back'
+  prisma-studio:
+    build:
+      context: .
+      target: dev
+      dockerfile: Dockerfile
+    volumes:
+      - ./server:/app
+    restart: unless-stopped
+    depends_on:
+      - db
+    ports:
+      - "5553:5555"
+    command: npx prisma studio
   db:
     image: mysql
     container_name: transai_db
