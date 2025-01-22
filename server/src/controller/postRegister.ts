@@ -113,7 +113,14 @@ export const postRegister = async (req: Request, res: Response): Promise<void> =
 
     await sendMail(to, 'Verify your email', contentMail)
 
-    res.status(200).json({ accessToken, id: newUser.id, name: newUser.name, email: newUser.email, role: newUser.role })
+    res.status(200).json({
+      accessToken,
+      id: newUser.id,
+      name: newUser.name,
+      email: newUser.email,
+      role: newUser.role,
+      verifyToken: newUser.verifyToken
+    })
   } catch (error) {
     res.sendStatus(500)
     console.log(error)
