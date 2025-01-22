@@ -31,7 +31,7 @@ model History {
   id        Int      @id @default(autoincrement())
   userId    Int
   user      User     @relation(fields: [userId], references: [id])
-  link      String
+  content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
