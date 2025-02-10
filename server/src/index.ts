@@ -9,6 +9,11 @@ import { postRegister } from './controller/postRegister'
 import { postVerifyEmail } from './controller/postVerifyEmail'
 import { authenicateToken } from './middleware/authenicateToken'
 import { postDeleteAccount } from './controller/postDeleteAccount'
+import { postSaveHistory } from './controller/postSaveHistory'
+import { postDeleteHistory } from './controller/postDeleteHistory'
+import { postUpdateHistory } from './controller/postUpdateHistory'
+import { getAllHistory } from './controller/getAllHistory'
+import { getMessageHistory } from './controller/getMessageHistory'
 
 const app = express()
 const server = http.createServer(app)
@@ -44,3 +49,10 @@ app.post('/api/verify-email/:token', postVerifyEmail)
 
 //Delete account
 app.post('/api/delete-account', authenicateToken, postDeleteAccount)
+
+//Save History
+app.get('/api/get-history', authenicateToken, getAllHistory)
+app.get('/api/get-message-history', authenicateToken, getMessageHistory)
+app.post('/api/create-history', authenicateToken, postSaveHistory)
+app.post('/api/delete-history', authenicateToken, postDeleteHistory)
+app.post('/api/update-history', authenicateToken, postUpdateHistory)

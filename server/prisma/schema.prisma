@@ -6,7 +6,7 @@
 
 generator client {
   provider      = "prisma-client-js"
-  binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
+  binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x", "linux-arm64-openssl-3.0.x"]
 }
 
 datasource db {
@@ -31,8 +31,19 @@ model History {
   id        Int      @id @default(autoincrement())
   userId    Int
   user      User     @relation(fields: [userId], references: [id])
-  content   String?
   title     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  message Message[]
+}
+
+model Message {
+  id Int @id @default(autoincrement())
+  historyId Int
+  history History @relation(fields: [historyId], references: [id])
+  message String
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
