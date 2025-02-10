@@ -11,6 +11,7 @@ import { authenicateToken } from './middleware/authenicateToken'
 import { postDeleteAccount } from './controller/postDeleteAccount'
 import { postSaveHistory } from './controller/postSaveHistory'
 import { postDeleteHistory } from './controller/postDeleteHistory'
+import { postUpdateHistory } from './controller/postUpdateHistory'
 
 const app = express()
 const server = http.createServer(app)
@@ -50,3 +51,4 @@ app.post('/api/delete-account', authenicateToken, postDeleteAccount)
 //Save History
 app.post('/api/create-history', authenicateToken, postSaveHistory)
 app.post('/api/delete-history', authenicateToken, postDeleteHistory)
+app.post('/api/update-history', authenicateToken, postUpdateHistory)
