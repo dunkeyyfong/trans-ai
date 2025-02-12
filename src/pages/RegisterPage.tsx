@@ -37,7 +37,7 @@ const RegisterPage = () => {
       }
 
       localStorage.setItem("token", data.token);
-      navigate("/login");
+      navigate("/verify-email");
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);

@@ -43,12 +43,12 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen p-6">
+    <div className="flex justify-center items-center min-h-screen px-6 mx-[16%]">
       <div className="hidden md:block">
         <div className="flex items-center justify-center h-full">
           <img
             src="https://i.pinimg.com/736x/fd/93/c0/fd93c0ee623cc3b03b16e0a771836330.jpg"
-            alt="Illustration"
+            alt="Img Login"
             className="max-w-xl lg:max-w-2xl"
           />
         </div>
@@ -110,7 +110,7 @@ const LoginPage = () => {
           </button>
         </div>
 
-        <div className="text-lg bg-slate-100 p-2">
+        <div className="text-lg bg-slate-100 py-4">
           Don't have an account?{" "}
           <Link to="/register" className="text-emerald-600 font-bold text-xl">
             Sign up
