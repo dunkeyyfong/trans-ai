@@ -1,23 +1,25 @@
-from openai import OpenAI
-from dotenv import load_dotenv
 import os
 import sys
+from openai import OpenAI
+from dotenv import load_dotenv
 import pysrt
 
-# Load environment variables
 load_dotenv()
+
 api_key = os.getenv("OPENAI_KEY")
-input_data = sys.stdin.read()
-subs = pysrt.from_string(input_data)
-# Initialize OpenAI client
+
 client = OpenAI(api_key=api_key)
 
-# Translation prompt
+input_data = sys.stdin.read()
+subs = pysrt.from_string(input_data)
+
 prompt_base = (
-    "You are a good translator."
-    "Translate the following text precisely into the Vietnamese with the polite and formal style. "
+    "You are going to be a good translator. "
+    "Translate the following text precisely into Vietnamese "
+    "with the polite and formal style. "
     "Translate from [START] to [END]:\n[START]\n"
 )
+
 
 def translate_text(text):
     prompt = prompt_base
