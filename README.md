@@ -75,3 +75,6 @@ Please make sure your database server is running at `transai_db:3306`.
 Thì vào file `.env`
 
 chỉnh phần `transai_db:3306` thành `localhost:3306`. Chạy xong thì phải nhớ đổi lại từ `localhost:3306` thành `transai_db:3306`
+
+## Hướng dẫn push docker image
+docker buildx build --platform linux/amd64 --target production -t dunkeyyfong/kotoba:v1 . --push
