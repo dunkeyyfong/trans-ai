@@ -2,10 +2,10 @@ import React from 'react'
 
 const Footer = () => {
   return (
-    <div>
-      Footer
-    </div>
-  )
-}
+    <footer className="p-4 text-center text-gray-600 border-t mt-6">
+      <p>&copy; 2025 Kotoba AI. All rights reserved.</p>
+    </footer>
+  );
+};
 
 export default Footer
