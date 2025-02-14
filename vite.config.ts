@@ -10,6 +10,7 @@ export default defineConfig({
     platform: "node",
   },
   server: {
+    allowedHosts: ["kotoba.tokyo"],
     host: "0.0.0.0",
     port: 5173,
   },
