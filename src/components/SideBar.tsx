@@ -5,7 +5,7 @@ const SideBar = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   return (
-    <div className="w-64 bg-white h-screen flex flex-col shadow-md">
+    <div className="w-64 bg-white h-screen flex flex-col">
       {/* Header với tìm kiếm và chỉnh sửa */}
       <div className="p-4 flex items-center justify-between border-b">
         <FaBars className="text-gray-600 cursor-pointer text-xl" />
