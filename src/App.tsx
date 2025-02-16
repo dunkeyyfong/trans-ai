@@ -15,8 +15,8 @@ const App = () => {
         <Route path="/verify-email" element={<VerifyEmailPage />} />
         <Route path="/email-verified" element={<EmailVerifiedPage />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/" element={ <HomePage />} />
-        <Route path="/marketing" element={<MarketingPage />} />
+        <Route path="/home" element={ <HomePage />} />
+        <Route path="/" element={<MarketingPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Router>
