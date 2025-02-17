@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { FiSearch } from "react-icons/fi";
+import { Button, Dropdown, MenuProps } from "antd";
+import { SettingOutlined } from "@ant-design/icons"
 import AdminSidebar from "../components/AdminSidebar";
 
 interface User {
@@ -13,7 +15,7 @@ interface User {
   isActive: boolean;
   lastLogin: string;
   statusMessage?: string;
-  accountType: string; // 🔥 Replaced verifyToken with accountType
+  accountType: string;
 }
 
 const dummyUsers: User[] = [
@@ -66,6 +68,18 @@ const AdminPage = () => {
     user.username.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const getMenuItems = (user: User): MenuProps["items"] => [
+
+    {
+      key: "2",
+      label: <a href={`/edit-user/${user.id}`}>Change Password</a>,
+    },
+    {
+      key: "3",
+      label: <a href={`/delete-user/${user.id}`} style={{ color: "red" }}>Delete User</a>,
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-gray-100 text-gray-900 flex">
       <AdminSidebar />
@@ -97,10 +111,8 @@ const AdminPage = () => {
                 <th className="p-4">Role</th>
                 <th className="p-4">Created At</th>
                 <th className="p-4">Updated At</th>
-                <th className="p-4">Last Login</th>
-                <th className="p-4">Status Message</th>
-                <th className="p-4">Account Type</th> {/* 🔥 Changed column name */}
                 <th className="p-4 text-center">Active</th>
+                <th className="p-4 text-center">Actions</th> {/* New Column */}
               </tr>
             </thead>
             <tbody>
@@ -117,13 +129,16 @@ const AdminPage = () => {
                   </td>
                   <td className="p-4">{new Date(user.createdAt).toLocaleDateString()}</td>
                   <td className="p-4">{new Date(user.updatedAt).toLocaleDateString()}</td>
-                  <td className="p-4">{new Date(user.lastLogin).toLocaleString()}</td>
-                  <td className="p-4">{user.statusMessage || "No status"}</td>
-                  <td className="p-4">{user.accountType}</td> {/* 🔥 Updated field */}
                   <td className="p-4 text-center">
                     <span className={`px-3 py-1 rounded-full text-white ${user.isActive ? "bg-green-500" : "bg-red-500"}`}>
                       {user.isActive ? "Active" : "Inactive"}
                     </span>
+                  </td>
+                  {/* New Dropdown Menu */}
+                  <td className="p-4 text-center">
+                    <Dropdown menu={{ items: getMenuItems(user) }} placement="bottomRight">
+                      <Button icon={<SettingOutlined />}></Button>
+                    </Dropdown>
                   </td>
                 </tr>
               ))}
