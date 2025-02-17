@@ -14,6 +14,7 @@ import { postDeleteHistory } from './controller/history/postDeleteHistory'
 import { postUpdateHistory } from './controller/history/postUpdateHistory'
 import { getAllHistory } from './controller/history/getAllHistory'
 import { getMessageHistory } from './controller/history/getMessageHistory'
+import { getAllUser } from './controller/admin/getAllUser'
 
 const app = express()
 const server = http.createServer(app)
@@ -56,3 +57,6 @@ app.get('/api/get-message-history', authenicateToken, getMessageHistory)
 app.post('/api/create-history', authenicateToken, postSaveHistory)
 app.post('/api/delete-history', authenicateToken, postDeleteHistory)
 app.post('/api/update-history', authenicateToken, postUpdateHistory)
+
+//admin
+app.get('/api/get-all-user', getAllUser)
