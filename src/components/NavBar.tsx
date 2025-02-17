@@ -5,17 +5,17 @@ import Logo from "../assets//imgs/logo_trans-ai.png";
 const Navbar = () => {
   return (
     <nav className="p-4 shadow-md border flex justify-between items-center">
-      <Link to="/" className="text-xl font-bold text-emerald-600">
+      <Link to="/home" className="text-xl font-bold text-emerald-600">
       <img src={Logo} alt="Logo_Trans-Ai" className="h-8" />
       </Link>
       <ul className="flex-grow flex justify-center space-x-6 text-gray-800 font-medium">
         <li>
-          <Link to="/" className="hover:text-gray-600 transition duration-300">
+          <Link to="/home" className="hover:text-gray-600 transition duration-300">
           Home
           </Link>
         </li>
         <li>
-          <Link to="/marketing" className="hover:text-gray-600 transition duration-300">
+          <Link to="/" className="hover:text-gray-600 transition duration-300">
           Marketing
           </Link>
         </li>
