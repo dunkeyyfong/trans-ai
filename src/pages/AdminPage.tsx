@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import { Button, Dropdown, MenuProps } from "antd";
-import { SettingOutlined } from "@ant-design/icons"
+import { DashOutlined } from "@ant-design/icons"
 import AdminSidebar from "../components/AdminSidebar";
 
 interface User {
@@ -109,7 +109,7 @@ const AdminPage = () => {
                   {/* New Dropdown Menu */}
                   <td className="p-4 text-center">
                     <Dropdown menu={{ items: getMenuItems(user) }} placement="bottomRight">
-                      <Button icon={<SettingOutlined />}></Button>
+                      <Button icon={<DashOutlined />}></Button>
                     </Dropdown>
                   </td>
                 </tr>
