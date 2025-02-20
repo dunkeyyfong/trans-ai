@@ -38,18 +38,32 @@ const Contact = () => {
             
                 <div className="mt-6 space-y-4">
                     <div className="flex items-center space-x-4">
-                    <span className="text-blue-600 text-2xl">✉️</span>
-                    <div>
-                        <p className="text-gray-600">Email</p>
-                        <p className="text-lg font-semibold">support@exemple.com</p>
-                    </div>
+                        <span className="text-blue-600 text-2xl">✉️</span>
+                        <div>
+                            <p className="text-gray-600">Email</p>
+                            <p className="text-lg font-semibold">support@example.com</p>
+                        </div>
                     </div>
                     <div className="flex items-center space-x-4">
-                    <span className="text-blue-600 text-2xl">📞</span>
-                    <div>
-                        <p className="text-gray-600">Phone</p>
-                        <p className="text-lg font-semibold">+1 234 567 890</p>
+                        <span className="text-blue-600 text-2xl">📞</span>
+                        <div>
+                            <p className="text-gray-600">Phone</p>
+                            <p className="text-lg font-semibold">+1 234 567 890</p>
+                        </div>
                     </div>
+                    <div className="flex items-center space-x-4">
+                        <span className="text-blue-600 text-2xl">📍</span>
+                        <div>
+                            <p className="text-gray-600">Address</p>
+                            <p className="text-lg font-semibold">123 Ha Noi, Viet Nam, VN 1000</p>
+                        </div>
+                    </div>
+                    <div className="flex items-center space-x-4">
+                        <span className="text-blue-600 text-2xl">🕒</span>
+                        <div>
+                            <p className="text-gray-600">Working Hours</p>
+                            <p className="text-lg font-semibold">Mon - Fri: 9 AM - 6 PM</p>
+                        </div>
                     </div>
                 </div>
             </div>
