@@ -6,6 +6,9 @@ import MarketingPage from "./pages/MarketingPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import VerifyEmailPage from "./pages/VerifyEmailPage";
 import EmailVerifiedPage from "./pages/EmailVerifiedPage";
+import AboutUs from "./pages/AboutUs";
+import Contact from "./pages/Contact";
+
 
 const App = () => {
   return (
@@ -16,6 +19,8 @@ const App = () => {
         <Route path="/email-verified" element={<EmailVerifiedPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/home" element={ <HomePage />} />
+        <Route path="/about" element={ <AboutUs />} />
+        <Route path="/contact" element={ <Contact />} />
         <Route path="/" element={<MarketingPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
