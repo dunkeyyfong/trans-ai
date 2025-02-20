@@ -13,7 +13,7 @@ const HomePage: React.FC = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("isAuthenticated");
-    navigate("/login");
+    navigate("/");
   };
 
   // Dữ liệu phụ đề (mô phỏng)
