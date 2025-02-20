@@ -10,8 +10,7 @@ const RegisterPage = () => {
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const navigate = useNavigate();
 
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleRegister = async () => {
     setError("");
 
     if (password !== confirmPassword) {
@@ -60,18 +59,18 @@ const RegisterPage = () => {
         </div>
       </div>
 
-      {/* Form đăng ký */}
+      {/* Đăng ký */}
       <div className="bg-white p-12 w-[500px] lg:w-[600px] text-center">
         <h2 className="text-4xl font-bold mb-10">Sign Up</h2>
 
         {error && <p className="text-red-500 text-lg mb-3">{error}</p>}
 
-        <form onSubmit={handleRegister}>
+        <div>
           {/* Full Name */}
           <input
             type="text"
             placeholder="Full Name"
-            className="w-full px-4 py-4 border rounded-xl mb-5 text-lg focus:outline-none focus:ring-4 focus:ring-emerald-500"
+            className="w-full p-4 border rounded-xl mb-5 text-lg focus:outline-none focus:ring-4 focus:ring-emerald-500"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
             required
@@ -81,7 +80,7 @@ const RegisterPage = () => {
           <input
             type="email"
             placeholder="Email"
-            className="w-full px-4 py-4 border rounded-xl mb-5 text-lg focus:outline-none focus:ring-4 focus:ring-emerald-500"
+            className="w-full p-4 border rounded-xl mb-5 text-lg focus:outline-none focus:ring-4 focus:ring-emerald-500"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -91,7 +90,7 @@ const RegisterPage = () => {
           <input
             type="password"
             placeholder="Password"
-            className="w-full px-4 py-4 border rounded-xl mb-5 text-lg focus:outline-none focus:ring-4 focus:ring-emerald-500"
+            className="w-full p-4 border rounded-xl mb-5 text-lg focus:outline-none focus:ring-4 focus:ring-emerald-500"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -101,13 +100,13 @@ const RegisterPage = () => {
           <input
             type="password"
             placeholder="Confirm Password"
-            className="w-full px-4 py-4 border rounded-xl mb-4 text-lg focus:outline-none focus:ring-4 focus:ring-emerald-500"
+            className="w-full p-4 border rounded-xl mb-4 text-lg focus:outline-none focus:ring-4 focus:ring-emerald-500"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
           />
 
-          {/* Checkbox điều khoản */}
+          {/* Điều khoản */}
           <div className="flex items-center mb-4">
             <input
               type="checkbox"
@@ -126,7 +125,7 @@ const RegisterPage = () => {
 
           {/* Nút đăng ký */}
           <button
-            type="submit"
+            onClick={handleRegister}
             className={`w-full py-4 rounded-xl text-white text-xl font-semibold ${
               agreeToTerms ? "bg-emerald-600 hover:bg-emerald-700" : "bg-gray-400 cursor-not-allowed"
             }`}
@@ -134,9 +133,9 @@ const RegisterPage = () => {
           >
             Sign Up
           </button>
-        </form>
+        </div>
 
-        {/* Đăng nhập nếu đã có tài khoản */}
+        {/* Điều hướng đến trang đăng nhập */}
         <div className="mt-6 text-lg bg-slate-100 py-4">
           Already have an account?{" "}
           <Link to="/login" className="text-emerald-600 font-bold text-xl">

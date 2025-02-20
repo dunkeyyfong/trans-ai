@@ -7,6 +7,9 @@ import NotFoundPage from "./pages/NotFoundPage";
 import VerifyEmailPage from "./pages/VerifyEmailPage";
 import EmailVerifiedPage from "./pages/EmailVerifiedPage";
 import AdminPage from "./pages/AdminPage";
+import AboutUs from "./pages/AboutUs";
+import Contact from "./pages/Contact";
+
 
 const App = () => {
   return (
@@ -17,8 +20,10 @@ const App = () => {
         <Route path="/verify-email" element={<VerifyEmailPage />} />
         <Route path="/email-verified" element={<EmailVerifiedPage />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/" element={ <HomePage />} />
-        <Route path="/marketing" element={<MarketingPage />} />
+        <Route path="/home" element={ <HomePage />} />
+        <Route path="/about" element={ <AboutUs />} />
+        <Route path="/contact" element={ <Contact />} />
+        <Route path="/" element={<MarketingPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Router>
