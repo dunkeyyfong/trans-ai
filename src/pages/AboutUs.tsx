@@ -4,7 +4,7 @@ import Footer from '../components/Footer'
 
 const AboutUs = () => {
 return (
-    <section className="bg-gray-100 text-black min-h-screen">
+    <section className="bg-gray-100 text-black min-h-screen mt-[6vh]">
        <Navbar/>
 
         {/* Header Image */}
