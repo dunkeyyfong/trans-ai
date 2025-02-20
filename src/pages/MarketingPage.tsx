@@ -194,9 +194,9 @@ const MarketingPage = () => {
 
 
         {/* Footer */}
-        <footer className="bg-white z-10">
+        <div className="bg-white z-10">
           <Footer />
-        </footer>
+        </div>
       </div>
 
       {/* Custom animations using Tailwind + CSS */}

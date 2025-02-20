@@ -15,7 +15,7 @@ const Navbar = () => {
       {/* Navigation */}
       <div className="hidden md:flex space-x-8 text-white text-lg">
         <Link to="/" className="hover:text-gray-300 transition">Home</Link>
-        <Link to="/about" className="hover:text-gray-300 transition">About us</Link>
+        <Link to="/about" className="hover:text-gray-300 transition">About Us</Link>
       </div>
 
       {/* CTA + Icons */}
