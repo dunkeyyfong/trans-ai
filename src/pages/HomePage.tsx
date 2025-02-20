@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SideBar from "../components/SideBar";
-import Navbar from "../components/NavBar";
-import Footer from "../components/Footer";
+// import Navbar from "../components/NavBar";
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
@@ -42,7 +41,7 @@ const HomePage: React.FC = () => {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Navbar */}
-      <Navbar />
+      {/* <Navbar /> */}
 
       {/* Main Layout */}
       <div className="flex flex-1 bg-gray-100">
@@ -125,7 +124,6 @@ const HomePage: React.FC = () => {
         </main>
       </div>
 
-      <Footer />
     </div>
   );
 };

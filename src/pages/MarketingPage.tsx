@@ -1,6 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import React  from "react";
 import Footer from "../components/Footer";
+import Navbar from "../components/NavBar";
+import Contact from "./Contact";
+
 
 const MarketingPage = () => {
   const [index, setIndex] = useState(0);
@@ -28,6 +31,15 @@ const MarketingPage = () => {
     { quote: "Definitely worth the investment. The AI is leagues ahead of other tools.", author: "Angela C., Film Director" }
   ];
 
+  const contactRef = useRef<HTMLDivElement>(null);
+
+  const scrollToContact = () => {
+    if (contactRef.current) {
+      contactRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
+
   useEffect(() => {
     const interval = setInterval(() => {
       nextTestimonial();
@@ -42,34 +54,8 @@ const MarketingPage = () => {
   return (
     <>
       <div className="flex flex-col min-h-screen text-white">
-        {/* Header */}
-        <header className="bg-black bg-opacity-70 backdrop-blur-md fixed top-0 left-0 w-full flex items-center justify-between px-8 py-4 shadow-lg shadow-black/50 z-[999]">
-          {/* Logo */}
-          <a href="/" className="flex items-center space-x-2">
-            <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-indigo-500 flex items-center justify-center rounded-lg">
-              <span className="text-white font-bold text-sm">言葉</span>
-            </div>
-            <span className="text-white text-xl font-semibold">KotobaAI</span>
-          </a>
-
-          {/* Navigation */}
-          <nav className="hidden md:flex space-x-8 text-white text-lg">
-            <a href="/" className="hover:text-gray-300 transition">Home</a>
-            <a href="/about" className="hover:text-gray-300 transition">About us</a>
-            <a href="/contact" className="hover:text-gray-300 transition">Contact</a>
-          </nav>
-
-          {/* CTA + Icons */}
-          <div className="flex items-center space-x-4">
-            <a href="/login" className="px-6 py-2 bg-white text-black font-semibold rounded-full shadow-md hover:bg-gray-200 transition">
-              Log In
-            </a>
-            <a href="/register" className="px-6 py-2 bg-white text-black font-semibold rounded-full shadow-md hover:bg-gray-200 transition">
-              Sign Up
-            </a>
-          </div>
-        </header>
-
+        {/* NavBar */}
+        <Navbar/>
         {/* Background Image Fullscreen */}
         <div className="fixed inset-0 w-full h-full bg-cover bg-center" style={{ backgroundImage: "url('/bg-maketing.jpg')" }}>
           {/* Overlay */}
@@ -94,8 +80,8 @@ const MarketingPage = () => {
               Learn More
             </a>
             <a
-              href="/contact"
-              className="px-10 py-5 bg-gray-800 text-white text-lg font-semibold rounded-xl shadow-lg hover:bg-gray-700 transition-transform transform hover:scale-105"
+              onClick={scrollToContact}
+              className="px-10 py-5 bg-gray-800 text-white text-lg font-semibold rounded-xl shadow-lg hover:bg-gray-700 transition-transform transform hover:scale-105 cursor-pointer"
             >
               Contact Us
             </a>
@@ -202,8 +188,13 @@ const MarketingPage = () => {
           </a>
         </section>
 
+        <div ref={contactRef} className="z-10">
+          <Contact />
+        </div>
+
+
         {/* Footer */}
-        <footer className="z-10">
+        <footer className="bg-white z-10">
           <Footer />
         </footer>
       </div>
