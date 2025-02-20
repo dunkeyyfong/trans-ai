@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaGoogle, FaFacebookF, FaApple } from "react-icons/fa";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -76,35 +75,10 @@ const LoginPage = () => {
 
           <button
             onClick={handleLogin}
-            className="w-full bg-emerald-600 text-white py-4 text-xl font-semibold rounded-xl flex items-center justify-center gap-3 hover:bg-emerald-700 transition duration-300"
+            className="w-full bg-emerald-600 mb-10 text-white py-4 text-xl font-semibold rounded-xl flex items-center justify-center gap-3 hover:bg-emerald-700 transition duration-300"
             disabled={isSubmitting}
           >
             {isSubmitting ? "Logging in..." : "Log in"}
-          </button>
-        </div>
-
-        <div className="relative my-10">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t"></div>
-          </div>
-          <div className="flex items-center my-6">
-            <div className="flex-1 border-t border-gray-600"></div>
-            <div className="relative bg-white px-4 text-gray-500 text-lg">
-              Other log in options
-            </div>
-            <div className="flex-1 border-t border-gray-600"></div>
-          </div>
-        </div>
-
-        <div className="flex justify-center gap-6 mb-10">
-          <button className="border p-4 rounded-xl hover:bg-gray-100">
-            <FaGoogle className="text-red-500" size={32} />
-          </button>
-          <button className="border p-4 rounded-xl hover:bg-gray-100">
-            <FaFacebookF className="text-blue-600" size={32} />
-          </button>
-          <button className="border p-4 rounded-xl hover:bg-gray-100">
-            <FaApple className="text-black" size={32} />
           </button>
         </div>
 
