@@ -78,3 +78,6 @@ chỉnh phần `transai_db:3306` thành `localhost:3306`. Chạy xong thì phả
 
 ## Hướng dẫn push docker image
 docker buildx build --platform linux/amd64 --target production -t dunkeyyfong/kotoba:v1 . --push
+
+## Tài liệu đặc tả hệ thông 
+https://drive.google.com/drive/folders/1IBY4jVh2WVUUqnRhoy6FbzF0qN06-fzu?usp=drive_link
