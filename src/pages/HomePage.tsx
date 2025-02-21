@@ -47,7 +47,7 @@ const HomePage: React.FC = () => {
       <div className="flex flex-1 bg-gray-100">
         {/* Sidebar */}
         <aside className="w-64 bg-white">
-          <SideBar />
+          <SideBar userName="Admin"/>
         </aside>
 
         {/* Main Content */}

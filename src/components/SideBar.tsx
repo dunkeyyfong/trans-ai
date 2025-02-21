@@ -1,7 +1,45 @@
-import React, { useState } from "react";
-import { FaBars, FaPlus, FaSearch, FaPen, FaTimes } from "react-icons/fa";
+import { Button, Dropdown } from "antd";
+import { useState } from "react";
+import type { MenuProps } from "antd";
+import { FaBars, FaPlus, FaSearch, FaTimes } from "react-icons/fa";
+import { LogoutOutlined } from "@ant-design/icons";
 
-const SideBar = () => {
+interface SideBarProps {
+  userName: string;
+}
+
+const items: MenuProps["items"] = [
+  // {
+  //   key: "1",
+  //   label: (
+  //     <button className="w-full text-left" onClick={() => alert("Logged out!")}>
+  //       <LogoutOutlined className="mr-3 text-red-500"/> <span className="text-red-500">Log Out</span>
+  //     </button>
+  //   ),
+  // },
+  // {
+  //   key: "2",
+  //   label: (
+  //     <a
+  //       target="_blank"
+  //       rel="noopener noreferrer"
+  //       href="https://www.aliyun.com"
+  //     >
+  //       2nd menu item
+  //     </a>
+  //   ),
+  // },
+  {
+    key: "1",
+    label: (
+      <button className="w-full text-left" onClick={() => alert("Logged out!")}>
+        <LogoutOutlined className="mr-3 text-red-500"/> <span className="text-red-500">Log Out</span>
+      </button>
+    ),
+  },
+];
+
+const SideBar = ({ userName }: SideBarProps) => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   return (
@@ -28,18 +66,24 @@ const SideBar = () => {
 
         <h2 className="text-gray-500 text-sm mb-2">Today</h2>
         <ul className="space-y-2">
-          <li className="p-2 rounded-md hover:bg-gray-200 cursor-pointer">React Router cấu hình</li>
-          <li className="p-2 rounded-md hover:bg-gray-200 cursor-pointer">Prisma Client Binary Error</li>
-          <li className="p-2 rounded-md hover:bg-gray-200 cursor-pointer">Gọi API xác thực email</li>
+          <li className="p-2 rounded-md hover:bg-gray-200 cursor-pointer">
+            React Router cấu hình
+          </li>
+          <li className="p-2 rounded-md hover:bg-gray-200 cursor-pointer">
+            Prisma Client Binary Error
+          </li>
+          <li className="p-2 rounded-md hover:bg-gray-200 cursor-pointer">
+            Gọi API xác thực email
+          </li>
         </ul>
       </div>
 
       {/* Projects */}
       <div className="p-4 border-t">
-        <h2 className="text-gray-500 text-sm mb-2">Projects</h2>
-        <ul>
-          <li className="p-2 rounded-md hover:bg-gray-200 cursor-pointer">Strands</li>
-        </ul>
+        <h2 className="text-gray-500 text-sm mb-2">User</h2>
+        <Dropdown menu={{ items }} placement="topLeft">
+          <p className="m-3">{userName}</p>
+        </Dropdown>
       </div>
 
       {/* Search Modal (Bên trong Sidebar) */}
@@ -51,7 +95,10 @@ const SideBar = () => {
               placeholder="Search chats..."
               className="w-full p-2 text-gray-800 border rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400"
             />
-            <button onClick={() => setIsSearchOpen(false)} className="ml-2 p-2 rounded-full hover:bg-gray-200">
+            <button
+              onClick={() => setIsSearchOpen(false)}
+              className="ml-2 p-2 rounded-full hover:bg-gray-200"
+            >
               <FaTimes className="text-gray-600" />
             </button>
           </div>
