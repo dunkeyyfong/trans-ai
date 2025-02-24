@@ -127,7 +127,7 @@ const RegisterPage = () => {
         </div>
 
         {/* Điều hướng đến trang đăng nhập */}
-        <div className="mt-6 text-lg bg-slate-100 py-4">
+        <div className="mt-6 text-lg py-4">
           Already have an account?{" "}
           <Link to="/login" className="text-emerald-600 font-bold text-xl">
             Log in

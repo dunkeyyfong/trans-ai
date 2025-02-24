@@ -74,7 +74,7 @@ const LoginPage = () => {
           </button>
         </div>
 
-        <div className="text-lg bg-slate-100 py-4">
+        <div className="text-lg py-4">
           Don't have an account?{" "}
           <Link to="/register" className="text-emerald-600 font-bold text-xl">
             Sign up
