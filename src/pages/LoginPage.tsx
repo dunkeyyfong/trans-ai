@@ -39,15 +39,7 @@ const LoginPage = () => {
 
   return (
     <div className="flex justify-center items-center min-h-screen px-6 mx-[16%]">
-      <div className="hidden md:block">
-        <div className="flex items-center justify-center h-full">
-          <img
-            src="https://i.pinimg.com/736x/fd/93/c0/fd93c0ee623cc3b03b16e0a771836330.jpg"
-            alt="Img Login"
-            className="max-w-xl lg:max-w-2xl"
-          />
-        </div>
-      </div>
+      
 
       <div className="bg-white p-12 w-[500px] lg:w-[600px] text-center">
         <h2 className="text-4xl font-bold mb-10">Log In</h2>

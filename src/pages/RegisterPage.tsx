@@ -48,16 +48,7 @@ const RegisterPage = () => {
 
   return (
     <div className="flex justify-center items-center min-h-screen px-6 mx-[16%]">
-      {/* Hình ảnh */}
-      <div className="hidden md:block">
-        <div className="flex items-center justify-center h-full">
-          <img
-            src="https://img.freepik.com/free-vector/sign-up-concept-illustration_114360-7965.jpg"
-            alt="Img Register"
-            className="max-w-xl lg:max-w-2xl"
-          />
-        </div>
-      </div>
+    
 
       {/* Đăng ký */}
       <div className="bg-white p-12 w-[500px] lg:w-[600px] text-center">
