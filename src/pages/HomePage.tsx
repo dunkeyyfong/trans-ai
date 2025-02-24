@@ -2,13 +2,26 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SideBar from "../components/SideBar";
 import LanguageSelector from "../components/LanguageSelector";
+import { Button, Drawer, DrawerProps } from "antd";
+import { MenuOutlined } from "@ant-design/icons";
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const [link, setLink] = useState<string>("");
+
   const [videoTitle, setVideoTitle] = useState<string>("YouTube Subtitle Processor");
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [chatHistory, setChatHistory] = useState<{ title: string; url: string }[]>([]);
+
+  const [open, setOpen] = useState(false);
+
+  const showDrawer = () => {
+    setOpen(true);
+  };
+
+  const onClose = () => {
+    setOpen(false);
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("isAuthenticated");
@@ -71,7 +84,7 @@ const HomePage: React.FC = () => {
     <div className="flex flex-col min-h-screen">
       <div className="flex flex-1 bg-gray-100">
         {/* Sidebar */}
-        <aside className="w-64 bg-white border-r">
+        <aside className="w-64 bg-white border-r md:block hidden">
           {/* Lịch sử chat */}
           <SideBar chatHistory={chatHistory} onRestoreChat={handleRestoreChat} />
         </aside>
@@ -79,9 +92,25 @@ const HomePage: React.FC = () => {
         {/* Main Content */}
         <main className="flex-1 flex flex-col items-center p-6">
           {/* Header */}
-          <div className="w-full max-w-6xl bg-white py-4 px-6 shadow-md rounded-md">
-            <h1 className="text-2xl font-semibold text-gray-800">{videoTitle}</h1>
+          <div className="flex ">
+            <Button icon={<MenuOutlined />} className="mr-3 p-2" onClick={showDrawer} />
+            <div className="w-full max-w-6xl bg-white py-4 px-6 shadow-md rounded-md">
+              <h1 className="text-2xl font-semibold text-gray-800">{videoTitle}</h1>
+            </div>
           </div>
+
+          <Drawer
+            title="Basic Drawer"
+            placement={"left"}
+            closable={false}
+            onClose={onClose}
+            open={open}
+          >
+            <p>Some contents...</p>
+            <p>Some contents...</p>
+            <p>Some contents...</p>
+          </Drawer>
+
 
           <div className="flex flex-col md:flex-row md:items-center md:space-x-4 w-full max-w-6xl mt-6">
             {/* Video URL Input */}
@@ -104,11 +133,10 @@ const HomePage: React.FC = () => {
           {/* Processing Button */}
           <button
             onClick={handleProcess}
-            className={`mt-4 px-6 py-3 rounded-md shadow-md font-medium transition duration-300 ${
-              isProcessing
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-indigo-600 text-white hover:bg-indigo-700"
-            }`}
+            className={`mt-4 px-6 py-3 rounded-md shadow-md font-medium transition duration-300 ${isProcessing
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-indigo-600 text-white hover:bg-indigo-700"
+              }`}
             disabled={isProcessing}
           >
             {isProcessing ? "Processing..." : "Start Processing"}
