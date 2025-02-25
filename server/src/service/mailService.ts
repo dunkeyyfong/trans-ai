@@ -10,9 +10,11 @@ const logger = winston.createLogger({
 })
 
 export const sendMail = async (to: string, subject: string, html: string) => {
+
   const transporter = nodemailer.createTransport({
-    service: process.env.MAIL_SERVICE,
     host: process.env.MAIL_HOST,
+    port: 465,
+    secure: true,
     auth: {
       user: process.env.MAIL_USER,
       pass: process.env.MAIL_PASS
@@ -20,7 +22,7 @@ export const sendMail = async (to: string, subject: string, html: string) => {
   })
 
   const mailOptions = {
-    from: `no-reply@${process.env.MAIL_DOMAIN}.site`,
+    from: `${process.env.MAIL_USER}`,
     to: to,
     subject: subject,
     html: html
