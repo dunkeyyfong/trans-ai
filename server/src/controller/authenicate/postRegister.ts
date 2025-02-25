@@ -100,7 +100,7 @@ export const postRegister = async (req: Request, res: Response): Promise<void> =
     <div class="content">
       <p>Hello ${newUser.name},</p>
       <p>Thank you for signing up. Please verify your email address to complete your registration.</p>
-      <a href="http://localhost:8080/verify-email?t=${newUser.verifyToken}" class="btn">Verify Email</a>
+      <a href="${process.env.URL_AUTHENICATE}/verify-email?t=${newUser.verifyToken}" class="btn">Verify Email</a>
       <p>If you didn’t create an account, you can safely ignore this email.</p>
       <p><strong>Note:</strong> If you do not verify your email within 2 hours, we will proceed to delete your account.</p>
     </div>
