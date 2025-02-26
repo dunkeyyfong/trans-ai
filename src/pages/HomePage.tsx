@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import SideBar from "../components/SideBar";
 import LanguageSelector from "../components/LanguageSelector";
+import { Button, Drawer } from "antd";
+import { MenuOutlined } from "@ant-design/icons";
 
 interface Chat {
   title: string;
@@ -17,11 +19,23 @@ const HomePage: React.FC = () => {
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [chatHistory, setChatHistory] = useState<Chat[]>([]);
   const [searchParams] = useSearchParams();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
+
 
   const handleLogout = () => {
     localStorage.removeItem("isAuthenticated");
     navigate("/");
   };
+
+  useEffect(() => {
+    setIsPageLoading(true);
+
+    setTimeout(() => {
+      setIsPageLoading(false);
+    }, 1500);
+  
+  }, [])
 
   useEffect(() => {
     const savedChats = localStorage.getItem("chatHistory");
@@ -56,7 +70,12 @@ const HomePage: React.FC = () => {
   };
 
   const handleRestoreChat = (chatId: number) => {
-    navigate(`/home?id=${chatId}`);
+    setIsPageLoading(true);
+  
+    setTimeout(() => {
+      navigate(`/home?id=${chatId}`);
+      setIsPageLoading(false);
+    }, 1500);
   };
 
   const isValidYouTubeUrl = (url: string) => {
@@ -97,24 +116,72 @@ const HomePage: React.FC = () => {
       alert("Please enter a valid YouTube URL.");
       return;
     }
+    
     setIsProcessing(true);
     setTimeout(() => {
       setIsProcessing(false);
     }, 2000);
   };
 
+
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen relative">
       <div className="flex flex-1 bg-gray-100">
-        <aside className="w-64 bg-white border-r">
+        {/* Sidebar (Hiển thị trên laptop) */}
+        <aside className="hidden md:block w-64 bg-white border-r">
           <SideBar chatHistory={chatHistory} onNewChat={handleNewChat} onRestoreChat={handleRestoreChat} />
         </aside>
 
-        <main className="flex-1 flex flex-col items-center p-6">
-          <div className="w-full max-w-6xl bg-white py-4 px-6 shadow-md rounded-md">
-            <h1 className="text-2xl font-semibold text-gray-800">{selectedChatTitle}</h1>
+        {/* Drawer (Hiển thị trên mobile) */}
+        <Drawer
+          title={
+            <div className="w-full flex justify-between items-center">
+              <span className="font-semibold text-2xl">Chat History</span>
+              <Button
+                type="text"
+                onClick={() => setDrawerOpen(false)}
+                icon={<span className="text-xl">✖</span>}
+                className="text-gray-200 hover:text-gray-800"
+              />
+            </div>
+          }
+          placement="left"
+          closable={false}
+          onClose={() => setDrawerOpen(false)}
+          open={drawerOpen}
+          width={280}
+          className="md:hidden"
+        >
+            <SideBar chatHistory={chatHistory} onNewChat={handleNewChat} onRestoreChat={handleRestoreChat} />
+        </Drawer>
+
+        {/* Main Content */}
+        <main className="flex-1 flex flex-col items-center p-6 relative">
+          {/* Màn hình loading cho phần main */}
+          {isPageLoading && (
+            <div className="absolute inset-0 bg-white/70 backdrop-blur-md flex items-center justify-center z-50">
+              <h1 className="text-3xl font-semibold text-gray-800 animate-pulse">Loading...</h1>
+            </div>
+          )}
+
+          {/* Header */}
+          <div className="w-full flex items-center justify-center">
+            {/* Nút mở Drawer trên mobile */}
+            <div>
+              <Button
+                icon={<MenuOutlined style={{ fontSize: "15px" }} />}
+                className="md:hidden p-4 mr-4 border border-gray-300 rounded-lg shadow-sm"
+                onClick={() => setDrawerOpen(true)}
+              />
+            </div>
+
+            {/* Tiêu đề video */}
+            <div className="w-full max-w-6xl bg-white py-4 px-6 shadow-md rounded-md text-center">
+              <h1 className="text-2xl font-semibold text-gray-800">{selectedChatTitle}</h1>
+            </div>
           </div>
 
+          {/* Input và Selector */}
           <div className="flex flex-col md:flex-row md:items-center md:space-x-4 w-full max-w-6xl mt-6">
             <div className="w-full md:w-3/4">
               <label className="block text-gray-700 font-medium mb-2">Video URL</label>
