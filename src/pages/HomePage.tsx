@@ -12,11 +12,14 @@ interface Chat {
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const [link, setLink] = useState<string>("");
-  const [videoTitle, setVideoTitle] = useState<string>("YouTube Subtitle Processor");
   const [selectedChatTitle, setSelectedChatTitle] = useState<string>("YouTube Subtitle Processor");
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [chatHistory, setChatHistory] = useState<Chat[]>([]);
   const [searchParams] = useSearchParams();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
+  const [selectedLanguage, setSelectedLanguage] = useState<string>("en");
+
 
   const handleLogout = () => {
     localStorage.removeItem("isAuthenticated");
@@ -69,17 +72,17 @@ const HomePage: React.FC = () => {
       const response = await fetch(`https://noembed.com/embed?url=${url}`);
       const data = await response.json();
       if (data.title) {
-        setVideoTitle(data.title);
+        setSelectedChatTitle(data.title);
         setChatHistory((prev) => {
           const exists = prev.some((chat) => chat.url === url);
           return exists ? prev : [{ title: data.title, id: prev.length + 1, url }, ...prev];
         });
       } else {
-        setVideoTitle("Unknown Video");
+        setSelectedChatTitle("Unknown Video");
       }
     } catch (error) {
       console.error("Error fetching video title:", error);
-      setVideoTitle("Error Fetching Title");
+      setSelectedChatTitle("Error Fetching Title");
     }
   };
 
@@ -92,16 +95,38 @@ const HomePage: React.FC = () => {
     }
   };
 
+  const handleLanguageChange = (language: string) => {
+    setSelectedLanguage(language);
+  };
+
   const handleProcess = () => {
     if (!link || !isValidYouTubeUrl(link)) {
       alert("Please enter a valid YouTube URL.");
       return;
     }
     setIsProcessing(true);
+
     setTimeout(() => {
       setIsProcessing(false);
     }, 2000);
+
+    const urlObj = new URL(link);
+    const params = new URLSearchParams(urlObj.search);
+    const videoId = params.get("v") || urlObj.pathname.split("/").pop();
+  
+    if (!videoId) {
+      alert("Invalid YouTube URL.");
+      return;
+    }
+  
+    const data = {
+      video_id: videoId,
+      lang: selectedLanguage,
+    };
+  
+    console.log(data);
   };
+  
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -127,7 +152,7 @@ const HomePage: React.FC = () => {
               />
             </div>
             <div className="w-full md:w-1/4 mt-4 md:mt-0">
-              <LanguageSelector />
+            <LanguageSelector onLanguageChange={handleLanguageChange} />
             </div>
           </div>
 
