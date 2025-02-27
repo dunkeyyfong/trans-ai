@@ -10,6 +10,8 @@ const RegisterPage = () => {
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const navigate = useNavigate();
 
+  const API_URL = import.meta.env.VITE_API_URL;
+    
   const handleRegister = async () => {
     setError("");
 
@@ -24,7 +26,7 @@ const RegisterPage = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:8085/api/register", {
+      const response = await fetch(`${API_URL}/api/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ fullName, email, password }),
