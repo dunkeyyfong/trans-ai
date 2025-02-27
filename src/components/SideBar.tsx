@@ -1,12 +1,11 @@
 import React, { useState } from "react";
-import { FaBars, FaPlus } from "react-icons/fa";
+import { FaPlus } from "react-icons/fa";
 import { Modal, Input, Button } from "antd";
 
 interface Chat {
   title: string;
   id: number;
 }
-
 
 interface SideBarProps {
   chatHistory: Chat[];
@@ -31,34 +30,62 @@ const SideBar: React.FC<SideBarProps> = ({ chatHistory, onNewChat, onRestoreChat
     handleCloseModal();
   };
 
+  const handleChatClick = (chatId: number) => {
+    onRestoreChat(chatId); // Gọi hàm từ HomePage để xử lý loading
+  };
+
   return (
-    <div className="w-64 bg-white h-screen flex flex-col">
-      {/* Header */}
-      <div className="p-4 flex items-center justify-between">
-        <FaBars className="text-gray-600 cursor-pointer text-xl" />
+    <>
+      {/* Sidebar trên desktop */}
+      <div className="hidden md:flex flex-col w-64 bg-white h-screen">
+        {/* New Chat Button */}
+        <div className="p-4">
+          <button
+            onClick={handleOpenModal}
+            className="w-full flex items-center gap-2 p-2 bg-blue-500 text-white rounded-md"
+          >
+            <FaPlus /> New Chat
+          </button>
+        </div>
+
+        {/* Chat History */}
+        <div className="p-4 flex-1 overflow-y-auto">
+          <h2 className="text-gray-500 text-sm mb-2">Today</h2>
+          <ul className="space-y-2">
+            {chatHistory.length > 0 ? (
+              chatHistory.map((chat) => (
+                <li
+                  key={chat.id}
+                  className="p-2 rounded-md hover:bg-gray-200 cursor-pointer transition flex items-center gap-2"
+                  onClick={() => handleChatClick(chat.id)}
+                >
+                  {chat.title}
+                </li>
+              ))
+            ) : (
+              <p className="text-gray-500 text-sm">No recent chats</p>
+            )}
+          </ul>
+        </div>
       </div>
 
-      {/* New Chat Button */}
-      <div className="p-4">
+      {/* Sidebar trên mobile */}
+      <div className="md:hidden bg-white w-full flex flex-col">
         <button
           onClick={handleOpenModal}
           className="w-full flex items-center gap-2 p-2 bg-blue-500 text-white rounded-md mb-4"
         >
           <FaPlus /> New Chat
         </button>
-      </div>
 
-
-      {/* Chat History */}
-      <div className="p-4 flex-1 overflow-y-auto">
         <h2 className="text-gray-500 text-sm mb-2">Today</h2>
         <ul className="space-y-2">
           {chatHistory.length > 0 ? (
             chatHistory.map((chat) => (
               <li
                 key={chat.id}
-                className="p-2 rounded-md hover:bg-gray-200 cursor-pointer transition"
-                onClick={() => onRestoreChat(chat.id)}
+                className="p-2 rounded-md hover:bg-gray-200 cursor-pointer transition flex items-center gap-2"
+                onClick={() => handleChatClick(chat.id)}
               >
                 {chat.title}
               </li>
@@ -67,6 +94,7 @@ const SideBar: React.FC<SideBarProps> = ({ chatHistory, onNewChat, onRestoreChat
             <p className="text-gray-500 text-sm">No recent chats</p>
           )}
         </ul>
+
       </div>
 
       {/* Ant Design Modal */}
@@ -89,7 +117,7 @@ const SideBar: React.FC<SideBarProps> = ({ chatHistory, onNewChat, onRestoreChat
           onChange={(e) => setChatTitle(e.target.value)}
         />
       </Modal>
-    </div>
+    </>
   );
 };
 
