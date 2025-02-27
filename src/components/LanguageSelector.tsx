@@ -5,6 +5,10 @@ interface Language {
   name: string;
 }
 
+interface LanguageSelectorProps {
+  onLanguageChange: (language: string) => void;
+}
+
 const languages: Language[] = [
   { code: "af", name: "Afrikaans" },
   { code: "sq", name: "Albanian" },
@@ -112,15 +116,15 @@ const languages: Language[] = [
   { code: "zu", name: "Zulu" }
 ];
 
-const LanguageSelector: React.FC = () => {
+const LanguageSelector: React.FC<LanguageSelectorProps> = ({ onLanguageChange }) => {
   const [selectedLanguage, setSelectedLanguage] = useState("en");
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedLanguage(e.target.value);
-    // Ở đây bạn có thể gọi hàm thay đổi ngôn ngữ của ứng dụng nếu cần
-    console.log("Selected language:", e.target.value);
+    const newLanguage = e.target.value;
+    setSelectedLanguage(newLanguage);
+    onLanguageChange(newLanguage);
   };
-
+  
   return (
     <div className="p-6 border-b border-gray-200 bg-white shadow-sm rounded-md">
       <label
