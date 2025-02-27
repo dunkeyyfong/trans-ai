@@ -85,46 +85,60 @@ const SideBar: React.FC<SideBarProps> = ({ chatHistory, onNewChat, onRestoreChat
             )}
           </ul>
         </div>
+
+        {/* Logout Button */}
+        <div className="p-4">
+          <button
+            onClick={handleOpenLogoutModal} // Mở modal xác nhận logout
+            className="w-full flex items-center gap-2 p-2 bg-red-500 text-white rounded-md"
+          >
+            <FaSignOutAlt /> Logout
+          </button>
+        </div>
       </div>
 
       {/* Sidebar trên mobile */}
       <div className="md:hidden bg-white w-full flex flex-col">
-        <button
-          onClick={handleOpenModal}
-          className="w-full flex items-center gap-2 p-2 bg-blue-500 text-white rounded-md mb-4"
-        >
-          <FaPlus /> New Chat
-        </button>
+        <div>
+          <button
+            onClick={handleOpenModal}
+            className="w-full flex items-center gap-2 p-2 bg-blue-500 text-white rounded-md mb-4"
+          >
+            <FaPlus /> New Chat
+          </button>
+        </div>
 
-      {/* Chat History */}
-      <div className="p-4 flex-1 overflow-y-auto">
-        <h2 className="text-gray-500 text-sm mb-2">Today</h2>
-        <ul className="space-y-2">
-          {chatHistory.length > 0 ? (
-            chatHistory.map((chat) => (
-              <li
-                key={chat.id}
-                className="p-2 rounded-md hover:bg-gray-200 cursor-pointer transition flex items-center gap-2"
-                onClick={() => handleChatClick(chat.id)}
-              >
-                {chat.title}
-              </li>
-            ))
-          ) : (
-            <p className="text-gray-500 text-sm">No recent chats</p>
-          )}
-        </ul>
+        {/* Chat History */}
+        <div className="p-4 flex-1 overflow-y-auto">
+          <h2 className="text-gray-500 text-sm mb-2">Today</h2>
+          <ul className="space-y-2">
+            {chatHistory.length > 0 ? (
+              chatHistory.map((chat) => (
+                <li
+                  key={chat.id}
+                  className="p-2 rounded-md hover:bg-gray-200 cursor-pointer transition flex items-center gap-2"
+                  onClick={() => handleChatClick(chat.id)}
+                >
+                  {chat.title}
+                </li>
+              ))
+            ) : (
+              <p className="text-gray-500 text-sm">No recent chats</p>
+            )}
+          </ul>
 
-      </div>
+        </div>
 
-      {/* Logout Button */}
-      <div className="p-4">
+        {/* Logout Button */}
+        <div className="p-4">
         <button
           onClick={handleOpenLogoutModal} // Mở modal xác nhận logout
           className="w-full flex items-center gap-2 p-2 bg-red-500 text-white rounded-md"
         >
           <FaSignOutAlt /> Logout
         </button>
+      </div>
+
       </div>
 
       {/* Modal Tạo Chat */}
@@ -164,7 +178,6 @@ const SideBar: React.FC<SideBarProps> = ({ chatHistory, onNewChat, onRestoreChat
       >
         <p>Are you sure you want to log out?</p>
       </Modal>
-      </div>
     </>
   );
 };
