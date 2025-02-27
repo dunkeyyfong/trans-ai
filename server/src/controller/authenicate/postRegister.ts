@@ -125,18 +125,18 @@ export const postRegister = async (req: Request, res: Response): Promise<void> =
 <body>
   <div class="container">
     <div class="header">
-      <img src="http://localhost:5173/ABOUT_US.jpg" alt="Kotoba AI Logo">
+      <img src="${process.env.URL_AUTHENICATE}/ABOUT_US.jpg" alt="Kotoba AI Logo">
       <h1>Welcome to Kotoba AI</h1>
       <p style="color: #555; font-size: 16px;">Your AI-powered future starts now.</p>
     </div>
     <div class="content">
-      <p>Hello <strong>John Doe</strong>,</p>
+      <p>Hello <strong>${newUser.name}</strong>,</p>
       <p>We’re excited to have you on board! To start using our services, please verify your email address by clicking the button below:</p>
-      <a href="#" class="btn">Verify My Email</a>
+      <a href="${process.env.URL_AUTHENICATE}/verify-email?t=${newUser.verifyToken}" class="btn">Verify My Email</a>
       <p class="note"><strong>Note:</strong> If you do not verify your email within <strong>2 hours</strong>, your account will be automatically deleted.</p>
     </div>
     <div class="footer">
-      <p class="support">Need help? Contact us at <a href="mailto:support@kotoba.ai">support@kotoba.ai</a></p>
+      <p class="support">Need help? Contact us at <a href="mailto:support@kotoba.tokyo">support@kotoba.tokyo</a></p>
       <p>&copy; 2025 Kotoba AI. All rights reserved.</p>
     </div>
   </div>
