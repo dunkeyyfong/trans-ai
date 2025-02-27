@@ -1,34 +1,51 @@
 import React, { useState } from "react";
-import { FaBars, FaPlus } from "react-icons/fa";
+import { FaBars, FaPlus, FaSignOutAlt } from "react-icons/fa";
 import { Modal, Input, Button } from "antd";
+import { useNavigate } from "react-router-dom";
 
 interface Chat {
   title: string;
   id: number;
 }
 
-
 interface SideBarProps {
   chatHistory: Chat[];
   onNewChat: (newChatTitle: string) => void;
   onRestoreChat: (chatId: number) => void;
+  onLogout: () => void;
 }
 
-const SideBar: React.FC<SideBarProps> = ({ chatHistory, onNewChat, onRestoreChat }) => {
+const SideBar: React.FC<SideBarProps> = ({ chatHistory, onNewChat, onRestoreChat, onLogout }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [chatTitle, setChatTitle] = useState("");
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const navigate = useNavigate();
 
+  // Mở Modal Tạo Chat
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setChatTitle("");
   };
 
+  // Xử lý tạo chat
   const handleCreateChat = () => {
     if (!chatTitle.trim()) return;
-
     onNewChat(chatTitle);
     handleCloseModal();
+  };
+
+  // Xử lý mở Modal xác nhận Logout
+  const handleOpenLogoutModal = () => {
+    setIsLogoutModalOpen(true);
+  };
+
+  // Xác nhận Logout
+  const handleConfirmLogout = () => {
+    setIsLogoutModalOpen(false);
+    localStorage.removeItem("token"); // Xóa token đăng nhập (nếu có)
+    onLogout(); // Gọi hàm onLogout từ prop
+    navigate("/login"); // Chuyển hướng về trang Login
   };
 
   return (
@@ -47,7 +64,6 @@ const SideBar: React.FC<SideBarProps> = ({ chatHistory, onNewChat, onRestoreChat
           <FaPlus /> New Chat
         </button>
       </div>
-
 
       {/* Chat History */}
       <div className="p-4 flex-1 overflow-y-auto">
@@ -69,7 +85,17 @@ const SideBar: React.FC<SideBarProps> = ({ chatHistory, onNewChat, onRestoreChat
         </ul>
       </div>
 
-      {/* Ant Design Modal */}
+      {/* Logout Button */}
+      <div className="p-4">
+        <button
+          onClick={handleOpenLogoutModal} // Mở modal xác nhận logout
+          className="w-full flex items-center gap-2 p-2 bg-red-500 text-white rounded-md"
+        >
+          <FaSignOutAlt /> Logout
+        </button>
+      </div>
+
+      {/* Modal Tạo Chat */}
       <Modal
         title="Create New Chat"
         open={isModalOpen}
@@ -88,6 +114,23 @@ const SideBar: React.FC<SideBarProps> = ({ chatHistory, onNewChat, onRestoreChat
           value={chatTitle}
           onChange={(e) => setChatTitle(e.target.value)}
         />
+      </Modal>
+
+      {/* Modal Xác Nhận Logout */}
+      <Modal
+        title="Confirm Logout"
+        open={isLogoutModalOpen}
+        onCancel={() => setIsLogoutModalOpen(false)}
+        footer={[
+          <Button key="cancel" onClick={() => setIsLogoutModalOpen(false)}>
+            Cancel
+          </Button>,
+          <Button key="logout" type="primary" danger onClick={handleConfirmLogout}>
+            Logout
+          </Button>,
+        ]}
+      >
+        <p>Are you sure you want to log out?</p>
       </Modal>
     </div>
   );
