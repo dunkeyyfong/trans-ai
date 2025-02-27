@@ -23,11 +23,7 @@ const HomePage: React.FC = () => {
   const [selectedLanguage, setSelectedLanguage] = useState<string>("en");
 
 
-  const handleLogout = () => {
-    localStorage.removeItem("isAuthenticated");
-    navigate("/");
-  };
-
+  // 🔹 Load chat history từ localStorage khi component mount
   useEffect(() => {
     setIsPageLoading(true);
 
@@ -44,6 +40,12 @@ const HomePage: React.FC = () => {
     }
   }, []);
 
+  // 🔹 Lưu chat history vào localStorage mỗi khi chatHistory thay đổi
+  useEffect(() => {
+    localStorage.setItem("chatHistory", JSON.stringify(chatHistory));
+  }, [chatHistory]);
+
+  // 🔹 Cập nhật tiêu đề chat từ URL
   useEffect(() => {
     const chatId = searchParams.get("id");
     if (chatId && chatHistory.length > 0) {
@@ -52,23 +54,16 @@ const HomePage: React.FC = () => {
     }
   }, [searchParams, chatHistory]);
 
+  // 🔹 Tạo cuộc trò chuyện mới
   const handleNewChat = (newChatTitle: string) => {
-    const lastId = parseInt(localStorage.getItem("lastChatId") || "0", 10);
-    const newId = lastId + 1;
+    const newId = Date.now(); // ID duy nhất dựa trên timestamp
+    const newChat: Chat = { title: newChatTitle, id: newId };
 
-    const newChat: Chat = {
-      title: newChatTitle,
-      id: newId,
-    };
-
-    const updatedChats = [newChat, ...chatHistory];
-    setChatHistory(updatedChats);
-    localStorage.setItem("chatHistory", JSON.stringify(updatedChats));
-    localStorage.setItem("lastChatId", newId.toString());
-
+    setChatHistory((prev) => [newChat, ...prev]);
     navigate(`/home?id=${newId}`);
   };
 
+  // 🔹 Khôi phục cuộc trò chuyện cũ
   const handleRestoreChat = (chatId: number) => {
     setIsPageLoading(true);
   
@@ -78,20 +73,23 @@ const HomePage: React.FC = () => {
     }, 1500);
   };
 
+  // 🔹 Xác thực link YouTube
   const isValidYouTubeUrl = (url: string) => {
     const regex = /^(https?:\/\/)?(www\.)?(youtube\.com\/(watch\?v=|embed\/|v\/)|youtu\.be\/)[a-zA-Z0-9_-]+/;
     return regex.test(url);
   };
 
+  // 🔹 Lấy tiêu đề video YouTube
   const fetchYouTubeTitle = async (url: string) => {
     try {
       const response = await fetch(`https://noembed.com/embed?url=${url}`);
       const data = await response.json();
       if (data.title) {
         setSelectedChatTitle(data.title);
+
         setChatHistory((prev) => {
           const exists = prev.some((chat) => chat.url === url);
-          return exists ? prev : [{ title: data.title, id: prev.length + 1, url }, ...prev];
+          return exists ? prev : [{ title: data.title, id: Date.now(), url }, ...prev];
         });
       } else {
         setSelectedChatTitle("Unknown Video");
@@ -102,6 +100,7 @@ const HomePage: React.FC = () => {
     }
   };
 
+  // 🔹 Xử lý nhập URL video
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const url = e.target.value;
     setLink(url);
@@ -142,6 +141,14 @@ const HomePage: React.FC = () => {
     };
   
     console.log(data);
+    setTimeout(() => setIsProcessing(false), 2000);
+  };
+
+  // 🔹 Xử lý đăng xuất
+  const handleLogout = () => {
+    console.log("Logging out...");
+    localStorage.removeItem("token"); // Xóa token đăng nhập (nếu có)
+    navigate("/login"); // Chuyển hướng về trang đăng nhập
   };
   
 
@@ -151,7 +158,7 @@ const HomePage: React.FC = () => {
       <div className="flex flex-1 bg-gray-100">
         {/* Sidebar (Hiển thị trên laptop) */}
         <aside className="hidden md:block w-64 bg-white border-r">
-          <SideBar chatHistory={chatHistory} onNewChat={handleNewChat} onRestoreChat={handleRestoreChat} />
+          <SideBar chatHistory={chatHistory} onNewChat={handleNewChat} onRestoreChat={handleRestoreChat} onLogout={handleLogout} />
         </aside>
 
         {/* Drawer (Hiển thị trên mobile) */}
@@ -174,7 +181,7 @@ const HomePage: React.FC = () => {
           width={280}
           className="md:hidden"
         >
-            <SideBar chatHistory={chatHistory} onNewChat={handleNewChat} onRestoreChat={handleRestoreChat} />
+          <SideBar chatHistory={chatHistory} onNewChat={handleNewChat} onRestoreChat={handleRestoreChat} onLogout={handleLogout} />
         </Drawer>
 
         {/* Main Content */}
@@ -203,7 +210,7 @@ const HomePage: React.FC = () => {
             </div>
           </div>
 
-          {/* Input và Selector */}
+          {/* Nhập URL video */}
           <div className="flex flex-col md:flex-row md:items-center md:space-x-4 w-full max-w-6xl mt-6">
             <div className="w-full md:w-3/4">
               <label className="block text-gray-700 font-medium mb-2">Video URL</label>
@@ -220,6 +227,7 @@ const HomePage: React.FC = () => {
             </div>
           </div>
 
+          {/* Nút xử lý */}
           <button
             onClick={handleProcess}
             className={`mt-4 px-6 py-3 rounded-md shadow-md font-medium transition duration-300 ${
@@ -228,13 +236,6 @@ const HomePage: React.FC = () => {
             disabled={isProcessing}
           >
             {isProcessing ? "Processing..." : "Start Processing"}
-          </button>
-
-          <button
-            onClick={handleLogout}
-            className="mt-6 px-6 py-2 bg-red-500 text-white rounded-md shadow-md hover:bg-red-600 transition duration-300"
-          >
-            Logout
           </button>
         </main>
       </div>
