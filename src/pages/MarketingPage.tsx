@@ -243,19 +243,23 @@ const MarketingPage = () => {
         </section>
 
         {/* Call to Action */}
-        <section className="py-20 bg-indigo-700 text-white text-center animate-slide-up">
-          <h2 className="text-5xl font-bold mb-6">Get Started Today</h2>
-          <p className="text-2xl max-w-3xl mx-auto mb-8">
-            Join thousands of users who are transforming video transcription
-            with AI. Sign up now and try it for free!
-          </p>
-          <a
-            href="/register"
-            className="px-10 py-5 bg-white text-black text-lg font-semibold rounded-xl shadow-lg transition-all hover:bg-gray-200 hover:shadow-xl"
-          >
-            Sign Up Now
-          </a>
-        </section>
+        <section
+  className="py-20 text-white text-center animate-slide-up bg-cover bg-center"
+  style={{ backgroundImage: "url('/bg-marketing.jpg')" }}
+>
+  <h2 className="text-5xl font-bold mb-6">Get Started Today</h2>
+  <p className="text-2xl max-w-3xl mx-auto mb-8">
+    Join thousands of users who are transforming video transcription
+    with AI. Sign up now and try it for free!
+  </p>
+  <a
+    href="/register"
+    className="px-10 py-5 bg-white text-black text-lg font-semibold rounded-xl shadow-lg transition-all hover:bg-gray-200 hover:shadow-xl"
+  >
+    Sign Up Now
+  </a>
+</section>
+
 
         <div ref={contactRef} className="z-10">
           <Contact />
