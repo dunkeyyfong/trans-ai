@@ -1,7 +1,31 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 
 const EmailVerifiedPage = () => {
+
+  const [searchParams] = useSearchParams();
+
+  const token = searchParams.get("t");
+
+  useEffect(() => {
+    const handleVerify = async () => {
+      try {
+        const response = await fetch("http://localhost:8085/api/verify-email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token }),
+        });
+  
+        const data = await response.json();
+        console.log(data);
+      } catch (e) {
+        console.error(e)
+      }
+    }
+
+    handleVerify()
+  })
+
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <div className="bg-white p-8 w-[400px] shadow-md rounded-lg text-center">

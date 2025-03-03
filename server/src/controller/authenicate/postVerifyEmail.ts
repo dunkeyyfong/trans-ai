@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { verifyToken } from '~/util/verifyToken'
 
 export const postVerifyEmail = async (req: Request, res: Response): Promise<void> => {
-  const { token } = req.params as { token: string }
+  const { token } = req.body as { token: string }
 
   try {
     const verify = await verifyToken(token)
