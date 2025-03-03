@@ -35,7 +35,8 @@ const RegisterPage = () => {
         throw new Error(data.message || "Registration failed");
       }
 
-      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data));
+
       navigate("/verify-email");
     } catch (err) {
       if (err instanceof Error) {

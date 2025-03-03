@@ -46,7 +46,7 @@ app.post('/api/login', postLogin)
 app.post('/api/register', postRegister)
 
 //Verify email
-app.post('/api/verify-email/:token', postVerifyEmail)
+app.post('/api/verify-email', postVerifyEmail)
 
 //Delete account
 app.post('/api/delete-account', authenicateToken, postDeleteAccount)
