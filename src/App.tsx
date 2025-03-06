@@ -6,7 +6,6 @@ import MarketingPage from "./pages/MarketingPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import VerifyEmailPage from "./pages/VerifyEmailPage";
 import EmailVerifiedPage from "./pages/EmailVerifiedPage";
-import AdminPage from "./pages/AdminPage";
 import AboutUs from "./pages/AboutUs";
 import Contact from "./pages/Contact";
 
@@ -16,7 +15,6 @@ const App = () => {
     <Router>
       <Routes>
         <Route path="/register" element={<RegisterPage />} />
-        <Route path="/admin" element={<AdminPage />} />
         <Route path="/verify-email" element={<VerifyEmailPage />} />
         <Route path="/email-verified" element={<EmailVerifiedPage />} />
         <Route path="/login" element={<LoginPage />} />
