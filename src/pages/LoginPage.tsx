@@ -1,5 +1,13 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { jwtDecode, JwtPayload } from "jwt-decode";
+
+interface DecodedToken extends JwtPayload {
+  id: number;
+  email: string;
+  role: string;
+  isActive: boolean;
+}
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -10,6 +18,7 @@ const LoginPage = () => {
   const navigate = useNavigate();
 
   const API_URL = import.meta.env.VITE_API_URL
+  const ADMIN_URL = import.meta.env.VITE_ADMIN_URL
 
   const handleLogin = async () => {
     setError("");
@@ -27,7 +36,15 @@ const LoginPage = () => {
       console.log(data);
 
       localStorage.setItem("token", data.token);
-      navigate("/home");
+
+      const decodedToken = jwtDecode<DecodedToken>(data.token);
+
+      if (decodedToken.role === "ADMIN") {
+        window.open(`${ADMIN_URL}/home?accessToken=${data.token}`);
+      } else {
+        navigate("/home");
+      }
+
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
