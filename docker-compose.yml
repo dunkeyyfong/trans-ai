@@ -28,6 +28,32 @@ services:
     ports:
       - '8085:8080'
     command: 'yarn run dev:back'
+  admin-fe:
+    build:
+      context: .
+      target: dev
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    restart: unless-stopped
+    ports:
+      - '8081:5173'
+    command: 'yarn run dev:admin'
+  admin-be:
+    build:
+      context: .
+      target: dev
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    restart: unless-stopped
+    ports:
+      - '8086:8080'
+    command: 'yarn run dev:admin-be'
   prisma-studio:
     build:
       context: .

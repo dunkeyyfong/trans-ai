@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "in-package": "yarn install --ignore-platform && cd server && yarn",
+    "in-package": "yarn install --ignore-platform && cd server && yarn && cd .. && cd admin && yarn run in-package",
     "dev": "vite",
     "dev:back": "cd server && yarn run dev",
     "dev:admin": "cd admin && yarn run dev",
