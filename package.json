@@ -7,6 +7,8 @@
     "in-package": "yarn install --ignore-platform && cd server && yarn",
     "dev": "vite",
     "dev:back": "cd server && yarn run dev",
+    "dev:admin": "cd admin && yarn run dev",
+    "dev:admin-be": "cd admin && yarn run dev:back",
     "build": "tsc -b && vite build",
     "build:back": "cd server && yarn run build",
     "prd:serve": "node server/dist/index.js",
