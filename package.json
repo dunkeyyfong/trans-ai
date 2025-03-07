@@ -6,7 +6,7 @@
   "scripts": {
     "in-package": "yarn install --ignore-platform && cd server && yarn && cd .. && cd admin && yarn run in-package",
     "dev": "vite",
-    "dev:back": "cd server && yarn run dev",
+    "dev:back": "cd server && yarn run dev && cd prisma && yarn run migrate && yarn run seed",
     "dev:admin": "cd admin && yarn run dev",
     "dev:admin-be": "cd admin && yarn run dev:back",
     "build": "tsc -b && vite build",
