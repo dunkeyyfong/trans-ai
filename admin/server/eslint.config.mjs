@@ -1,35 +1,35 @@
-// @ts-check
-import eslint from '@eslint/js';
-import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
-import globals from 'globals';
-import tseslint from 'typescript-eslint';
+import globals from 'globals'
+import pluginJs from '@eslint/js'
+import tseslint from 'typescript-eslint'
+import eslintPluginPrettier from 'eslint-plugin-prettier'
 
-export default tseslint.config(
+export default [
+  { files: ['**/*.{js,mjs,cjs,ts}'] },
+  { languageOptions: { globals: globals.node } },
+  pluginJs.configs.recommended,
+  ...tseslint.configs.recommended,
   {
-    ignores: ['eslint.config.mjs'],
-  },
-  eslint.configs.recommended,
-  ...tseslint.configs.recommendedTypeChecked,
-  eslintPluginPrettierRecommended,
-  {
-    languageOptions: {
-      globals: {
-        ...globals.node,
-        ...globals.jest,
-      },
-      ecmaVersion: 5,
-      sourceType: 'module',
-      parserOptions: {
-        projectService: true,
-        tsconfigRootDir: import.meta.dirname,
-      },
+    plugins: {
+      prettier: eslintPluginPrettier
     },
-  },
-  {
     rules: {
-      '@typescript-eslint/no-explicit-any': 'off',
-      '@typescript-eslint/no-floating-promises': 'warn',
-      '@typescript-eslint/no-unsafe-argument': 'warn'
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-unused-vars': 'warn',
+      'prettier/prettier': [
+        'warn',
+        {
+          arrowParens: 'always',
+          semi: false,
+          trailingComma: 'none',
+          tabWidth: 2,
+          endOfLine: 'auto',
+          useTabs: false,
+          singleQuote: true,
+          printWidth: 120,
+          jsxSingleQuote: true
+        }
+      ]
     },
-  },
-);
+    ignores: ['**/node_modules/', '**/dist/']
+  }
+]
