@@ -1,17 +1,25 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "declaration": true,
-    "removeComments": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
-    "target": "ES2023",
-    "sourceMap": true,
-    "outDir": "./dist",
-    "baseUrl": "./",
-    "incremental": true,
-    "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true
-  }
+    "module": "NodeNext", // Quy định output module được sử dụng
+    "moduleResolution": "NodeNext",
+    "target": "ES2023", // Target output cho code
+    "outDir": "dist", // Đường dẫn output cho thư mục build
+    "esModuleInterop": true,
+    "strict": true /* Enable all strict type-checking options. */,
+    "skipLibCheck": true /* Skip type checking all .d.ts files. */,
+    "baseUrl": ".", // Đường dẫn base cho các import
+    "paths": {
+      "~/*": ["src/*", "*"] // Đường dẫn tương đối cho các import (alias)
+    }
+  },
+  "files": ["src/type.d.ts"], // Các file dùng để defined global type cho dự án
+  "include": [
+    "src/**/*", // Bao gồm toàn bộ thư mục src
+    "*.ts", // Bao gồm các file TypeScript ngoài src
+    "**/*.ts" // Bao gồm tất cả các file TypeScript trong toàn dự án
+  ],
+  "exclude": [
+    "node_modules",
+    "dist" // Loại trừ thư mục build
+  ] // Đường dẫn include cho các file cần build
 }

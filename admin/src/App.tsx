@@ -21,8 +21,7 @@ import Home from "./pages/Dashboard/Home";
 
 export default function App() {
   return (
-    <>
-      <Router>
+    <Router>
         <ScrollToTop />
         <Routes>
           {/* Dashboard Layout */}
@@ -60,7 +59,6 @@ export default function App() {
           {/* Fallback Route */}
           <Route path="*" element={<NotFound />} />
         </Routes>
-      </Router>
-    </>
+    </Router>
   );
 }

@@ -59,4 +59,4 @@ app.post('/api/delete-history', authenicateToken, postDeleteHistory)
 app.post('/api/update-history', authenicateToken, postUpdateHistory)
 
 //admin
-app.get('/api/get-all-user', getAllUser)
+app.get('/api/get-all-user', authenicateToken, getAllUser)
