@@ -39,6 +39,11 @@ const navItems: NavItem[] = [
     path: "/calendar",
   },
   {
+    name: "Users",
+    icon: <TableIcon />,
+    path: "/basic-tables",
+  },
+  {
     icon: <UserCircleIcon />,
     name: "User Profile",
     path: "/profile",
@@ -47,11 +52,6 @@ const navItems: NavItem[] = [
     name: "Forms",
     icon: <ListIcon />,
     subItems: [{ name: "Form Elements", path: "/form-elements", pro: false }],
-  },
-  {
-    name: "Tables",
-    icon: <TableIcon />,
-    subItems: [{ name: "Basic Tables", path: "/basic-tables", pro: false }],
   },
   {
     name: "Pages",
