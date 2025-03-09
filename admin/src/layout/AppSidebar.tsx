@@ -24,11 +24,13 @@ type NavItem = {
   subItems?: { name: string; path: string; pro?: boolean; new?: boolean }[];
 };
 
+let accessToken = localStorage.getItem("user");
+
 const navItems: NavItem[] = [
   {
     icon: <GridIcon />,
     name: "Dashboard",
-    path: "/",
+    path: `/home?accessToken=${accessToken}`,
     // subItems: [{ name: "Ecommerce", path: "/", pro: false }],
   },
   {
