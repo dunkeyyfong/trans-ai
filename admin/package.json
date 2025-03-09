@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:back": "cd server && yarn run start",
+    "dev:back": "cd server && yarn run dev",
     "in-package": "yarn install --ignore-platform && cd server && yarn",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
