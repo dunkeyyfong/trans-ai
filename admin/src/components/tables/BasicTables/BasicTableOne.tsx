@@ -8,6 +8,7 @@ import {
 
 import Badge from "../../ui/badge/Badge";
 import Button from "../../ui/button/Button";
+import { Link } from "react-router";
 
 interface Order {
   id: number;
@@ -190,9 +191,11 @@ export default function BasicTableOne() {
                     {order.budget}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                    <Button variant="outline" size="sm">
-                      Edit
-                    </Button>
+                    <Link to={`/profile?user=${encodeURI(JSON.stringify(order))}`}>
+                      <Button size="sm" variant="outline">
+                        View
+                      </Button>
+                    </Link>
                   </TableCell>
                 </TableRow>
               ))}
