@@ -83,18 +83,28 @@ const AppHeader: React.FC = () => {
             {/* Cross Icon */}
           </button>
 
-          <Link to="/" className="lg:hidden">
-            <img
-              className="dark:hidden max-h-20 max-w-[200px] object-contain"
-              src="/images/logo/kotoba-logo.jpg"
-              alt="Logo"
-           />
-           <img
-             className="hidden dark:block max-h-12 max-w-[150px] object-contain"
-             src="/images/logo/kotoba-logo-dark.jpg"
-             alt="Logo"
-           />
-         </Link>
+          <Link to="/" className="flex items-center lg:hidden">
+
+  <div className="flex">
+    <img
+      className="dark:hidden max-h-20 max-w-[200px] object-contain"
+      src="/images/logo/kotoba-logo.png"
+      alt="Logo"
+    />
+    <img
+      className="hidden dark:block max-h-12 max-w-[150px] object-contain"
+      src="/images/logo/kotoba-logo.png"
+      alt="Logo"
+    />
+  </div>
+
+
+  <span className="text-lg font-bold text-gray-900 dark:text-white">
+    Kotoba Admin
+  </span>
+</Link>
+
+
 
 
           <button

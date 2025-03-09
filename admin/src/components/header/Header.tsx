@@ -78,18 +78,27 @@ const Header: React.FC<HeaderProps> = ({ onClick, onToggle }) => {
             </svg>
           </button>
 
-          <Link to="/" className="lg:hidden">
+          <Link to="/" className="flex items-center space-x-3 lg:hidden">
+ 
             <img
               className="dark:hidden"
-              src="./images/logo/logo.svg"
+              src="./images/logo/kotoba-logo.png"
               alt="Logo"
-            />
+              width={80}
+              height={40}
+             />
             <img
               className="hidden dark:block"
-              src="./images/logo/logo-dark.svg"
+              src="./images/logo/kotoba-logo.png"
               alt="Logo"
-            />
-          </Link>
+              width={80}
+              height={40}
+             />
+             <span className="text-lg font-bold text-gray-900 dark:text-white">
+               Kotoba Admin
+             </span>
+           </Link>
+
 
           <button
             onClick={toggleApplicationMenu}
