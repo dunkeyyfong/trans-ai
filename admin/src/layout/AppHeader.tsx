@@ -85,16 +85,17 @@ const AppHeader: React.FC = () => {
 
           <Link to="/" className="lg:hidden">
             <img
-              className="dark:hidden"
-              src="./images/logo/logo.svg"
+              className="dark:hidden max-h-20 max-w-[200px] object-contain"
+              src="/images/logo/kotoba-logo.jpg"
               alt="Logo"
-            />
-            <img
-              className="hidden dark:block"
-              src="./images/logo/logo-dark.svg"
-              alt="Logo"
-            />
-          </Link>
+           />
+           <img
+             className="hidden dark:block max-h-12 max-w-[150px] object-contain"
+             src="/images/logo/kotoba-logo-dark.jpg"
+             alt="Logo"
+           />
+         </Link>
+
 
           <button
             onClick={toggleApplicationMenu}
