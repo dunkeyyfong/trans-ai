@@ -10,7 +10,7 @@ export default function Home() {
   return (
     <>
       <PageMeta
-        title="Kotoba - Admin Dashboard"
+        title="Kotoba - Admin"
         description="Bảng điều khiển quản trị Kotoba"
       />
       <div className="grid grid-cols-12 gap-4 md:gap-6">

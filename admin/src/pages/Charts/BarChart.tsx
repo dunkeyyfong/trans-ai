@@ -7,7 +7,7 @@ export default function BarChart() {
   return (
     <div>
       <PageMeta
-        title="Kotoba - Bar Chart"
+        title="Kotoba - Admin"
         description="This is React.js Chart Dashboard page for TailAdmin - React.js Tailwind CSS Admin Dashboard Template"
       />
       <PageBreadcrumb pageTitle="Bar Chart" />

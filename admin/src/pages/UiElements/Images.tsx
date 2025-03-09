@@ -9,7 +9,7 @@ export default function Images() {
   return (
     <>
       <PageMeta
-        title="Kotoba - Images"
+        title="Kotoba - Admin"
         description="This is React.js Images page for TailAdmin - React.js Tailwind CSS Admin Dashboard Template"
       />
       <PageBreadcrumb pageTitle="Images" />

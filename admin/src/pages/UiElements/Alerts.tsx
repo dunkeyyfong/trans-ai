@@ -7,7 +7,7 @@ export default function Alerts() {
   return (
     <>
       <PageMeta
-        title="Kotoba - Alerts"
+        title="Kotoba - Admin"
         description="This is React.js Alerts Dashboard page for TailAdmin - React.js Tailwind CSS Admin Dashboard Template"
       />
       <PageBreadcrumb pageTitle="Alerts" />
