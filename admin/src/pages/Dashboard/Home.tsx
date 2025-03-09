@@ -20,6 +20,7 @@ export default function Home() {
 
   useEffect(() => {
     localStorage.setItem('user', JSON.stringify(decodedToken));
+    localStorage.setItem('accessToken', JSON.stringify(accessToken));
   }, [accessToken]);
 
   // if (decodedToken?.role !== 'ADMIN') {
