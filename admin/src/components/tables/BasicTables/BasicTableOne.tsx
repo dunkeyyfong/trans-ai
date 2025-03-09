@@ -191,7 +191,7 @@ export default function BasicTableOne() {
                     {order.budget}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                    <Link to={`/profile?user=${encodeURI(JSON.stringify(order))}`}>
+                    <Link to={`/edit-profile?user=${encodeURI(JSON.stringify(order))}`}>
                       <Button size="sm" variant="outline">
                         View
                       </Button>
