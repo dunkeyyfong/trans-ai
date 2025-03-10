@@ -15,6 +15,7 @@ import { postUpdateHistory } from './controller/history/postUpdateHistory'
 import { getAllHistory } from './controller/history/getAllHistory'
 import { getMessageHistory } from './controller/history/getMessageHistory'
 import { getAllUser } from './controller/admin/getAllUser'
+import { postUpdatePassword } from './controller/authenicate/postUpdatePassword'
 
 const app = express()
 const server = http.createServer(app)
@@ -44,6 +45,7 @@ app.get(/^(?!\/api\/)/, function (req, res) {
 //Authenicate
 app.post('/api/login', postLogin)
 app.post('/api/register', postRegister)
+app.post('/api/update-password', postUpdatePassword)
 
 //Verify email
 app.post('/api/verify-email', postVerifyEmail)
