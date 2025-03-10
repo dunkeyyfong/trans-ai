@@ -63,6 +63,20 @@ const HomePage: React.FC = () => {
     navigate(`/home?id=${newId}`);
   };
 
+  // xóa chat
+  const handleDeleteChat = (chatId: number) => {
+    setIsPageLoading(true);
+
+    setTimeout(() => {
+      setChatHistory((prev) => prev.filter((chat) => chat.id !== chatId));
+
+      setSelectedChatTitle("YouTube Subtitle Processor");
+      navigate("/home");
+
+      setIsPageLoading(false);
+    }, 1500);
+  };
+
   // 🔹 Khôi phục cuộc trò chuyện cũ
   const handleRestoreChat = (chatId: number) => {
     setIsPageLoading(true);
@@ -158,7 +172,7 @@ const HomePage: React.FC = () => {
       <div className="flex flex-1 bg-gray-100">
         {/* Sidebar (Hiển thị trên laptop) */}
         <aside className="hidden md:block w-64 bg-white border-r">
-          <SideBar chatHistory={chatHistory} onNewChat={handleNewChat} onRestoreChat={handleRestoreChat} onLogout={handleLogout} />
+          <SideBar chatHistory={chatHistory} onNewChat={handleNewChat} onRestoreChat={handleRestoreChat} onDeleteChat={handleDeleteChat} onLogout={handleLogout} />
         </aside>
 
         {/* Drawer (Hiển thị trên mobile) */}
@@ -181,7 +195,7 @@ const HomePage: React.FC = () => {
           width={280}
           className="md:hidden"
         >
-          <SideBar chatHistory={chatHistory} onNewChat={handleNewChat} onRestoreChat={handleRestoreChat} onLogout={handleLogout} />
+          <SideBar chatHistory={chatHistory} onNewChat={handleNewChat} onRestoreChat={handleRestoreChat} onDeleteChat={handleDeleteChat} onLogout={handleLogout} />
         </Drawer>
 
         {/* Main Content */}
