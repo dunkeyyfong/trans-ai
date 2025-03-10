@@ -48,6 +48,12 @@ model Message {
   updatedAt DateTime @updatedAt
 }
 
+model PageVisit {
+  id Int @id @default(autoincrement())
+  reload Int 
+}
+
+
 enum Role {
   USER
   ADMIN
