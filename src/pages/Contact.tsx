@@ -46,11 +46,11 @@ const Contact = () => {
                 <p className="text-gray-600 mb-4">You can reach us anytime</p>
                 <form className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input type="text" placeholder="First Name" className="w-full p-3 border border-gray-300 rounded-md" />
-                    <input type="text" placeholder="Last Name" className="w-full p-3 border border-gray-300 rounded-md" />
+                        <input type="text" placeholder="First Name" className="w-full p-3 border border-gray-300 rounded-md" />
+                        <input type="text" placeholder="Last Name" className="w-full p-3 border border-gray-300 rounded-md" />
                     </div>
-                    <input type="email" placeholder="Email Address" className="w-full p-3 border border-gray-300 rounded-md" />
-                    <input type="text" placeholder="Phone #" className="w-full p-3 border border-gray-300 rounded-md" />
+                        <input type="email" placeholder="Email Address" className="w-full p-3 border border-gray-300 rounded-md" />
+                        <input type="text" placeholder="Phone #" className="w-full p-3 border border-gray-300 rounded-md" />
                     <textarea placeholder="Your Message" className="w-full p-3 border border-gray-300 rounded-md h-32 resize-none"></textarea>
                     <button type="submit" className="w-full bg-blue-600 text-white py-3 font-semibold rounded-md hover:bg-blue-700 transition">Submit</button>
                 </form>
