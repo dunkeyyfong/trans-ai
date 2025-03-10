@@ -11,7 +11,7 @@ const RegisterPage = () => {
   const navigate = useNavigate();
 
   const API_URL = import.meta.env.VITE_API_URL;
-    
+
   const handleRegister = async () => {
     setError("");
 
@@ -50,12 +50,11 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen px-6 mx-[16%]">
-    
-
-      {/* Đăng ký */}
-      <div className="bg-white p-12 w-[500px] lg:w-[600px] text-center">
-        <h2 className="text-4xl font-bold mb-10">Sign Up</h2>
+    <div className="flex justify-center items-center min-h-screen px-4">
+      <div className="bg-white p-8 w-full max-w-md text-center">
+        <h2 className="text-3xl md:text-4xl font-bold mb-8 text-gray-800">
+          Sign Up
+        </h2>
 
         {error && <p className="text-red-500 text-lg mb-3">{error}</p>}
 
@@ -64,7 +63,7 @@ const RegisterPage = () => {
           <input
             type="text"
             placeholder="Full Name"
-            className="w-full p-4 border rounded-xl mb-5 text-lg focus:outline-none focus:ring-4 focus:ring-emerald-500"
+            className="w-full p-3 border rounded-lg mb-4 text-lg focus:outline-none focus:ring-2 focus:ring-emerald-400"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
@@ -74,7 +73,7 @@ const RegisterPage = () => {
           <input
             type="email"
             placeholder="Email"
-            className="w-full p-4 border rounded-xl mb-5 text-lg focus:outline-none focus:ring-4 focus:ring-emerald-500"
+            className="w-full p-3 border rounded-lg mb-4 text-lg focus:outline-none focus:ring-2 focus:ring-emerald-400"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -84,7 +83,7 @@ const RegisterPage = () => {
           <input
             type="password"
             placeholder="Password"
-            className="w-full p-4 border rounded-xl mb-5 text-lg focus:outline-none focus:ring-4 focus:ring-emerald-500"
+            className="w-full p-3 border rounded-lg mb-4 text-lg focus:outline-none focus:ring-2 focus:ring-emerald-400"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -94,34 +93,40 @@ const RegisterPage = () => {
           <input
             type="password"
             placeholder="Confirm Password"
-            className="w-full p-4 border rounded-xl mb-4 text-lg focus:outline-none focus:ring-4 focus:ring-emerald-500"
+            className="w-full p-3 border rounded-lg mb-4 text-lg focus:outline-none focus:ring-2 focus:ring-emerald-400"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
           />
 
           {/* Điều khoản */}
-          <div className="flex items-center mb-4">
+          <div className="flex items-center mb-4 text-left">
             <input
               type="checkbox"
               id="terms"
-              className="mr-2"
+              className="mr-2 w-5 h-5 cursor-pointer"
               checked={agreeToTerms}
               onChange={(e) => setAgreeToTerms(e.target.checked)}
             />
-            <label htmlFor="terms" className="text-base text-gray-600">
+            <label htmlFor="terms" className="text-sm text-gray-600">
               I agree to the
-              <Link to="/terms" className="text-emerald-600 underline"> Terms of Use </Link>
+              <Link to="/terms" className="text-emerald-600 underline mx-1">
+                Terms of Use
+              </Link>
               and
-              <Link to="/privacy" className="text-emerald-600 underline"> Privacy Policy</Link>.
+              <Link to="/privacy" className="text-emerald-600 underline mx-1">
+                Privacy Policy
+              </Link>.
             </label>
           </div>
 
           {/* Nút đăng ký */}
           <button
             onClick={handleRegister}
-            className={`w-full py-4 rounded-xl text-white text-xl font-semibold ${
-              agreeToTerms ? "bg-emerald-600 hover:bg-emerald-700" : "bg-gray-400 cursor-not-allowed"
+            className={`w-full py-3 rounded-lg text-white text-lg font-semibold transition duration-300 ${
+              agreeToTerms
+                ? "bg-emerald-600 hover:bg-emerald-700"
+                : "bg-gray-400 cursor-not-allowed"
             }`}
             disabled={!agreeToTerms}
           >
@@ -130,9 +135,9 @@ const RegisterPage = () => {
         </div>
 
         {/* Điều hướng đến trang đăng nhập */}
-        <div className="mt-6 text-lg py-4">
+        <div className="text-lg py-4">
           Already have an account?{" "}
-          <Link to="/login" className="text-emerald-600 font-bold text-xl">
+          <Link to="/login" className="text-emerald-600 font-bold">
             Log in
           </Link>
         </div>
