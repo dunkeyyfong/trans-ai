@@ -144,58 +144,42 @@ const MarketingPage = () => {
         </div>
 
         {/* Main Content */}
-        <main className="relative flex flex-1 flex-col items-center justify-center p-16 text-center w-full max-w-6xl mx-auto min-h-screen z-10">
-          <h1 className="text-7xl font-extrabold text-white mb-8 drop-shadow-lg">
+        <main className="relative flex flex-1 flex-col items-center justify-center px-6 py-20 md:p-20 text-center w-full max-w-6xl mx-auto  min-h-screen z-10">
+          <h1 className="text-4xl md:text-7xl font-extrabold text-white mb-6 md:mb-8 drop-shadow-lg">
             Revolutionizing Video Transcription with AI
           </h1>
-          <p className="text-2xl max-w-4xl text-gray-200">
-            Our platform provides seamless YouTube video transcription and
-            AI-powered text processing for enhanced accessibility and insights.
+          <p className="text-lg md:text-2xl max-w-4xl text-gray-200">
+            Our platform provides seamless YouTube video transcription and AI-powered text processing for enhanced accessibility and insights.
           </p>
 
           {/* Buttons */}
-          <div className="mt-10 flex space-x-8">
-            <a
-              href="/home"
-              className="px-10 py-5 bg-white text-black text-lg font-semibold rounded-xl shadow-lg transition-transform transform hover:scale-105"
-            >
+          <div className="mt-8 md:mt-10 flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-6 w-full max-w-xs md:max-w-none">
+            <a href="/home" className="px-6 md:px-10 py-4 md:py-5 bg-white text-black text-lg font-semibold rounded-lg shadow-lg transition-transform transform hover:scale-105 w-full text-center">
               Learn More
             </a>
-            <a
-              onClick={scrollToContact}
-              className="px-10 py-5 bg-gray-800 text-white text-lg font-semibold rounded-xl shadow-lg hover:bg-gray-700 transition-transform transform hover:scale-105 cursor-pointer"
-            >
+            <a onClick={scrollToContact} className="px-6 md:px-10 py-4 md:py-5 bg-gray-800 text-white text-lg font-semibold rounded-lg shadow-lg hover:bg-gray-700 transition-transform transform hover:scale-105 cursor-pointer w-full text-center">
               Contact Us
             </a>
           </div>
         </main>
 
         {/* Features Section */}
-        <section className="py-20 bg-white text-black animate-fade-in">
-          <div className="max-w-6xl mx-auto text-center">
-            <h2 className="text-5xl font-bold mb-10">Key Features</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+        <section className="py-16 md:py-20 bg-white text-black animate-fade-in">
+          <div className="max-w-6xl mx-auto text-center px-4">
+            <h2 className="text-3xl md:text-5xl font-bold mb-8 md:mb-10">Key Features</h2>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-12">
               {[
-                {
-                  title: "🎙️ AI Transcription",
-                  desc: "Accurate speech-to-text conversion using state-of-the-art AI models.",
-                },
-                {
-                  title: "📊 Smart Summarization",
-                  desc: "Get concise and meaningful summaries of your video content.",
-                },
-                {
-                  title: "🌎 Multi-Language Support",
-                  desc: "Transcribe and translate into multiple languages effortlessly.",
-                },
+                { icon: "🎙️", title: "AI Transcription", desc: "Accurate speech-to-text conversion using AI." },
+                { icon: "📊", title: "Smart Summarization", desc: "Get concise and meaningful summaries." },
+                { icon: "🌎", title: "Multi-Language Support", desc: "Transcribe and translate with ease." },
               ].map((feature, index) => (
                 <div
                   key={index}
-                  className="p-8 shadow-lg rounded-lg bg-gray-100 transition-transform transform hover:scale-105 hover:shadow-xl text-xl"
+                  className="p-6 md:p-8 shadow-lg rounded-lg bg-gray-100 transition-transform transform md:hover:scale-105 md:hover:shadow-xl active:scale-95 active:shadow-lg text-xl flex flex-col items-center text-center"
                 >
-                  <h3 className="text-3xl font-semibold mb-4">
-                    {feature.title}
-                  </h3>
+                  <div className="text-4xl md:text-5xl mb-4">{feature.icon}</div>
+                  <h3 className="text-2xl md:text-3xl font-semibold mb-2">{feature.title}</h3>
                   <p className="text-gray-700">{feature.desc}</p>
                 </div>
               ))}
@@ -204,29 +188,22 @@ const MarketingPage = () => {
         </section>
 
         {/* How It Works Section */}
-        <section className="py-20 bg-gray-900 text-white animate-slide-up">
-          <div className="max-w-6xl mx-auto text-center">
-            <h2 className="text-5xl font-bold mb-10">How It Works</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+        <section className="py-16 md:py-20 bg-gray-900 text-white animate-slide-up">
+          <div className="max-w-6xl mx-auto text-center px-4">
+            <h2 className="text-3xl md:text-5xl font-bold mb-8 md:mb-10">How It Works</h2>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-12">
               {[
-                {
-                  step: "🔗 Step 1: Upload a Link",
-                  desc: "Paste your YouTube video link or upload a local file.",
-                },
-                {
-                  step: "⚡ Step 2: AI Processing",
-                  desc: "Our AI extracts and processes the video transcript.",
-                },
-                {
-                  step: "📄 Step 3: Get Your Transcript",
-                  desc: "Download the transcript or use AI-powered summarization.",
-                },
+                { icon: "🔗", step: "Step 1: Upload a Link", desc: "Paste your YouTube video link or upload a local file." },
+                { icon: "⚡", step: "Step 2: AI Processing", desc: "Our AI extracts and processes the video transcript." },
+                { icon: "📄", step: "Step 3: Get Your Transcript", desc: "Download the transcript or use AI-powered summarization." },
               ].map((step, index) => (
                 <div
                   key={index}
-                  className="p-8 shadow-lg rounded-lg bg-gray-800 transition-transform transform hover:scale-105 hover:shadow-xl text-xl"
+                  className="p-6 md:p-8 shadow-lg rounded-lg bg-gray-800 transition-transform transform md:hover:scale-105 md:hover:shadow-xl active:scale-95 active:shadow-lg text-xl flex flex-col items-center text-center"
                 >
-                  <h3 className="text-3xl font-semibold mb-4">{step.step}</h3>
+                  <div className="text-4xl md:text-5xl mb-4">{step.icon}</div>
+                  <h3 className="text-2xl md:text-3xl font-semibold mb-2">{step.step}</h3>
                   <p>{step.desc}</p>
                 </div>
               ))}
@@ -234,32 +211,40 @@ const MarketingPage = () => {
           </div>
         </section>
 
-        {/* Testimonials Section */}
-        <section className="py-20 bg-white text-black animate-fade-in">
+
+        {/* Testimonials Section - Mobile Optimized */}
+        <section className="py-16 px-4 sm:px-6 bg-white text-black animate-fade-in">
           <div className="max-w-6xl mx-auto text-center">
-            <h2 className="text-5xl font-bold mb-10">What Our Users Say</h2>
-            <Carousel testimonials={testimonials} index={index} />
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 sm:mb-10">
+              What Our Users Say
+            </h2>
+
+            <div className="relative w-full overflow-hidden">
+              <Carousel testimonials={testimonials} index={index} />
+            </div>
           </div>
         </section>
 
+
         {/* Call to Action */}
         <section
-  className="py-20 text-white text-center animate-slide-up bg-cover bg-center"
-  style={{ backgroundImage: "url('/bg-marketing.jpg')" }}
->
-  <h2 className="text-5xl font-bold mb-6">Get Started Today</h2>
-  <p className="text-2xl max-w-3xl mx-auto mb-8">
-    Join thousands of users who are transforming video transcription
-    with AI. Sign up now and try it for free!
-  </p>
-  <a
-    href="/register"
-    className="px-10 py-5 bg-white text-black text-lg font-semibold rounded-xl shadow-lg transition-all hover:bg-gray-200 hover:shadow-xl"
-  >
-    Sign Up Now
-  </a>
-</section>
-
+          className="py-16 px-6 sm:py-20 text-white text-center animate-slide-up bg-cover bg-center"
+          style={{ backgroundImage: "url('/bg-marketing.jpg')" }}
+        >
+          <h2 className="text-3xl sm:text-5xl font-bold mb-4 sm:mb-6">
+            Get Started Today
+          </h2>
+          <p className="text-lg sm:text-2xl max-w-md sm:max-w-3xl mx-auto mb-6 sm:mb-8">
+            Join thousands of users who are transforming video transcription with AI. 
+            Sign up now and try it for free!
+          </p>
+          <a
+            href="/register"
+            className="inline-block px-8 py-4 sm:px-10 sm:py-5 bg-white text-black text-lg font-semibold rounded-lg sm:rounded-xl shadow-md sm:shadow-lg transition-transform transform hover:scale-105 text-center"
+          >
+            Sign Up Now
+          </a>
+        </section>
 
         <div ref={contactRef} className="z-10">
           <Contact />
