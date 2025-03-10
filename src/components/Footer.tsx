@@ -9,14 +9,9 @@ const Footer = () => {
           <h3 className="text-lg font-semibold">About Us</h3>
           <ul className="mt-4 space-y-2 text-gray-400">
             <li>
-              <Link to="/" className="hover:text-white">Our Story</Link>
+              <Link to="/about" className="hover:text-white">Our Story</Link>
             </li>
-            <li>
-              <Link to="/" className="hover:text-white">Technology</Link>
-            </li>
-            <li>
-              <Link to="/" className="hover:text-white">Careers</Link>
-            </li>
+
           </ul>
         </div>
         <div>
