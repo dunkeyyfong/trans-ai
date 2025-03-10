@@ -83,6 +83,12 @@ const LoginPage = () => {
             required
           />
 
+          <div className="text-right mb-4">
+            <Link to="/forgot-password" className="hover:text-emerald-600 hover:underline">
+              Forgot Password?
+            </Link>
+          </div>
+
           <button
             onClick={handleLogin}
             className={`w-full bg-emerald-600 text-white py-3 text-lg font-semibold rounded-lg flex items-center justify-center gap-3 transition duration-300 ${
