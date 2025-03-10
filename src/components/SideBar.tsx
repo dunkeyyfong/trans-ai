@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FaPlus, FaSignOutAlt } from "react-icons/fa";
+import { FaPlus, FaSignOutAlt, FaTrash } from "react-icons/fa";
 import { Modal, Input, Button } from "antd";
 import { useNavigate } from "react-router-dom";
 
@@ -12,13 +12,15 @@ interface SideBarProps {
   chatHistory: Chat[];
   onNewChat: (newChatTitle: string) => void;
   onRestoreChat: (chatId: number) => void;
+  onDeleteChat: (chatId: number) => void;
   onLogout: () => void;
 }
 
-const SideBar: React.FC<SideBarProps> = ({ chatHistory, onNewChat, onRestoreChat, onLogout }) => {
+const SideBar: React.FC<SideBarProps> = ({ chatHistory, onNewChat, onRestoreChat, onDeleteChat, onLogout }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [chatTitle, setChatTitle] = useState("");
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const [deleteChatId, setDeleteChatId] = useState<number | null>(null);
   const navigate = useNavigate();
 
   // Mở Modal Tạo Chat
@@ -35,21 +37,32 @@ const SideBar: React.FC<SideBarProps> = ({ chatHistory, onNewChat, onRestoreChat
     handleCloseModal();
   };
 
+  // Mở modal xác nhận xóa chat
+  const handleOpenDeleteModal = (chatId: number) => {
+    setDeleteChatId(chatId);
+  };
+
+  // Xác nhận xóa chat
+  const handleConfirmDeleteChat = () => {
+    if (deleteChatId !== null) {
+      onDeleteChat(deleteChatId);
+      setDeleteChatId(null);
+    }
+  };
+
   const handleChatClick = (chatId: number) => {
-    onRestoreChat(chatId); // Gọi hàm từ HomePage để xử lý loading
-  // Xử lý mở Modal xác nhận Logout
-  }
+    onRestoreChat(chatId);
+  };
 
   const handleOpenLogoutModal = () => {
     setIsLogoutModalOpen(true);
   };
 
-  // Xác nhận Logout
   const handleConfirmLogout = () => {
     setIsLogoutModalOpen(false);
-    localStorage.removeItem("token"); // Xóa token đăng nhập (nếu có)
-    onLogout(); // Gọi hàm onLogout từ prop
-    navigate("/login"); // Chuyển hướng về trang Login
+    localStorage.removeItem("token");
+    onLogout();
+    navigate("/login");
   };
 
   return (
@@ -74,10 +87,15 @@ const SideBar: React.FC<SideBarProps> = ({ chatHistory, onNewChat, onRestoreChat
               chatHistory.map((chat) => (
                 <li
                   key={chat.id}
-                  className="p-2 rounded-md hover:bg-gray-200 cursor-pointer transition flex items-center gap-2"
-                  onClick={() => handleChatClick(chat.id)}
+                  className="p-2 rounded-md hover:bg-gray-200 cursor-pointer transition flex items-center justify-between"
                 >
-                  {chat.title}
+                  <span onClick={() => handleChatClick(chat.id)} className="flex-1 cursor-pointer">
+                    {chat.title}
+                  </span>
+                  <FaTrash
+                    className="text-red-500 hover:text-red-700 cursor-pointer"
+                    onClick={() => handleOpenDeleteModal(chat.id)}
+                  />
                 </li>
               ))
             ) : (
@@ -89,7 +107,7 @@ const SideBar: React.FC<SideBarProps> = ({ chatHistory, onNewChat, onRestoreChat
         {/* Logout Button */}
         <div className="p-4">
           <button
-            onClick={handleOpenLogoutModal} // Mở modal xác nhận logout
+            onClick={handleOpenLogoutModal}
             className="w-full flex items-center gap-2 p-2 bg-red-500 text-white rounded-md"
           >
             <FaSignOutAlt /> Logout
@@ -116,17 +134,21 @@ const SideBar: React.FC<SideBarProps> = ({ chatHistory, onNewChat, onRestoreChat
               chatHistory.map((chat) => (
                 <li
                   key={chat.id}
-                  className="p-2 rounded-md hover:bg-gray-200 cursor-pointer transition flex items-center gap-2"
-                  onClick={() => handleChatClick(chat.id)}
+                  className="p-2 rounded-md hover:bg-gray-200 cursor-pointer transition flex items-center justify-between"
                 >
-                  {chat.title}
+                  <span onClick={() => handleChatClick(chat.id)} className="flex-1 cursor-pointer">
+                    {chat.title}
+                  </span>
+                  <FaTrash
+                    className="text-red-500 hover:text-red-700 cursor-pointer"
+                    onClick={() => handleOpenDeleteModal(chat.id)}
+                  />
                 </li>
               ))
             ) : (
               <p className="text-gray-500 text-sm">No recent chats</p>
             )}
           </ul>
-
         </div>
 
         {/* Logout Button */}
@@ -160,6 +182,23 @@ const SideBar: React.FC<SideBarProps> = ({ chatHistory, onNewChat, onRestoreChat
           value={chatTitle}
           onChange={(e) => setChatTitle(e.target.value)}
         />
+      </Modal>
+
+      {/* Modal Xác Nhận Xóa Chat */}
+      <Modal
+        title="Confirm Delete"
+        open={deleteChatId !== null}
+        onCancel={() => setDeleteChatId(null)}
+        footer={[
+          <Button key="cancel" onClick={() => setDeleteChatId(null)}>
+            Cancel
+          </Button>,
+          <Button key="delete" type="primary" danger onClick={handleConfirmDeleteChat}>
+            Delete
+          </Button>,
+        ]}
+      >
+        <p>Are you sure you want to delete this chat?</p>
       </Modal>
 
       {/* Modal Xác Nhận Logout */}
