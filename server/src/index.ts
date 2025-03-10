@@ -15,6 +15,7 @@ import { postUpdateHistory } from './controller/history/postUpdateHistory'
 import { getAllHistory } from './controller/history/getAllHistory'
 import { getMessageHistory } from './controller/history/getMessageHistory'
 import { getAllUser } from './controller/admin/getAllUser'
+import { postVisitCount } from './controller/postVisitCount'
 
 const app = express()
 const server = http.createServer(app)
@@ -60,3 +61,6 @@ app.post('/api/update-history', authenicateToken, postUpdateHistory)
 
 //admin
 app.get('/api/get-all-user', authenicateToken, getAllUser)
+
+//Visit Count
+app.post('/api/visit-count', postVisitCount)

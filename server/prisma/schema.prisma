@@ -48,9 +48,9 @@ model Message {
   updatedAt DateTime @updatedAt
 }
 
-model PageVisit {
+model Count {
   id Int @id @default(autoincrement())
-  reload Int 
+  count Int 
 }
 
 
