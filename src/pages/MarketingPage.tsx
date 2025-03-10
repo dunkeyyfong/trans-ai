@@ -152,15 +152,22 @@ const MarketingPage = () => {
             Our platform provides seamless YouTube video transcription and AI-powered text processing for enhanced accessibility and insights.
           </p>
 
-          {/* Buttons */}
-          <div className="mt-8 md:mt-10 flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-6 w-full max-w-xs md:max-w-none">
-            <a href="/home" className="px-6 md:px-10 py-4 md:py-5 bg-white text-black text-lg font-semibold rounded-lg shadow-lg transition-transform transform hover:scale-105 w-full text-center">
+         {/* Buttons */}
+          <div className="mt-8 md:mt-10 flex flex-col md:flex-row justify-center items-center gap-6 w-full">
+            <a
+              href="/home"
+              className="px-10 py-4 md:px-12 md:py-5 bg-white text-black text-xl font-bold rounded-lg shadow-xl transition-transform transform hover:scale-105 w-56 md:w-64 text-center"
+            >
               Learn More
             </a>
-            <a onClick={scrollToContact} className="px-6 md:px-10 py-4 md:py-5 bg-gray-800 text-white text-lg font-semibold rounded-lg shadow-lg hover:bg-gray-700 transition-transform transform hover:scale-105 cursor-pointer w-full text-center">
+            <a
+              onClick={scrollToContact}
+              className="px-10 py-4 md:px-12 md:py-5 bg-gray-800 text-white text-xl font-bold rounded-lg shadow-xl hover:bg-gray-700 transition-transform transform hover:scale-105 cursor-pointer w-56 md:w-64 text-center"
+            >
               Contact Us
             </a>
           </div>
+
         </main>
 
         {/* Features Section */}
