@@ -315,33 +315,42 @@ const AppSidebar: React.FC = () => {
           !isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
         }`}
       >
-        <Link to="/">
-          {isExpanded || isHovered || isMobileOpen ? (
-            <>
-              <img
-                className="dark:hidden"
-                src="/images/logo/logo.svg"
-                alt="Logo"
-                width={150}
-                height={40}
-              />
-              <img
-                className="hidden dark:block"
-                src="/images/logo/logo-dark.svg"
-                alt="Logo"
-                width={150}
-                height={40}
-              />
-            </>
-          ) : (
-            <img
-              src="/images/logo/logo-icon.svg"
-              alt="Logo"
-              width={32}
-              height={32}
-            />
-          )}
-        </Link>
+        <Link to="/" className="flex items-center">
+
+  {isExpanded || isHovered || isMobileOpen ? (
+    <>
+      <img
+        className="dark:hidden"
+        src="/images/logo/kotoba-logo.png"
+        alt="Logo"
+        width={100}
+        height={40}
+      />
+      <img
+        className="hidden dark:block"
+        src="/images/logo/kotoba-logo.png"
+        alt="Logo"
+        width={100}
+        height={40}
+      />
+    </>
+  ) : (
+    <img
+      src="/images/logo/kotoba-logo.png"
+      alt="Logo"
+      width={60}
+      height={60}
+    />
+  )}
+
+{(isExpanded || isHovered || isMobileOpen) && (
+  <span className="text-lg font-bold text-gray-900 dark:text-white transition-all duration-300">
+    Kotoba Admin
+  </span>
+)}
+
+</Link>
+
       </div>
       <div className="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar">
         <nav className="mb-6">
