@@ -3,15 +3,17 @@ import { Link, useNavigate } from "react-router-dom";
 import { LeftOutlined } from "@ant-design/icons";
 
 const ForgotPassword = () => {
+
+    const API_URL = import.meta.env.VITE_API_URL;
+
     const [email, setEmail] = useState("");
     const [message, setMessage] = useState("");
     const navigate = useNavigate();
-
     const handleResetPassword = async () => {
         if (!email) return;
 
         try {
-            const res = await fetch("http://localhost:5000/api/forgot-password", {
+            const res = await fetch(`${API_URL}/api/find-email`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email }),
