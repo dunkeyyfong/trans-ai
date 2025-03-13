@@ -29,7 +29,7 @@ export const postUpdatePassword = async (req: Request, res: Response): Promise<v
         id: user.id
       },
       data: {
-        password: hashedPassword // Đảm bảo rằng bạn đã hash mật khẩu trước khi lưu
+        password: hashedPassword
       }
     })
 
