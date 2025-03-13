@@ -14,6 +14,8 @@ import ResetPassword from "./pages/ResetPassword";
 import { useEffect} from "react";
 
 const App = () => {
+  
+  const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     if (sessionStorage.getItem("visited")) return;
@@ -23,8 +25,21 @@ const App = () => {
       newCount = 1;
     }
 
-    localStorage.setItem("visitCount", newCount.toString());
-    sessionStorage.setItem("visited", "true");
+    const handleVerify = async () => {
+      try {
+        await fetch(`${API_URL}/api/visit-count`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ newCount }),
+        });
+
+      } catch (e) {
+        console.error(e)
+      }
+    }
+
+    handleVerify()
+
     console.log(`Số lượt truy cập: ${newCount}`);
   }, []);
 
