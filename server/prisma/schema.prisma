@@ -48,7 +48,7 @@ model Message {
   updatedAt DateTime @updatedAt
 }
 
-model Count {
+model CountVistor {
   id Int @id @default(autoincrement())
   count Int 
 }
