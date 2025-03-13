@@ -1,9 +1,7 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { MailOutlined } from "@ant-design/icons";
 
 const EmailConfirmForgotPass = () => {
-    const location = useLocation();
-    const email = location.state?.email || "your email";
 
     return (
         <div className="flex items-center justify-center min-h-screen">
@@ -13,8 +11,7 @@ const EmailConfirmForgotPass = () => {
                     Check Your Email
                 </h2>
                 <p className="text-gray-600 mb-6">
-                    We have sent password reset instructions to 
-                    <span className="font-semibold text-gray-900"> {email}</span>. 
+                    We have sent password reset instructions to you
                     Please check your inbox and follow the link to reset your password.
                 </p>
 
