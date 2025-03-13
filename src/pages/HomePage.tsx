@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import SideBar from "../components/SideBar";
 import LanguageSelector from "../components/LanguageSelector";
@@ -11,9 +11,18 @@ interface Chat {
   url?: string;
 }
 
+interface User {
+  accessToken: string;
+  id: number;
+  email: string;
+  role: string;
+  verifyToken: string;
+}
+
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const [link, setLink] = useState<string>("");
+  const accessToken = useRef<string>("")
   const [selectedChatTitle, setSelectedChatTitle] = useState<string>("YouTube Subtitle Processor");
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [chatHistory, setChatHistory] = useState<Chat[]>([]);
@@ -22,6 +31,20 @@ const HomePage: React.FC = () => {
   const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
   const [selectedLanguage, setSelectedLanguage] = useState<string>("en");
 
+  const userString = localStorage.getItem("user");
+
+if (userString) {
+  try {
+    const user: User = JSON.parse(userString);
+    accessToken.current = user.accessToken
+  } catch (error) {
+    console.error("Error parsing user from localStorage", error);
+  }
+} else {
+  console.error("No user found in localStorage");
+}
+
+  const API_URL = import.meta.env.VITE_API_URL;
 
   // 🔹 Load chat history từ localStorage khi component mount
   useEffect(() => {
@@ -128,7 +151,9 @@ const HomePage: React.FC = () => {
     setSelectedLanguage(language);
   };
 
-  const handleProcess = () => {
+  const handleProcess = async () => {
+    console.log("accessToken",accessToken);
+    
     if (!link || !isValidYouTubeUrl(link)) {
       alert("Please enter a valid YouTube URL.");
       return;
@@ -155,6 +180,25 @@ const HomePage: React.FC = () => {
     };
   
     console.log(data);
+
+    try {
+      const response = await fetch(`${API_URL}/api/download`, {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${accessToken.current}`// Thêm token vào header
+        },
+        body: JSON.stringify({ videoId }),
+      });
+
+      const data = await response.json()
+      console.log(data)
+
+    } catch (error) {
+      console.log(error);
+      
+    }
+
     setTimeout(() => setIsProcessing(false), 2000);
   };
 

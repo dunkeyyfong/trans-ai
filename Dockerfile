@@ -5,6 +5,7 @@ WORKDIR /app
 
 ENV NODE_ENV=development
 RUN apt-get update && apt-get install -y openssl
+RUN apt update && apt install file -y
 RUN npm install -g yarn
 
 FROM node:22-alpine AS production

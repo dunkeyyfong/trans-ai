@@ -2,7 +2,7 @@ import { Response, Request } from 'express'
 import { spawn } from 'node:child_process'
 import path from 'path'
 
-export const getDownload = async (req: Request, res: Response): Promise<void> => {
+export const postDownload = async (req: Request, res: Response): Promise<void> => {
   try {
     const { videoId } = req.body as { videoId: string }
 
@@ -13,7 +13,8 @@ export const getDownload = async (req: Request, res: Response): Promise<void> =>
 
     console.log('video ID:', videoId)
 
-    const cmd = spawn(path.join(process.cwd(), 'server/scripts/download_audio.sh'), [videoId])
+    const scriptPath = '/app/server/scripts/download_audio.sh';
+    const cmd = spawn('/bin/bash', [scriptPath, videoId]);
     
     cmd.stdout.on('data', (data) => {
       console.log(`stdout: ${data}`)
@@ -30,6 +31,8 @@ export const getDownload = async (req: Request, res: Response): Promise<void> =>
         res.status(500).json({ success: false, message: `Download process exited with code ${code}` })
       }
     })
+
+    res.status(200).json({ message: "Video ID", videoId })
     
   } catch (error) {
     res.sendStatus(500)

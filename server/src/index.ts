@@ -18,7 +18,7 @@ import { getAllUser } from './controller/admin/getAllUser'
 import { postVisitCount } from './controller/postVisitCount'
 import { postUpdatePassword } from './controller/authenicate/postUpdatePassword'
 import { postFindEmail } from './controller/authenicate/postFindEmail'
-import { getDownload } from './controller/scripts/getDownload'
+import { postDownload } from './controller/scripts/postDownload'
 
 const app = express()
 const server = http.createServer(app)
@@ -72,4 +72,4 @@ app.get('/api/get-all-user', authenicateToken, getAllUser)
 app.post('/api/visit-count', postVisitCount)
 
 //Download
-app.post('/api/download', authenicateToken,getDownload)
+app.post('/api/download', authenicateToken, postDownload)
