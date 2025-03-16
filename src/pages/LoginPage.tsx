@@ -35,12 +35,12 @@ const LoginPage = () => {
       const data = await response.json();
       console.log(data);
 
-      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data));
 
-      const decodedToken = jwtDecode<DecodedToken>(data.token);
+      const decodedToken = jwtDecode<DecodedToken>(data.accessToken);
 
       if (decodedToken.role === "ADMIN") {
-        window.open(`${ADMIN_URL}/home?accessToken=${data.token}`);
+        window.open(`${ADMIN_URL}/home?accessToken=${data.accessToken}`);
       } else {
         navigate("/home");
       }
