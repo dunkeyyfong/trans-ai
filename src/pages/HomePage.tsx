@@ -23,6 +23,7 @@ const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const [link, setLink] = useState<string>("");
   const accessToken = useRef<string>("")
+  const currentUserId = useRef<number>(0);
   const [selectedChatTitle, setSelectedChatTitle] = useState<string>("YouTube Subtitle Processor");
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [chatHistory, setChatHistory] = useState<Chat[]>([]);
@@ -37,6 +38,7 @@ if (userString) {
   try {
     const user: User = JSON.parse(userString);
     accessToken.current = user.accessToken
+    currentUserId.current = user.id
   } catch (error) {
     console.error("Error parsing user from localStorage", error);
   }
@@ -128,6 +130,15 @@ if (userString) {
           const exists = prev.some((chat) => chat.url === url);
           return exists ? prev : [{ title: data.title, id: Date.now(), url }, ...prev];
         });
+
+        await fetch(`${API_URL}/api/create-history`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${accessToken.current}`
+          },
+          body: JSON.stringify({ name: data.title, id: currentUserId.current }),
+        })
       } else {
         setSelectedChatTitle("Unknown Video");
       }
