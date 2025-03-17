@@ -132,7 +132,7 @@ export const postRegister = async (req: Request, res: Response): Promise<void> =
     <div class="content">
       <p>Hello <strong>${newUser.name}</strong>,</p>
       <p>We’re excited to have you on board! To start using our services, please verify your email address by clicking the button below:</p>
-      <a href="${process.env.URL_AUTHENICATE}/verify-email?t=${newUser.verifyToken}" class="btn">Verify My Email</a>
+      <a href="${process.env.URL_AUTHENICATE}/email-verified?t=${newUser.verifyToken}" class="btn">Verify My Email</a>
       <p class="note"><strong>Note:</strong> If you do not verify your email within <strong>2 hours</strong>, your account will be automatically deleted.</p>
     </div>
     <div class="footer">
