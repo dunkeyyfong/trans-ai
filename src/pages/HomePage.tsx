@@ -30,6 +30,7 @@ const HomePage: React.FC = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
   const [selectedLanguage, setSelectedLanguage] = useState<string>("en");
+  const [translatedText, setTranslatedText] = useState<string>("");
 
   const userString = localStorage.getItem("user");
 
@@ -162,6 +163,7 @@ if (userString) {
     setIsProcessing(true);
 
     setTimeout(() => {
+      setTranslatedText("Đây là bản dịch của video..."); // Giả lập dịch thuật
       setIsProcessing(false);
     }, 2000);
 
@@ -295,6 +297,14 @@ if (userString) {
           >
             {isProcessing ? "Processing..." : "Start Processing"}
           </button>
+
+          {/* Hiển thị văn bản dịch */}
+          {translatedText && (
+            <div className="mt-6 w-full max-w-6xl p-4 bg-white shadow-md rounded-md">
+              <h2 className="text-lg font-semibold mb-2">Translated Text:</h2>
+              <p className="text-gray-700 whitespace-pre-wrap">{translatedText}</p>
+            </div>
+          )}
         </main>
       </div>
     </div>
