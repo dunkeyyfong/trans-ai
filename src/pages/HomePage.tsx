@@ -32,20 +32,19 @@ const HomePage: React.FC = () => {
   const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
   const [selectedLanguage, setSelectedLanguage] = useState<string>("en");
 
-  const userString = localStorage.getItem("user");
-
-if (userString) {
-  try {
-    const user: User = JSON.parse(userString);
-    accessToken.current = user.accessToken
-    currentUserId.current = user.id
-  } catch (error) {
-    console.error("Error parsing user from localStorage", error);
-  }
-} else {
-  console.error("No user found in localStorage");
-}
-
+  useEffect(() => {
+    const userString = localStorage.getItem("user");
+    if (userString) {
+      try {
+        const user: User = JSON.parse(userString);
+        accessToken.current = user.accessToken;
+        currentUserId.current = user.id;
+      } catch (error) {
+        console.error("Error parsing user from localStorage", error);
+      }
+    }
+  }, []);
+  
   const API_URL = import.meta.env.VITE_API_URL;
 
   // 🔹 Load chat history từ localStorage khi component mount
@@ -65,28 +64,62 @@ if (userString) {
     }
   }, []);
 
-  // 🔹 Lưu chat history vào localStorage mỗi khi chatHistory thay đổi
-  useEffect(() => {
-    localStorage.setItem("chatHistory", JSON.stringify(chatHistory));
-  }, [chatHistory]);
 
   // 🔹 Cập nhật tiêu đề chat từ URL
   useEffect(() => {
-    const chatId = searchParams.get("id");
-    if (chatId && chatHistory.length > 0) {
-      const chat = chatHistory.find((c) => c.id.toString() === chatId);
-      if (chat) setSelectedChatTitle(chat.title);
-    }
+    const fetchChatData = async () => {
+      if (chatHistory.length === 0) return;
+  
+      const chatId = searchParams.get("id");
+      if (chatId) {
+        const chat = chatHistory.find((c) => c.id.toString() === chatId);
+        if (chat) {
+          setSelectedChatTitle(chat.title);
+          setLink(chat.url || "");
+        }
+      }
+    };
+  
+    fetchChatData();
   }, [searchParams, chatHistory]);
-
+  
   // 🔹 Tạo cuộc trò chuyện mới
-  const handleNewChat = (newChatTitle: string) => {
-    const newId = Date.now(); // ID duy nhất dựa trên timestamp
-    const newChat: Chat = { title: newChatTitle, id: newId };
+  const handleNewChat = async (newChatTitle: string) => {
+    setLink("");
+    setSelectedChatTitle(newChatTitle);
 
-    setChatHistory((prev) => [newChat, ...prev]);
-    navigate(`/home?id=${newId}`);
+  
+    const newChat: Chat = { title: newChatTitle, id: Date.now(), url: "" };
+  
+    try {
+      const response = await fetch(`${API_URL}/api/create-history`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${accessToken.current}`
+        },
+        body: JSON.stringify({
+          name: newChatTitle,
+          id: currentUserId.current,
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to save chat history");
+      }
+  
+      setChatHistory((prev) => {
+        const updatedChats = [newChat, ...prev];
+        localStorage.setItem("chatHistory", JSON.stringify(updatedChats));
+        return updatedChats;
+      });
+  
+      navigate(`/home?id=${newChat.id}`);
+    } catch (error) {
+      console.error("Error saving chat to database:", error);
+    }
   };
+  
 
   // xóa chat
   const handleDeleteChat = (chatId: number) => {
@@ -118,43 +151,34 @@ if (userString) {
     return regex.test(url);
   };
 
-  // 🔹 Lấy tiêu đề video YouTube
-  const fetchYouTubeTitle = async (url: string) => {
-    try {
-      const response = await fetch(`https://noembed.com/embed?url=${url}`);
-      const data = await response.json();
-      if (data.title) {
-        setSelectedChatTitle(data.title);
-
-        setChatHistory((prev) => {
-          const exists = prev.some((chat) => chat.url === url);
-          return exists ? prev : [{ title: data.title, id: Date.now(), url }, ...prev];
-        });
-
-        await fetch(`${API_URL}/api/create-history`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${accessToken.current}`
-          },
-          body: JSON.stringify({ name: data.title, id: currentUserId.current }),
-        })
-      } else {
-        setSelectedChatTitle("Unknown Video");
-      }
-    } catch (error) {
-      console.error("Error fetching video title:", error);
-      setSelectedChatTitle("Error Fetching Title");
-    }
-  };
-
   // 🔹 Xử lý nhập URL video
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const url = e.target.value;
     setLink(url);
-
+  
     if (isValidYouTubeUrl(url)) {
-      fetchYouTubeTitle(url);
+  
+      const chatId = searchParams.get("id");
+  
+      if (chatId) {
+        // 🔹 Nếu đã có chat hiện tại, chỉ cập nhật URL của nó, không thay đổi tiêu đề chat
+        setChatHistory((prev) =>
+          prev.map((chat) =>
+            chat.id.toString() === chatId ? { ...chat, url } : chat
+          )
+        );
+      } else {
+        // 🔹 Nếu chưa có chat, tạo một chat mới với tên mặc định "New Chat"
+        const newChat: Chat = { title: "New Chat", id: Date.now(), url };
+  
+        setChatHistory((prev) => {
+          const updatedChats = [newChat, ...prev];
+          localStorage.setItem("chatHistory", JSON.stringify(updatedChats));
+          return updatedChats;
+        });
+  
+        navigate(`/home?id=${newChat.id}`);
+      }
     }
   };
 
@@ -197,7 +221,7 @@ if (userString) {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${accessToken.current}`// Thêm token vào header
+          "Authorization": `Bearer ${accessToken.current}`
         },
         body: JSON.stringify({ videoId }),
       });
@@ -216,8 +240,9 @@ if (userString) {
   // 🔹 Xử lý đăng xuất
   const handleLogout = () => {
     console.log("Logging out...");
-    localStorage.removeItem("token"); // Xóa token đăng nhập (nếu có)
-    navigate("/login"); // Chuyển hướng về trang đăng nhập
+    localStorage.removeItem("token");
+    localStorage.removeItem("user")
+    navigate("/login");
   };
   
 
