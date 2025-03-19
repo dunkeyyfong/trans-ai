@@ -2,8 +2,10 @@ import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import SideBar from "../components/SideBar";
 import LanguageSelector from "../components/LanguageSelector";
-import { Button, Drawer } from "antd";
+import { Breadcrumb, Button, Drawer } from "antd";
 import { MenuOutlined } from "@ant-design/icons";
+import { useDynamicTitle } from "../hooks/useDynamicTitle";
+import { fetchYouTubeTitle } from "../utils/getTitleYoutube";
 
 interface Chat {
   title: string;
@@ -24,13 +26,13 @@ const HomePage: React.FC = () => {
   const [link, setLink] = useState<string>("");
   const accessToken = useRef<string>("")
   const currentUserId = useRef<number>(0);
-  const [selectedChatTitle, setSelectedChatTitle] = useState<string>("YouTube Subtitle Processor");
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [chatHistory, setChatHistory] = useState<Chat[]>([]);
   const [searchParams] = useSearchParams();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
   const [selectedLanguage, setSelectedLanguage] = useState<string>("en");
+  const { title, setTitle } = useDynamicTitle();
 
   useEffect(() => {
     const userString = localStorage.getItem("user");
@@ -74,7 +76,7 @@ const HomePage: React.FC = () => {
       if (chatId) {
         const chat = chatHistory.find((c) => c.id.toString() === chatId);
         if (chat) {
-          setSelectedChatTitle(chat.title);
+          setTitle(chat.title);
           setLink(chat.url || "");
         }
       }
@@ -86,7 +88,7 @@ const HomePage: React.FC = () => {
   // 🔹 Tạo cuộc trò chuyện mới
   const handleNewChat = async (newChatTitle: string) => {
     setLink("");
-    setSelectedChatTitle(newChatTitle);
+    setTitle(newChatTitle);
 
   
     const newChat: Chat = { title: newChatTitle, id: Date.now(), url: "" };
@@ -128,7 +130,6 @@ const HomePage: React.FC = () => {
     setTimeout(() => {
       setChatHistory((prev) => prev.filter((chat) => chat.id !== chatId));
 
-      setSelectedChatTitle("YouTube Subtitle Processor");
       navigate("/home");
 
       setIsPageLoading(false);
@@ -168,8 +169,20 @@ const HomePage: React.FC = () => {
           )
         );
       } else {
+
+        const titleVideo = await fetchYouTubeTitle(url);
+
         // 🔹 Nếu chưa có chat, tạo một chat mới với tên mặc định "New Chat"
-        const newChat: Chat = { title: "New Chat", id: Date.now(), url };
+        const newChat: Chat = { title: titleVideo, id: Date.now(), url };
+
+        await fetch(`${API_URL}/api/create-history`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${accessToken.current}`
+          },
+          body: JSON.stringify({ name: titleVideo, id: currentUserId.current }),
+        })
   
         setChatHistory((prev) => {
           const updatedChats = [newChat, ...prev];
@@ -298,9 +311,25 @@ const HomePage: React.FC = () => {
               />
             </div>
 
+         <div className="w-full max-w-6xl">
+            {searchParams.get("id") && (
+              <Breadcrumb className="mb-4 md:block hidden">
+                <Breadcrumb.Item>
+                  <span 
+                    onClick={() => window.location.reload()} 
+                    className="cursor-pointer hover:text-gray-600"
+                  >
+                    Home
+                  </span>
+                </Breadcrumb.Item>
+                <Breadcrumb.Item>{title}</Breadcrumb.Item>
+              </Breadcrumb>
+            )}
+
             {/* Tiêu đề video */}
             <div className="w-full max-w-6xl bg-white py-4 px-6 shadow-md rounded-md text-center">
-              <h1 className="text-2xl font-semibold text-gray-800">{selectedChatTitle}</h1>
+              <h1 className="text-2xl font-semibold text-gray-800">{title}</h1>
+            </div>
             </div>
           </div>
 
