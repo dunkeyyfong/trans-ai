@@ -109,12 +109,20 @@ const MarketingPage = () => {
   ];
 
   const contactRef = useRef<HTMLDivElement>(null);
-
+  const scrollToHowItWorks = () => {
+    const section = document.getElementById("how-it-works");
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+  
   const scrollToContact = () => {
     if (contactRef.current) {
       contactRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   };
+
+
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -155,7 +163,7 @@ const MarketingPage = () => {
          {/* Buttons */}
           <div className="mt-8 md:mt-10 flex flex-col md:flex-row justify-center items-center gap-6 w-full">
             <a
-              href="/home"
+              onClick={scrollToHowItWorks}
               className="px-10 py-4 md:px-12 md:py-5 bg-white text-black text-xl font-bold rounded-lg shadow-xl transition-transform transform hover:scale-105 w-56 md:w-64 text-center"
             >
               Learn More
@@ -195,7 +203,7 @@ const MarketingPage = () => {
         </section>
 
         {/* How It Works Section */}
-        <section className="py-16 md:py-20 bg-gray-900 text-white animate-slide-up">
+        <section id="how-it-works" className="py-16 md:py-20 bg-gray-900 text-white animate-slide-up">
           <div className="max-w-6xl mx-auto text-center px-4">
             <h2 className="text-3xl md:text-5xl font-bold mb-8 md:mb-10">How It Works</h2>
 
@@ -235,6 +243,7 @@ const MarketingPage = () => {
 
         {/* Call to Action */}
         <section
+          id="call-to-action"
           className="py-16 px-6 sm:py-20 text-white text-center animate-slide-up bg-cover bg-center"
           style={{ backgroundImage: "url('/bg-marketing.jpg')" }}
         >
