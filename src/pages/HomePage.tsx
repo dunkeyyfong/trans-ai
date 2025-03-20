@@ -2,10 +2,11 @@ import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import SideBar from "../components/SideBar";
 import LanguageSelector from "../components/LanguageSelector";
-import { Breadcrumb, Button, Drawer } from "antd";
+import { Breadcrumb, Button, Drawer, message } from "antd";
 import { MenuOutlined } from "@ant-design/icons";
 import { useDynamicTitle } from "../hooks/useDynamicTitle";
 import { fetchYouTubeTitle } from "../utils/getTitleYoutube";
+import { useChatHistory } from "../hooks/useChatHistory";
 
 interface Chat {
   title: string;
@@ -27,13 +28,12 @@ const HomePage: React.FC = () => {
   const accessToken = useRef<string>("")
   const currentUserId = useRef<number>(0);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
-  const [chatHistory, setChatHistory] = useState<Chat[]>([]);
   const [searchParams] = useSearchParams();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
   const [selectedLanguage, setSelectedLanguage] = useState<string>("en");
   const { title, setTitle } = useDynamicTitle();
-
+  
   useEffect(() => {
     const userString = localStorage.getItem("user");
     if (userString) {
@@ -47,6 +47,7 @@ const HomePage: React.FC = () => {
     }
   }, []);
   
+  const { chatHistory, setChatHistory, fetchChatHistory } = useChatHistory(currentUserId.current, accessToken.current);
   const API_URL = import.meta.env.VITE_API_URL;
 
   // 🔹 Load chat history từ localStorage khi component mount
@@ -59,31 +60,6 @@ const HomePage: React.FC = () => {
   
   }, [])
 
-  useEffect(() => {
-    const savedChats = localStorage.getItem("chatHistory");
-    if (savedChats) {
-      setChatHistory(JSON.parse(savedChats));
-    }
-  }, []);
-
-
-  // 🔹 Cập nhật tiêu đề chat từ URL
-  useEffect(() => {
-    const fetchChatData = async () => {
-      if (chatHistory.length === 0) return;
-  
-      const chatId = searchParams.get("id");
-      if (chatId) {
-        const chat = chatHistory.find((c) => c.id.toString() === chatId);
-        if (chat) {
-          setTitle(chat.title);
-          setLink(chat.url || "");
-        }
-      }
-    };
-  
-    fetchChatData();
-  }, [searchParams, chatHistory]);
   
   // 🔹 Tạo cuộc trò chuyện mới
   const handleNewChat = async (newChatTitle: string) => {
@@ -112,7 +88,6 @@ const HomePage: React.FC = () => {
   
       setChatHistory((prev) => {
         const updatedChats = [newChat, ...prev];
-        localStorage.setItem("chatHistory", JSON.stringify(updatedChats));
         return updatedChats;
       });
   
@@ -124,26 +99,60 @@ const HomePage: React.FC = () => {
   
 
   // xóa chat
-  const handleDeleteChat = (chatId: number) => {
-    setIsPageLoading(true);
+  const handleDeleteChat = async (chatId: number) => {
+    try {
+      const response = await fetch(`${API_URL}/api/delete-history`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${accessToken.current}`
+        },
+        body: JSON.stringify({
+          idHistory: chatId,
+          id: currentUserId.current,
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to save chat history");
+      }
 
-    setTimeout(() => {
-      setChatHistory((prev) => prev.filter((chat) => chat.id !== chatId));
+      const data = await response.json()
 
-      navigate("/home");
+      message.success(data)
 
-      setIsPageLoading(false);
-    }, 1500);
+      await fetchChatHistory()
+      
+      await navigate('/home')
+
+      await window.location.reload()
+
+    } catch (error) {
+      console.log(error)
+    }
   };
+  
 
   // 🔹 Khôi phục cuộc trò chuyện cũ
-  const handleRestoreChat = (chatId: number) => {
-    setIsPageLoading(true);
-  
-    setTimeout(() => {
-      navigate(`/home?id=${chatId}`);
-      setIsPageLoading(false);
-    }, 1500);
+  const handleRestoreChat = async (chatId: number) => {
+    navigate(`/home?id=${chatId}`);
+
+    const response = await fetch(`${API_URL}/api/get-data-history?id=${encodeURIComponent(currentUserId.current)}&idHistory=${chatId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken.current}`
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch history data");
+    }
+
+    const data = await response.json();
+    
+    setTitle(data.data.title)
+
   };
 
   // 🔹 Xác thực link YouTube
@@ -186,7 +195,6 @@ const HomePage: React.FC = () => {
   
         setChatHistory((prev) => {
           const updatedChats = [newChat, ...prev];
-          localStorage.setItem("chatHistory", JSON.stringify(updatedChats));
           return updatedChats;
         });
   
@@ -253,7 +261,6 @@ const HomePage: React.FC = () => {
   // 🔹 Xử lý đăng xuất
   const handleLogout = () => {
     console.log("Logging out...");
-    localStorage.removeItem("token");
     localStorage.removeItem("user")
     navigate("/login");
   };
@@ -316,7 +323,10 @@ const HomePage: React.FC = () => {
               <Breadcrumb className="mb-4 md:block hidden">
                 <Breadcrumb.Item>
                   <span 
-                    onClick={() => window.location.reload()} 
+                    onClick={() => {
+                      navigate('/home')
+                      window.location.reload()
+                    }} 
                     className="cursor-pointer hover:text-gray-600"
                   >
                     Home

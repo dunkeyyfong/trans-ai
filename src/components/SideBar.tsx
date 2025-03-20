@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useState } from "react";
 import { FaPlus, FaSignOutAlt, FaTrash } from "react-icons/fa";
 import { Modal, Input, Button } from "antd";
 import { useNavigate } from "react-router-dom";
@@ -60,7 +60,7 @@ const SideBar: React.FC<SideBarProps> = ({ chatHistory, onNewChat, onRestoreChat
 
   const handleConfirmLogout = () => {
     setIsLogoutModalOpen(false);
-    localStorage.removeItem("token");
+    localStorage.removeItem("user");
     onLogout();
     navigate("/login");
   };
