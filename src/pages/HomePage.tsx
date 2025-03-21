@@ -65,9 +65,6 @@ const HomePage: React.FC = () => {
   const handleNewChat = async (newChatTitle: string) => {
     setLink("");
     setTitle(newChatTitle);
-
-  
-    const newChat: Chat = { title: newChatTitle, id: Date.now(), url: "" };
   
     try {
       const response = await fetch(`${API_URL}/api/create-history`, {
@@ -85,6 +82,10 @@ const HomePage: React.FC = () => {
       if (!response.ok) {
         throw new Error("Failed to save chat history");
       }
+
+      const data = await response.json()
+
+      const newChat = { title: newChatTitle, id: data.id, url: "" };
   
       setChatHistory((prev) => {
         const updatedChats = [newChat, ...prev];

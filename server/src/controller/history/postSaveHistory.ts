@@ -17,14 +17,14 @@ export const postSaveHistory = async (req: Request, res: Response): Promise<void
       res.status(404).json({ error: 'Login or Register please' })
     }
 
-    await prisma.history.create({
+    const newHistory = await prisma.history.create({
       data: {
         title: name,
         userId: parseInt(id)
       }
     })
 
-    res.status(201).json({ message: 'Created successful' })
+    res.status(201).json({ message: 'Created successful', id: newHistory.id })
   } catch (error) {
     res.sendStatus(500)
     console.log(error)
