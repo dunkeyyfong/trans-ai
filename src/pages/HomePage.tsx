@@ -2,8 +2,11 @@ import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import SideBar from "../components/SideBar";
 import LanguageSelector from "../components/LanguageSelector";
-import { Button, Drawer } from "antd";
+import { Breadcrumb, Button, Drawer, message } from "antd";
 import { MenuOutlined } from "@ant-design/icons";
+import { useDynamicTitle } from "../hooks/useDynamicTitle";
+import { fetchYouTubeTitle } from "../utils/getTitleYoutube";
+import { useChatHistory } from "../hooks/useChatHistory";
 
 interface Chat {
   title: string;
@@ -23,27 +26,28 @@ const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const [link, setLink] = useState<string>("");
   const accessToken = useRef<string>("")
-  const [selectedChatTitle, setSelectedChatTitle] = useState<string>("YouTube Subtitle Processor");
+  const currentUserId = useRef<number>(0);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
-  const [chatHistory, setChatHistory] = useState<Chat[]>([]);
   const [searchParams] = useSearchParams();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
   const [selectedLanguage, setSelectedLanguage] = useState<string>("en");
-
-  const userString = localStorage.getItem("user");
-
-if (userString) {
-  try {
-    const user: User = JSON.parse(userString);
-    accessToken.current = user.accessToken
-  } catch (error) {
-    console.error("Error parsing user from localStorage", error);
-  }
-} else {
-  console.error("No user found in localStorage");
-}
-
+  const { title, setTitle } = useDynamicTitle();
+  
+  useEffect(() => {
+    const userString = localStorage.getItem("user");
+    if (userString) {
+      try {
+        const user: User = JSON.parse(userString);
+        accessToken.current = user.accessToken;
+        currentUserId.current = user.id;
+      } catch (error) {
+        console.error("Error parsing user from localStorage", error);
+      }
+    }
+  }, []);
+  
+  const { chatHistory, setChatHistory, fetchChatHistory } = useChatHistory(currentUserId.current, accessToken.current);
   const API_URL = import.meta.env.VITE_API_URL;
 
   // 🔹 Load chat history từ localStorage khi component mount
@@ -56,58 +60,100 @@ if (userString) {
   
   }, [])
 
-  useEffect(() => {
-    const savedChats = localStorage.getItem("chatHistory");
-    if (savedChats) {
-      setChatHistory(JSON.parse(savedChats));
-    }
-  }, []);
-
-  // 🔹 Lưu chat history vào localStorage mỗi khi chatHistory thay đổi
-  useEffect(() => {
-    localStorage.setItem("chatHistory", JSON.stringify(chatHistory));
-  }, [chatHistory]);
-
-  // 🔹 Cập nhật tiêu đề chat từ URL
-  useEffect(() => {
-    const chatId = searchParams.get("id");
-    if (chatId && chatHistory.length > 0) {
-      const chat = chatHistory.find((c) => c.id.toString() === chatId);
-      if (chat) setSelectedChatTitle(chat.title);
-    }
-  }, [searchParams, chatHistory]);
-
+  
   // 🔹 Tạo cuộc trò chuyện mới
-  const handleNewChat = (newChatTitle: string) => {
-    const newId = Date.now(); // ID duy nhất dựa trên timestamp
-    const newChat: Chat = { title: newChatTitle, id: newId };
+  const handleNewChat = async (newChatTitle: string) => {
+    setLink("");
+    setTitle(newChatTitle);
+  
+    try {
+      const response = await fetch(`${API_URL}/api/create-history`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${accessToken.current}`
+        },
+        body: JSON.stringify({
+          name: newChatTitle,
+          id: currentUserId.current,
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to save chat history");
+      }
 
-    setChatHistory((prev) => [newChat, ...prev]);
-    navigate(`/home?id=${newId}`);
+      const data = await response.json()
+
+      const newChat = { title: newChatTitle, id: data.id, url: "" };
+  
+      setChatHistory((prev) => {
+        const updatedChats = [newChat, ...prev];
+        return updatedChats;
+      });
+  
+      navigate(`/home?id=${newChat.id}`);
+    } catch (error) {
+      console.error("Error saving chat to database:", error);
+    }
   };
+  
 
   // xóa chat
-  const handleDeleteChat = (chatId: number) => {
-    setIsPageLoading(true);
+  const handleDeleteChat = async (chatId: number) => {
+    try {
+      const response = await fetch(`${API_URL}/api/delete-history`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${accessToken.current}`
+        },
+        body: JSON.stringify({
+          idHistory: chatId,
+          id: currentUserId.current,
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to save chat history");
+      }
 
-    setTimeout(() => {
-      setChatHistory((prev) => prev.filter((chat) => chat.id !== chatId));
+      const data = await response.json()
 
-      setSelectedChatTitle("YouTube Subtitle Processor");
-      navigate("/home");
+      message.success(data)
 
-      setIsPageLoading(false);
-    }, 1500);
+      await fetchChatHistory()
+      
+      await navigate('/home')
+
+      await window.location.reload()
+
+    } catch (error) {
+      console.log(error)
+    }
   };
+  
 
   // 🔹 Khôi phục cuộc trò chuyện cũ
-  const handleRestoreChat = (chatId: number) => {
-    setIsPageLoading(true);
-  
-    setTimeout(() => {
-      navigate(`/home?id=${chatId}`);
-      setIsPageLoading(false);
-    }, 1500);
+  const handleRestoreChat = async (chatId: number) => {
+    navigate(`/home?id=${chatId}`);
+
+    const response = await fetch(`${API_URL}/api/get-data-history?id=${encodeURIComponent(currentUserId.current)}&idHistory=${chatId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken.current}`
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch history data");
+    }
+
+    const data = await response.json();
+    
+    setTitle(data.data.title)
+
   };
 
   // 🔹 Xác thực link YouTube
@@ -116,34 +162,45 @@ if (userString) {
     return regex.test(url);
   };
 
-  // 🔹 Lấy tiêu đề video YouTube
-  const fetchYouTubeTitle = async (url: string) => {
-    try {
-      const response = await fetch(`https://noembed.com/embed?url=${url}`);
-      const data = await response.json();
-      if (data.title) {
-        setSelectedChatTitle(data.title);
-
-        setChatHistory((prev) => {
-          const exists = prev.some((chat) => chat.url === url);
-          return exists ? prev : [{ title: data.title, id: Date.now(), url }, ...prev];
-        });
-      } else {
-        setSelectedChatTitle("Unknown Video");
-      }
-    } catch (error) {
-      console.error("Error fetching video title:", error);
-      setSelectedChatTitle("Error Fetching Title");
-    }
-  };
-
   // 🔹 Xử lý nhập URL video
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const url = e.target.value;
     setLink(url);
-
+  
     if (isValidYouTubeUrl(url)) {
-      fetchYouTubeTitle(url);
+  
+      const chatId = searchParams.get("id");
+  
+      if (chatId) {
+        // 🔹 Nếu đã có chat hiện tại, chỉ cập nhật URL của nó, không thay đổi tiêu đề chat
+        setChatHistory((prev) =>
+          prev.map((chat) =>
+            chat.id.toString() === chatId ? { ...chat, url } : chat
+          )
+        );
+      } else {
+
+        const titleVideo = await fetchYouTubeTitle(url);
+
+        // 🔹 Nếu chưa có chat, tạo một chat mới với tên mặc định "New Chat"
+        const newChat: Chat = { title: titleVideo, id: Date.now(), url };
+
+        await fetch(`${API_URL}/api/create-history`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${accessToken.current}`
+          },
+          body: JSON.stringify({ name: titleVideo, id: currentUserId.current }),
+        })
+  
+        setChatHistory((prev) => {
+          const updatedChats = [newChat, ...prev];
+          return updatedChats;
+        });
+  
+        navigate(`/home?id=${newChat.id}`);
+      }
     }
   };
 
@@ -186,7 +243,7 @@ if (userString) {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${accessToken.current}`// Thêm token vào header
+          "Authorization": `Bearer ${accessToken.current}`
         },
         body: JSON.stringify({ videoId }),
       });
@@ -205,8 +262,8 @@ if (userString) {
   // 🔹 Xử lý đăng xuất
   const handleLogout = () => {
     console.log("Logging out...");
-    localStorage.removeItem("token"); // Xóa token đăng nhập (nếu có)
-    navigate("/login"); // Chuyển hướng về trang đăng nhập
+    localStorage.removeItem("user")
+    navigate("/login");
   };
   
 
@@ -262,9 +319,28 @@ if (userString) {
               />
             </div>
 
+         <div className="w-full max-w-6xl">
+            {searchParams.get("id") && (
+              <Breadcrumb className="mb-4 md:block hidden">
+                <Breadcrumb.Item>
+                  <span 
+                    onClick={() => {
+                      navigate('/home')
+                      window.location.reload()
+                    }} 
+                    className="cursor-pointer hover:text-gray-600"
+                  >
+                    Home
+                  </span>
+                </Breadcrumb.Item>
+                <Breadcrumb.Item>{title}</Breadcrumb.Item>
+              </Breadcrumb>
+            )}
+
             {/* Tiêu đề video */}
             <div className="w-full max-w-6xl bg-white py-4 px-6 shadow-md rounded-md text-center">
-              <h1 className="text-2xl font-semibold text-gray-800">{selectedChatTitle}</h1>
+              <h1 className="text-2xl font-semibold text-gray-800">{title}</h1>
+            </div>
             </div>
           </div>
 

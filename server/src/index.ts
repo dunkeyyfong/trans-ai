@@ -19,6 +19,7 @@ import { postVisitCount } from './controller/postVisitCount'
 import { postUpdatePassword } from './controller/authenicate/postUpdatePassword'
 import { postFindEmail } from './controller/authenicate/postFindEmail'
 import { postDownload } from './controller/scripts/postDownload'
+import { getHistory } from './controller/history/getHistory'
 
 const app = express()
 const server = http.createServer(app)
@@ -61,6 +62,7 @@ app.post('/api/delete-account', authenicateToken, postDeleteAccount)
 //Save History
 app.get('/api/get-history', authenicateToken, getAllHistory)
 app.get('/api/get-message-history', authenicateToken, getMessageHistory)
+app.get('/api/get-data-history', authenicateToken, getHistory)
 app.post('/api/create-history', authenicateToken, postSaveHistory)
 app.post('/api/delete-history', authenicateToken, postDeleteHistory)
 app.post('/api/update-history', authenicateToken, postUpdateHistory)

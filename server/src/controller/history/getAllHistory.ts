@@ -5,7 +5,7 @@ export const getAllHistory = async (req: Request, res: Response): Promise<void> 
   const prisma = new PrismaClient()
 
   try {
-    const { id } = req.body as { id: string }
+    const { id } = req.query as { id: string };
 
     const existUser = await prisma.user.findUnique({
       where: {

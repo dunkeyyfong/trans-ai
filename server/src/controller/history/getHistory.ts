@@ -1,11 +1,11 @@
 import { Response, Request } from 'express'
 import { PrismaClient } from '@prisma/client'
 
-export const postSaveHistory = async (req: Request, res: Response): Promise<void> => {
+export const getHistory = async (req: Request, res: Response): Promise<void> => {
   const prisma = new PrismaClient()
 
   try {
-    const { name, id } = req.body as { name: string; id: string }
+    const { id, idHistory } = req.query as { id: string; idHistory: string };
 
     const existUser = await prisma.user.findUnique({
       where: {
@@ -17,14 +17,13 @@ export const postSaveHistory = async (req: Request, res: Response): Promise<void
       res.status(404).json({ error: 'Login or Register please' })
     }
 
-    const newHistory = await prisma.history.create({
-      data: {
-        title: name,
-        userId: parseInt(id)
-      }
+    const dataHistory = await prisma.history.findUnique({
+      where: {
+        id: parseInt(idHistory)
+      },
     })
 
-    res.status(201).json({ message: 'Created successful', id: newHistory.id })
+    res.status(201).json({ message: 'Get History Successful', data: dataHistory })
   } catch (error) {
     res.sendStatus(500)
     console.log(error)
