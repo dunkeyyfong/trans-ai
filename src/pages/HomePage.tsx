@@ -212,7 +212,6 @@ const HomePage: React.FC = () => {
   };
 
   const handleProcess = async () => {
-    console.log("accessToken",accessToken);
     
     if (!link || !isValidYouTubeUrl(link)) {
       alert("Please enter a valid YouTube URL.");
@@ -238,20 +237,17 @@ const HomePage: React.FC = () => {
       video_id: videoId,
       lang: selectedLanguage,
     };
-  
-    console.log(data);
 
     try {
-      const response = await fetch(`${API_URL}/api/download`, {
-        method: "POST",
+      const response = await fetch(`${API_URL}/api/download?videoId=${videoId}`, {
+        method: "GET",
         headers: { 
           "Content-Type": "application/json",
           "Authorization": `Bearer ${accessToken.current}`
         },
-        body: JSON.stringify({ videoId }),
       });
 
-      const data = await response.json()
+      const data = await response.text()
       console.log(data)
 
     } catch (error) {
