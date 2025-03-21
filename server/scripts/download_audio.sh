@@ -13,7 +13,7 @@ SUBTITLE_FILE="$TMP_DIR/$VIDEO_ID.srt"
 AUDIO_FILE="$TMP_DIR/$VIDEO_ID.m4a"
 
 # Tải phụ đề (nếu có)
-yt-dlp "https://www.youtube.com/watch?v=$VIDEO_ID" --write-subs --sub-format srt --skip-download -o "$SUBTITLE_FILE" 2>&1
+yt-dlp "https://www.youtube.com/watch?v=$VIDEO_ID" --write-auto-sub --sub-lang vi  --sub-format vtt --convert-subs srt --skip-download -o "$SUBTITLE_FILE" 2>&1
 
 # Kiểm tra nếu phụ đề không tồn tại thì tải âm thanh
 if [ ! -f "$SUBTITLE_FILE" ]; then
