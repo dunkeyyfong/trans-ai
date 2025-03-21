@@ -182,10 +182,7 @@ const HomePage: React.FC = () => {
 
         const titleVideo = await fetchYouTubeTitle(url);
 
-        // 🔹 Nếu chưa có chat, tạo một chat mới với tên mặc định "New Chat"
-        const newChat: Chat = { title: titleVideo, id: Date.now(), url };
-
-        await fetch(`${API_URL}/api/create-history`, {
+        const response = await fetch(`${API_URL}/api/create-history`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -194,12 +191,18 @@ const HomePage: React.FC = () => {
           body: JSON.stringify({ name: titleVideo, id: currentUserId.current }),
         })
   
+        const data = await response.json()
+
+        const newChat = { title: titleVideo, id: data.id, url: "" };
+  
         setChatHistory((prev) => {
           const updatedChats = [newChat, ...prev];
           return updatedChats;
         });
   
         navigate(`/home?id=${newChat.id}`);
+
+        setTitle(titleVideo)
       }
     }
   };
