@@ -5,7 +5,7 @@ import LanguageSelector from "../components/LanguageSelector";
 import { Breadcrumb, Button, Drawer, message } from "antd";
 import { MenuOutlined } from "@ant-design/icons";
 import { useDynamicTitle } from "../hooks/useDynamicTitle";
-import { fetchYouTubeTitle } from "../utils/getTitleYoutube";
+import { fetchYouTubeTitle } from "../utils/api-client";
 import { useChatHistory } from "../hooks/useChatHistory";
 
 interface Chat {
