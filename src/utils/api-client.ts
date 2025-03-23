@@ -1,3 +1,25 @@
+export async function processVideo(
+  videoId: string,
+  accessToken: string,
+  API_URL: string,
+  callback: ProgressCallback
+): Promise<false | string> {
+  callback('Downloading audio...\n')
+  await download(videoId, callback, accessToken, API_URL)
+
+  callback('\nTranscribing audio. It takes a while...\n')
+  const srt = await transcribe(videoId, callback)
+
+  if (srt) {
+    callback('\nTranslating text...\n')
+    const result = await translate(srt, callback)
+    callback('\nDone!\n')
+    return result
+  }
+
+  return false
+}
+
 export async function download(videoId: string, onProgress: ProgressCallback, accessToken: string, API_URL: string) {
   const response = await fetch(`${API_URL}/api/download?videoId=${videoId}`, {
     method: "GET",

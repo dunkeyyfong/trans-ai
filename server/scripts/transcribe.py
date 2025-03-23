@@ -10,7 +10,7 @@ api_key = os.getenv("OPENAI_KEY")
 client = OpenAI(api_key=api_key)
 
 video_id = sys.argv[1]
-tmp_dir = os.path.join(os.getcwd(), 'tmp')
+tmp_dir = os.path.join(os.getcwd(), '/app/server/tmp')
 audio_file_path = os.path.join(tmp_dir, video_id + '.m4a')
 
 audio_file = open(audio_file_path, "rb")
