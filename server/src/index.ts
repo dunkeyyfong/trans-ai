@@ -20,6 +20,8 @@ import { postUpdatePassword } from './controller/authenicate/postUpdatePassword'
 import { postFindEmail } from './controller/authenicate/postFindEmail'
 import { getDownload } from './controller/scripts/getDownload'
 import { getHistory } from './controller/history/getHistory'
+import { getTranscribe } from './controller/scripts/getTranscribe'
+import { postTranslate } from './controller/scripts/postTranslate'
 
 const app = express()
 const server = http.createServer(app)
@@ -75,3 +77,9 @@ app.post('/api/visit-count', postVisitCount)
 
 //Download
 app.get('/api/download', authenicateToken, getDownload)
+
+//Transcribe
+app.get('/api/transcribe', authenicateToken, getTranscribe)
+
+//Translate
+app.post('/api/translate', authenicateToken, postTranslate)
