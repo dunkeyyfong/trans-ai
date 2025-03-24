@@ -5,7 +5,7 @@ import LanguageSelector from "../components/LanguageSelector";
 import { Breadcrumb, Button, Drawer, message } from "antd";
 import { MenuOutlined } from "@ant-design/icons";
 import { useDynamicTitle } from "../hooks/useDynamicTitle";
-import { fetchYouTubeTitle } from "../utils/api-client";
+import { fetchYouTubeTitle, processVideo } from "../utils/api-client";
 import { useChatHistory } from "../hooks/useChatHistory";
 
 interface Chat {
@@ -220,10 +220,6 @@ const HomePage: React.FC = () => {
     
     setIsProcessing(true);
 
-    setTimeout(() => {
-      setIsProcessing(false);
-    }, 2000);
-
     const urlObj = new URL(link);
     const params = new URLSearchParams(urlObj.search);
     const videoId = params.get("v") || urlObj.pathname.split("/").pop();
@@ -238,24 +234,20 @@ const HomePage: React.FC = () => {
       lang: selectedLanguage,
     };
 
-    try {
-      const response = await fetch(`${API_URL}/api/download?videoId=${videoId}`, {
-        method: "GET",
-        headers: { 
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${accessToken.current}`
-        },
-      });
+    if (typeof videoId === 'string') {
 
-      const data = await response.text()
-      console.log(data)
+      const transcriptInJapanese = await processVideo(videoId, (message: string) => {
+        console.log(message)
+      }, accessToken.current, API_URL)
+      if (transcriptInJapanese) {
+        // setResultTranscript(transcriptInJapanese)
+      }
 
-    } catch (error) {
-      console.log(error);
-      
+      // setProcessing(false)
+      // setActiveTab('result')
+    } else {
+      alert('Invalid URL')
     }
-
-    setTimeout(() => setIsProcessing(false), 2000);
   };
 
   // 🔹 Xử lý đăng xuất

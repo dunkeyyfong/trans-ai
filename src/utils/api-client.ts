@@ -1,8 +1,8 @@
 export async function processVideo(
   videoId: string,
+  callback: ProgressCallback,
   accessToken: string,
-  API_URL: string,
-  callback: ProgressCallback
+  API_URL: string
 ): Promise<false | string> {
   callback('Downloading audio...\n')
   await download(videoId, callback, accessToken, API_URL)
