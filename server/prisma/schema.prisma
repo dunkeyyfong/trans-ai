@@ -43,6 +43,7 @@ model Message {
   historyId Int
   history History @relation(fields: [historyId], references: [id])
   message String
+  url String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

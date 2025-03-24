@@ -21,6 +21,9 @@ export const getHistory = async (req: Request, res: Response): Promise<void> => 
       where: {
         id: parseInt(idHistory)
       },
+      include:{
+        message: true
+      }
     })
 
     res.status(201).json({ message: 'Get History Successful', data: dataHistory })

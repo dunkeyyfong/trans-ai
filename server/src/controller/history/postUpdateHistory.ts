@@ -5,7 +5,7 @@ export const postUpdateHistory = async (req: Request, res: Response): Promise<vo
   const prisma = new PrismaClient()
 
   try {
-    const { id, content, idHistory } = req.body as { content: string; id: string; idHistory: string }
+    const { id, content, url, idHistory } = req.body as { content: string; id: string; idHistory: string; url: string }
 
     const existUser = await prisma.user.findUnique({
       where: {
@@ -34,7 +34,8 @@ export const postUpdateHistory = async (req: Request, res: Response): Promise<vo
       data: {
         message: {
           create: {
-            message: content
+            message: content,
+            url: url
           }
         }
       }

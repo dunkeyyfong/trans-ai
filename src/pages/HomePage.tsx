@@ -8,12 +8,6 @@ import { useDynamicTitle } from "../hooks/useDynamicTitle";
 import { fetchYouTubeTitle, processVideo } from "../utils/api-client";
 import { useChatHistory } from "../hooks/useChatHistory";
 
-interface Chat {
-  title: string;
-  id: number;
-  url?: string;
-}
-
 interface User {
   accessToken: string;
   id: number;
@@ -169,7 +163,9 @@ const HomePage: React.FC = () => {
     const data = await response.json();
     
     setTitle(data.data.title)
-
+    setLink(data.data.message[0]?.url || '');
+    setResultTranscript(data.data.message[0]?.content || '');
+    setActiveTab('result');
   };
 
   // 🔹 Xác thực link YouTube
@@ -255,15 +251,44 @@ const HomePage: React.FC = () => {
       setResultTranscript('')
       setIsProcessing(true)
 
+      await fetch(`${API_URL}/api/update-history`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${accessToken.current}`
+        },
+        body: JSON.stringify({
+          id: currentUserId.current,
+          idHistory: searchParams.get("id"),
+          url: link,
+          content: ""
+        })
+      });
+
       const transcriptInJapanese = await processVideo(videoId, (message: string) => {
         setProgressOutput(prev => prev + message)
       }, accessToken.current, API_URL)
-      if (transcriptInJapanese) {
-        setResultTranscript(transcriptInJapanese)
-      }
 
+      if (transcriptInJapanese) {
+        setResultTranscript(transcriptInJapanese);
+  
+        setActiveTab('result');
+
+        await fetch(`${API_URL}/api/update-history`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${accessToken.current}`
+          },
+          body: JSON.stringify({
+            id: currentUserId.current,
+            idHistory: searchParams.get("id"),
+            url: link,
+            content: resultTranscript
+          })
+        });
+      }
       setIsProcessing(false)
-      setActiveTab('result')
     } else {
       alert('Invalid URL')
     }
