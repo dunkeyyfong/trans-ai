@@ -33,6 +33,9 @@ const HomePage: React.FC = () => {
   const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
   const [selectedLanguage, setSelectedLanguage] = useState<string>("en");
   const { title, setTitle } = useDynamicTitle();
+  const [activeTab, setActiveTab] = useState('progress')
+  const [progressOutput, setProgressOutput] = useState('')
+  const [resultTranscript, setResultTranscript] = useState('')
   
   useEffect(() => {
     const userString = localStorage.getItem("user");
@@ -370,6 +373,40 @@ const HomePage: React.FC = () => {
           >
             {isProcessing ? "Processing..." : "Start Processing"}
           </button>
+
+          <div className="w-full max-w-6xl mt-6">
+            <div className="flex border-b border-gray-300 mb-4">
+              <button
+                onClick={() => setActiveTab('progress')}
+                className={`px-4 py-2 font-medium text-sm border-b-2 transition-all ${
+                  activeTab === 'progress'
+                    ? 'border-indigo-600 text-indigo-600'
+                    : 'border-transparent text-gray-600 hover:text-indigo-500'
+                }`}
+              >
+                Progress
+              </button>
+              <button
+                onClick={() => setActiveTab('result')}
+                className={`ml-4 px-4 py-2 font-medium text-sm border-b-2 transition-all ${
+                  activeTab === 'result'
+                    ? 'border-indigo-600 text-indigo-600'
+                    : 'border-transparent text-gray-600 hover:text-indigo-500'
+                }`}
+              >
+                Result
+              </button>
+            </div>
+
+            <div className="bg-white rounded-md shadow-sm p-4 min-h-[200px] max-h-[400px] overflow-auto">
+              {activeTab === 'progress' && (
+                <pre className="whitespace-pre-wrap text-gray-800 text-base">{progressOutput}</pre>
+              )}
+              {activeTab === 'result' && (
+                <pre className="whitespace-pre-wrap text-gray-800 text-base">{resultTranscript}</pre>
+              )}
+            </div>
+          </div>
         </main>
       </div>
     </div>
