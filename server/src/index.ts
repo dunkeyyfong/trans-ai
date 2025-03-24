@@ -28,6 +28,7 @@ const server = http.createServer(app)
 app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+app.use(express.text({ type: 'text/plain' }))
 app.use(cookieParser())
 dotenv.config()
 

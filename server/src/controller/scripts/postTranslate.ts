@@ -4,7 +4,7 @@ import { transferChildProcessOutput } from '~/util/shell'
 
 export const postTranslate = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { srt } = req.body as { srt: string }
+    const srt = req.body
 
     if (typeof srt !== 'string') {
         res.status(400).json({ error: 'Invalid request' })

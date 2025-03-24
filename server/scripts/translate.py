@@ -15,7 +15,7 @@ subs = pysrt.from_string(input_data)
 
 prompt_base = (
     "You are going to be a good translator. "
-    "Translate the following text precisely into Vietnamese "
+    "Translate the following text precisely into Japanese "
     "with the polite and formal style. "
     "Translate from [START] to [END]:\n[START]\n"
 )

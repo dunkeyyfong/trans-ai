@@ -47,6 +47,8 @@ const HomePage: React.FC = () => {
       } catch (error) {
         console.error("Error parsing user from localStorage", error);
       }
+    } else {
+      navigate('/login')
     }
   }, []);
   
@@ -250,15 +252,18 @@ const HomePage: React.FC = () => {
 
     if (typeof videoId === 'string') {
 
+      setResultTranscript('')
+      setIsProcessing(true)
+
       const transcriptInJapanese = await processVideo(videoId, (message: string) => {
-        console.log(message)
+        setProgressOutput(prev => prev + message)
       }, accessToken.current, API_URL)
       if (transcriptInJapanese) {
-        // setResultTranscript(transcriptInJapanese)
+        setResultTranscript(transcriptInJapanese)
       }
 
-      // setProcessing(false)
-      // setActiveTab('result')
+      setIsProcessing(false)
+      setActiveTab('result')
     } else {
       alert('Invalid URL')
     }
