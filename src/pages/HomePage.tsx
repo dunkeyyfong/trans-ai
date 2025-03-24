@@ -63,6 +63,17 @@ const HomePage: React.FC = () => {
   
   }, [])
 
+    // Tự động tắt Drawer nếu đang mở trên desktop
+    useEffect(() => {
+      const handleResize = () => {
+        if (window.innerWidth >= 768) {
+          setDrawerOpen(false);
+        }
+      };
+    
+      window.addEventListener("resize", handleResize);
+      return () => window.removeEventListener("resize", handleResize);
+    }, []);
   
   // 🔹 Tạo cuộc trò chuyện mới
   const handleNewChat = async (newChatTitle: string) => {
