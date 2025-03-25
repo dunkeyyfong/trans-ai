@@ -7,9 +7,9 @@ const prisma = new PrismaClient()
 
 export const postUpdateUser = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { idUser, password, email, name } = req.body as {
+    const { idUser, email, name } = req.body as {
       idUser: string
-      password: string
+      // password: string
       email: string
       name: string
     }
@@ -24,7 +24,7 @@ export const postUpdateUser = async (req: Request, res: Response): Promise<void>
       res.status(404).json({ error: 'User not found' })
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10)
+    // const hashedPassword = await bcrypt.hash(password, 10)
 
     const updatedUser = await prisma.user.update({
       where: {
@@ -32,7 +32,7 @@ export const postUpdateUser = async (req: Request, res: Response): Promise<void>
       },
       data: {
         email: email,
-        password: hashedPassword, 
+        // password: hashedPassword, 
         name: name
       }
     })

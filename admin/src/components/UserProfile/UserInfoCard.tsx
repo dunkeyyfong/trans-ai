@@ -3,18 +3,41 @@ import { Modal } from "../ui/modal";
 import Button from "../ui/button/Button";
 import Input from "../form/input/InputField";
 import Label from "../form/Label";
+import { useState } from "react";
 
 interface UserInfoCard {
   name: string;
+  role: string;
   email: string;
   createdAt: string;
+  idUser: number;
 }
 
-export default function UserInfoCard({name, email, createdAt}:UserInfoCard) {
+export default function UserInfoCard({name, email, role ,createdAt, idUser}:UserInfoCard) {
   const { isOpen, openModal, closeModal } = useModal();
-  const handleSave = () => {
+  const [nameUpdate, setNameUpdate]= useState<string>(name);
+  const [emailUpdate, setEmailUpdate]= useState<string>(email);
+  const [roleUpdate, setRoleUpdate]= useState<string>(role);
+
+  const accessToken = localStorage.getItem("accessToken")
+
+  const handleSave =async () => {
     // Handle save logic here
     console.log("Saving changes...");
+    try {
+      const response = await fetch(`http://localhost:8085/api/update-user`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${accessToken}` },
+        body: JSON.stringify({idUser, email, role, name }),
+      });
+
+      const data = await response.json();
+
+      console.log(data)
+
+    } catch (err) {
+      console.error(err)
+    }
     closeModal();
   };
   return (
@@ -99,17 +122,20 @@ export default function UserInfoCard({name, email, createdAt}:UserInfoCard) {
                 <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
                   <div className="col-span-2 ">
                     <Label>Name</Label>
-                    <Input type="text" value="Musharof" />
+                    <Input type="text" value={nameUpdate} 
+            onChange={(e) => setNameUpdate(e.target.value)}/>
                   </div>
 
                   <div className="col-span-2">
                     <Label>Email Address</Label>
-                    <Input type="text" value="randomuser@pimjo.com" />
+                    <Input type="text" value={emailUpdate} 
+            onChange={(e) => setEmailUpdate(e.target.value)}/>
                   </div>
 
                   <div className="col-span-2">
                     <Label>Role</Label>
-                    <Input type="text" value="USER" />
+                    <Input type="text" value={roleUpdate} 
+            onChange={(e) => setRoleUpdate(e.target.value)}/>
                   </div>
                 </div>
               </div>
