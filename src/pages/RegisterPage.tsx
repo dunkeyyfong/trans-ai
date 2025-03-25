@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
+import { notification } from "antd";
 const RegisterPage = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -16,12 +16,24 @@ const RegisterPage = () => {
     setError("");
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match");
+      
+        notification.error({
+        message: "Register Failed",
+        description:
+        "Passwords do not match",
+        duration: 2,
+      });
       return;
     }
 
     if (!agreeToTerms) {
-      setError("You must agree to the terms to continue.");
+      
+      notification.error({
+        message: "Register Failed",
+        description:
+        "You must agree to the terms to continue.",
+        duration: 2,
+      });
       return;
     }
 
@@ -34,7 +46,15 @@ const RegisterPage = () => {
 
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.message || "Registration failed");
+        let errorMessage = "Login failed";
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorMessage;
+          notification.error({
+            message: "Register Failed",
+            description:
+            errorMessage,
+            duration: 2,
+          });
       }
 
       localStorage.setItem("user", JSON.stringify(data));
@@ -42,9 +62,22 @@ const RegisterPage = () => {
       navigate("/verify-email");
     } catch (err) {
       if (err instanceof Error) {
-        setError(err.message);
+        
+        notification.error({
+          message: "Register Failed",
+          description:
+          err.message,
+          duration: 2,
+        });
+
       } else {
-        setError("An unknown error occurred");
+        
+        notification.error({
+          message: "Register Failed",
+          description:
+          "An unknown error occurred",
+          duration: 2,
+        });
       }
     }
   };
