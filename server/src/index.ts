@@ -15,6 +15,7 @@ import { postUpdateHistory } from './controller/history/postUpdateHistory'
 import { getAllHistory } from './controller/history/getAllHistory'
 import { getMessageHistory } from './controller/history/getMessageHistory'
 import { getAllUser } from './controller/admin/getAllUser'
+import { postUpdateUser } from './controller/admin/postUpdateUser' // Thêm import
 import { postVisitCount } from './controller/postVisitCount'
 import { postUpdatePassword } from './controller/authenicate/postUpdatePassword'
 import { postFindEmail } from './controller/authenicate/postFindEmail'
@@ -49,20 +50,19 @@ app.get(/^(?!\/api\/)/, function (req, res) {
   res.sendFile(path.join(__dirname, '..', '..', 'dist', 'index.html'))
 })
 
-//Authenicate
+// Authenicate
 app.post('/api/login', postLogin)
 app.post('/api/register', postRegister)
 app.post('/api/update-password', postUpdatePassword)
 app.post('/api/find-email', postFindEmail)
 
-
-//Verify email
+// Verify email
 app.post('/api/verify-email', postVerifyEmail)
 
-//Delete account
+// Delete account
 app.post('/api/delete-account', authenicateToken, postDeleteAccount)
 
-//Save History
+// Save History
 app.get('/api/get-history', authenicateToken, getAllHistory)
 app.get('/api/get-message-history', authenicateToken, getMessageHistory)
 app.get('/api/get-data-history', authenicateToken, getHistory)
@@ -70,17 +70,18 @@ app.post('/api/create-history', authenicateToken, postSaveHistory)
 app.post('/api/delete-history', authenicateToken, postDeleteHistory)
 app.post('/api/update-history', authenicateToken, postUpdateHistory)
 
-//admin
+// Admin
 app.get('/api/get-all-user', authenicateToken, getAllUser)
+app.post('/api/update-user', authenicateToken, postUpdateUser) // Thêm route
 
-//Visit Count
+// Visit Count
 app.post('/api/visit-count', postVisitCount)
 
-//Download
+// Download
 app.get('/api/download', authenicateToken, getDownload)
 
-//Transcribe
+// Transcribe
 app.get('/api/transcribe', authenicateToken, getTranscribe)
 
-//Translate
+// Translate
 app.post('/api/translate', authenicateToken, postTranslate)
