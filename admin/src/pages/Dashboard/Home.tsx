@@ -11,22 +11,20 @@ const accessToken = new URLSearchParams(window.location.search).get('accessToken
 
 export default function Home() {
   
+  useEffect(() => {
+    localStorage.setItem('user', JSON.stringify(decodedToken));
+    localStorage.setItem('accessToken', JSON.stringify(accessToken));
+  }, [accessToken]);
+
   if (!accessToken) {
     return <Navigate to="*" replace />;
   }
 
   const decodedToken = jwtDecode(accessToken);
 
-  useEffect(() => {
-    localStorage.setItem('user', JSON.stringify(decodedToken));
-    localStorage.setItem('accessToken', JSON.stringify(accessToken));
-  }, [accessToken]);
-
   // if (decodedToken?.role !== 'ADMIN') {
   //   return <Navigate to="/not-found" replace />;
   // }
-
-  console.log(decodedToken);
 
   return (
     <>
@@ -49,7 +47,7 @@ export default function Home() {
         </div>
 
         <div className="col-span-12">
-          <RecentOrders />
+          <RecentOrders token={accessToken}/>
         </div>
       </div>
     </>
