@@ -27,8 +27,8 @@ export default function UserInfoCard({name, email, role ,createdAt, idUser}:User
     try {
       const response = await fetch(`http://localhost:8085/api/update-user`, {
         method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${accessToken}` },
-        body: JSON.stringify({idUser, email, role, name }),
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${JSON.parse(accessToken!)}` },
+        body: JSON.stringify({ idUser, email: emailUpdate, name: nameUpdate })
       });
 
       const data = await response.json();
@@ -111,7 +111,7 @@ export default function UserInfoCard({name, email, role ,createdAt, idUser}:User
               Edit Information
             </h4>
           </div>
-          <form className="flex flex-col">
+          <div className="flex flex-col">
             <div className="custom-scrollbar h-[450px] overflow-y-auto px-2 pb-3">
               
               <div className="mt-2">
@@ -148,7 +148,7 @@ export default function UserInfoCard({name, email, role ,createdAt, idUser}:User
                 Save Changes
               </Button>
             </div>
-          </form>
+          </div>
         </div>
       </Modal>
     </div>

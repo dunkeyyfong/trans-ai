@@ -48,8 +48,5 @@ export const postUpdateUser = async (req: Request, res: Response): Promise<void>
       message: 'Internal server error',
       error: error instanceof Error ? error.message : 'Unknown error'
     })
-  } finally {
-    // Đóng kết nối Prisma
-    await prisma.$disconnect()
   }
 }
