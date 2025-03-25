@@ -219,6 +219,22 @@ const HomePage: React.FC = () => {
     }
   };
 
+  const handleDownloadSrt = () => {
+    // Nếu không có transcript, dùng chuỗi rỗng
+    const content = resultTranscript || "";
+  
+    // Tạo và tải file
+    const blob = new Blob([content], { type: 'text/srt' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${title || 'transcript'}.srt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  };
+
   const handleLanguageChange = (language: string) => {
     setSelectedLanguage(language);
   };
@@ -436,7 +452,17 @@ const HomePage: React.FC = () => {
                 <pre className="whitespace-pre-wrap text-gray-800 text-base">{progressOutput}</pre>
               )}
               {activeTab === 'result' && (
+              <>
+                <div className="flex justify-end mb-2">
+                  <Button
+                    onClick={handleDownloadSrt}
+                    className="bg-blue-500 hover:bg-blue-600 text-white"
+                  >
+                    Download SRT
+                  </Button>
+                </div>
                 <pre className="whitespace-pre-wrap text-gray-800 text-base">{resultTranscript}</pre>
+              </>
               )}
             </div>
           </div>
