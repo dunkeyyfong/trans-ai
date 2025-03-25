@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { jwtDecode, JwtPayload } from "jwt-decode";
+import { notification } from "antd";
 
 interface DecodedToken extends JwtPayload {
   id: number;
@@ -12,8 +13,6 @@ interface DecodedToken extends JwtPayload {
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
@@ -21,8 +20,6 @@ const LoginPage = () => {
   const ADMIN_URL = import.meta.env.VITE_ADMIN_URL;
 
   const handleLogin = async () => {
-    setError("");
-    setMessage("");
     setIsSubmitting(true);
 
     try {
@@ -32,23 +29,44 @@ const LoginPage = () => {
         body: JSON.stringify({ email, password }),
       });
 
-      const data = await response.json();
+      if (!response.ok) {
+        let errorMessage = "Login failed";
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorMessage;
+          notification.error({
+            message: "Login Failed",
+            description:
+            errorMessage,
+            duration: 2,
+          });
 
+        } 
+
+      const data = await response.json();
       localStorage.setItem("user", JSON.stringify(data));
 
+      // Decode token
       const decodedToken = jwtDecode<DecodedToken>(data.accessToken);
 
+      notification.success({
+        message: "Login Successful",
+        description: `Welcome back, ${decodedToken.email}!`,
+        duration: 2,
+      });
+
+      // Redirect based on role
       if (decodedToken.role === "ADMIN") {
         window.open(`${ADMIN_URL}/home?accessToken=${data.accessToken}`);
       } else {
         navigate("/home");
       }
     } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError("An unknown error occurred");
-      }
+      notification.error({
+        message: "Login Failed",
+        description:
+          err instanceof Error ? err.message : "An unknown error occurred",
+        duration: 2,
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -60,9 +78,6 @@ const LoginPage = () => {
         <h2 className="text-3xl md:text-4xl font-bold mb-8 text-gray-800">
           Log In
         </h2>
-
-        {error && <p className="text-red-500 text-lg mb-3">{error}</p>}
-        {message && <p className="text-green-500 text-lg mb-3">{message}</p>}
 
         <div>
           <input
@@ -83,7 +98,10 @@ const LoginPage = () => {
           />
 
           <div className="text-right mb-4">
-            <Link to="/forgot-password" className="hover:text-emerald-600 hover:underline">
+            <Link
+              to="/forgot-password"
+              className="hover:text-emerald-600 hover:underline"
+            >
               Forgot Password?
             </Link>
           </div>
@@ -91,7 +109,9 @@ const LoginPage = () => {
           <button
             onClick={handleLogin}
             className={`w-full bg-emerald-600 text-white py-3 text-lg font-semibold rounded-lg flex items-center justify-center gap-3 transition duration-300 ${
-              isSubmitting ? "opacity-70 cursor-not-allowed" : "hover:bg-emerald-700"
+              isSubmitting
+                ? "opacity-70 cursor-not-allowed"
+                : "hover:bg-emerald-700"
             }`}
             disabled={isSubmitting}
           >

@@ -13,23 +13,22 @@ export const postLogin = async (req: Request, res: Response): Promise<void> => {
       where: { email }
     })
 
+    if(!user) {
+      res.status(404).json({ message: 'Email not found'})
+      return
+    }
+
     if (!user || !(await bcrypt.compare(password, user.password))) {
-      res.status(401).send('Invalid email or password')
+      res.status(401).json({ message:'Invalid email or password'})
       return
     }
 
     if (!user.isActive) {
-      res.status(401).send('User is not active, please verify your email')
+      res.status(401).json({ message:'User is not active, please verify your email'})
       return
     }
 
     const accessToken = generateToken(user)
-
-    res.cookie('auth-token', accessToken, {
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      httpOnly: true,
-      sameSite: 'strict'
-    })
 
     res
       .status(200)
