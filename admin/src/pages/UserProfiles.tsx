@@ -12,6 +12,7 @@ interface UserData {
   createdAt: string;
   role: "ADMIN" | "USER";
   isActive: boolean;
+  
 }
 
 export default function UserProfiles() {
@@ -19,7 +20,6 @@ export default function UserProfiles() {
 
   useEffect(() => {
     const queryUser = new URLSearchParams(window.location.search).get("user");
-    console.log(queryUser);
 
     if (queryUser) {
       try {
@@ -52,6 +52,8 @@ export default function UserProfiles() {
           <UserInfoCard
             name={userData!.name}
             email={userData!.email}
+            role={userData!.role}
+            idUser={userData!.id}
             createdAt={userData!.createdAt}
           />
           {/* <UserAddressCard /> */}

@@ -22,6 +22,12 @@ export default function Home() {
 
   const decodedToken = jwtDecode(accessToken);
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useEffect(() => {
+    localStorage.setItem('user', JSON.stringify(decodedToken));
+    localStorage.setItem('accessToken', JSON.stringify(accessToken));
+  }, [accessToken]);
+
   // if (decodedToken?.role !== 'ADMIN') {
   //   return <Navigate to="/not-found" replace />;
   // }
