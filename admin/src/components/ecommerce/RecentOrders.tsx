@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import {
   Table,
   TableBody,
@@ -6,6 +7,10 @@ import {
   TableRow,
 } from "../ui/table";
 import Badge from "../ui/badge/Badge";
+
+interface RecentOrdersProp {
+  token: string;
+}
 
 interface User {
   id: number;
@@ -16,19 +21,60 @@ interface User {
   isActive: boolean;
 }
 
-// Define the table data using the interface
-const tableData: User[] = [
-  {
-    id: 1,
-    name: "MacBook Pro 13”",
-    email: "Electronics",
-    createdAt: "2021-09-12",
-    role: "ADMIN",
-    isActive: true,
-  }
-];
+export default function RecentOrders({token} : RecentOrdersProp) {
+  const [tableData, setTableData] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-export default function RecentOrders() {
+  useEffect(() => {
+
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
+
+    const fetchUsers = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('http://localhost:8085/api/get-all-user', {
+          headers: {
+          'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch users');
+        }
+        
+        const data = await response.json();
+        console.log(data.data)
+
+        await setTableData(data.data)
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6">
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6">
+        <p className="text-red-500">Error: {error}</p>
+      </div>
+    );
+  }
+
   return (
     <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6">
       <div className="flex flex-col gap-2 mb-4 sm:flex-row sm:items-center sm:justify-between">
@@ -37,12 +83,9 @@ export default function RecentOrders() {
             Users
           </h3>
         </div>
-
-        
       </div>
       <div className="max-w-full overflow-x-auto">
         <Table>
-          {/* Table Header */}
           <TableHeader className="border-gray-100 dark:border-gray-800 border-y">
             <TableRow>
               <TableCell
@@ -71,9 +114,6 @@ export default function RecentOrders() {
               </TableCell>
             </TableRow>
           </TableHeader>
-
-          {/* Table Body */}
-
           <TableBody className="divide-y divide-gray-100 dark:divide-gray-800">
             {tableData.map((product) => (
               <TableRow key={product.id} className="">
