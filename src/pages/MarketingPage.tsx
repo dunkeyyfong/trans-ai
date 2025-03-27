@@ -109,10 +109,11 @@ const MarketingPage = () => {
   ];
 
   const contactRef = useRef<HTMLDivElement>(null);
+  const howItWorksRef = useRef<HTMLDivElement>(null);
+
   const scrollToHowItWorks = () => {
-    const section = document.getElementById("how-it-works");
-    if (section) {
-      section.scrollIntoView({ behavior: "smooth" });
+    if (howItWorksRef.current) {
+      howItWorksRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   };
   
@@ -121,7 +122,6 @@ const MarketingPage = () => {
       contactRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   };
-
 
 
   useEffect(() => {
@@ -164,7 +164,7 @@ const MarketingPage = () => {
           <div className="mt-8 md:mt-10 flex flex-col md:flex-row justify-center items-center gap-6 w-full">
             <a
               onClick={scrollToHowItWorks}
-              className="px-10 py-4 md:px-12 md:py-5 bg-white text-black text-xl font-bold rounded-lg shadow-xl transition-transform transform hover:scale-105 w-56 md:w-64 text-center"
+              className="px-10 py-4 md:px-12 md:py-5 bg-white text-black text-xl font-bold rounded-lg shadow-xl transition-transform transform hover:scale-105 cursor-pointer w-56 md:w-64 text-center"
             >
               Learn More
             </a>
@@ -179,7 +179,7 @@ const MarketingPage = () => {
         </main>
 
         {/* Features Section */}
-        <section className="py-16 md:py-20 bg-white text-black animate-fade-in">
+        <section ref={howItWorksRef} className="py-16 md:py-20 bg-white text-black animate-fade-in">
           <div className="max-w-6xl mx-auto text-center px-4">
             <h2 className="text-3xl md:text-5xl font-bold mb-8 md:mb-10">Key Features</h2>
 
@@ -203,7 +203,7 @@ const MarketingPage = () => {
         </section>
 
         {/* How It Works Section */}
-        <section id="how-it-works" className="py-16 md:py-20 bg-gray-900 text-white animate-slide-up">
+        <section className="py-16 md:py-20 bg-gray-900 text-white animate-slide-up">
           <div className="max-w-6xl mx-auto text-center px-4">
             <h2 className="text-3xl md:text-5xl font-bold mb-8 md:mb-10">How It Works</h2>
 
@@ -243,7 +243,6 @@ const MarketingPage = () => {
 
         {/* Call to Action */}
         <section
-          id="call-to-action"
           className="py-16 px-6 sm:py-20 text-white text-center animate-slide-up bg-cover bg-center"
           style={{ backgroundImage: "url('/bg-marketing.jpg')" }}
         >
