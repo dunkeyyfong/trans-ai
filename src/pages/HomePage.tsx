@@ -14,6 +14,7 @@ interface User {
   email: string;
   role: string;
   verifyToken: string;
+  name?: string;
 }
 
 const HomePage: React.FC = () => {
@@ -21,6 +22,8 @@ const HomePage: React.FC = () => {
   const [link, setLink] = useState<string>("");
   const accessToken = useRef<string>("")
   const currentUserId = useRef<number>(0);
+  const [userEmail, setUserEmail] = useState<string>("");
+  const [userName, setUserName] = useState<string>("");
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [searchParams] = useSearchParams();
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -38,6 +41,9 @@ const HomePage: React.FC = () => {
         const user: User = JSON.parse(userString);
         accessToken.current = user.accessToken;
         currentUserId.current = user.id;
+        setUserEmail(user.email);
+        setUserName(user.name || "")
+        console.log(user)
       } catch (error) {
         console.error("Error parsing user from localStorage", error);
       }
@@ -316,7 +322,6 @@ const HomePage: React.FC = () => {
     localStorage.removeItem("user")
     navigate("/login");
   };
-  
 
 
   return (
@@ -324,7 +329,7 @@ const HomePage: React.FC = () => {
       <div className="flex flex-1 bg-gray-100">
         {/* Sidebar (Hiển thị trên laptop) */}
         <aside className="hidden md:block w-64 bg-white border-r">
-          <SideBar chatHistory={chatHistory} onNewChat={handleNewChat} onRestoreChat={handleRestoreChat} onDeleteChat={handleDeleteChat} onLogout={handleLogout} />
+          <SideBar chatHistory={chatHistory} onNewChat={handleNewChat} onRestoreChat={handleRestoreChat} onDeleteChat={handleDeleteChat} onLogout={handleLogout} userEmail={userEmail} userName={userName}/>
         </aside>
 
         {/* Drawer (Hiển thị trên mobile) */}
@@ -347,7 +352,7 @@ const HomePage: React.FC = () => {
           width={280}
           className="md:hidden"
         >
-          <SideBar chatHistory={chatHistory} onNewChat={handleNewChat} onRestoreChat={handleRestoreChat} onDeleteChat={handleDeleteChat} onLogout={handleLogout} />
+          <SideBar chatHistory={chatHistory} onNewChat={handleNewChat} onRestoreChat={handleRestoreChat} onDeleteChat={handleDeleteChat} onLogout={handleLogout} userEmail={userEmail} userName={userName}/>
         </Drawer>
 
         {/* Main Content */}
@@ -370,7 +375,7 @@ const HomePage: React.FC = () => {
               />
             </div>
 
-         <div className="w-full max-w-6xl">
+          <div className="w-full max-w-6xl">
             {searchParams.get("id") && (
               <Breadcrumb className="mb-4 md:block hidden">
                 <Breadcrumb.Item>

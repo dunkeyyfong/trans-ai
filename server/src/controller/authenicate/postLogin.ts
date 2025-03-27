@@ -32,7 +32,7 @@ export const postLogin = async (req: Request, res: Response): Promise<void> => {
 
     res
       .status(200)
-      .json({ accessToken, id: user.id, email: user.email, role: user.role, verifyToken: user.verifyToken })
+      .json({ accessToken, id: user.id, email: user.email, name: user.name, role: user.role, verifyToken: user.verifyToken })
   } catch (error) {
     res.sendStatus(500)
     console.log(error)
