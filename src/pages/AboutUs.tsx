@@ -58,9 +58,9 @@ return (
                         As avid learners and explorers, we often struggled with videos in languages we didn’t understand. Existing tools were either too complex, inaccurate, or lacked seamless integration. That’s when we set out to build <span className="font-semibold">Kotoba</span>—a platform designed to <span className="italic">effortlessly translate and transcribe YouTube videos</span> with precision and ease.
                     </p>
                     <p className="text-lg mt-6">
-                        From a passion project to a tool that empowers thousands, <span className="font-semibold">Kotoba</span> continues to evolve, ensuring that <span className="italic">knowledge and entertainment remain borderless.</span> 🚀
+                        From a passion project to a tool that empowers thousands, <span className="font-semibold">Kotoba</span> continues to evolve, ensuring that <span className="italic">knowledge and entertainment remain borderless.</span>
                     </p>
-                    <p className="text-lg mt-4 font-semibold text-blue-500">Join us on this journey and explore the world, one translation at a time. 🌍✨</p>
+                    <p className="text-lg mt-4 font-semibold text-blue-500">Join us on this journey and explore the world, one translation at a time.</p>
                 </div>
             </div>
 
