@@ -4,6 +4,7 @@ import dotenv from 'dotenv'
 import cors from 'cors'
 import path from 'path'
 import cookieParser from 'cookie-parser'
+import cron from 'node-cron';
 import { postLogin } from './controller/authenicate/postLogin'
 import { postRegister } from './controller/authenicate/postRegister'
 import { postVerifyEmail } from './controller/authenicate/postVerifyEmail'
@@ -23,6 +24,8 @@ import { getDownload } from './controller/scripts/getDownload'
 import { getHistory } from './controller/history/getHistory'
 import { getTranscribe } from './controller/scripts/getTranscribe'
 import { postTranslate } from './controller/scripts/postTranslate'
+import { backUpDB } from './util/backUpDB'
+import { moveBackUp } from './util/moveBackUp'
 
 const app = express()
 const server = http.createServer(app)
@@ -49,6 +52,10 @@ app.use((req, res, next) => {
 app.get(/^(?!\/api\/)/, function (req, res) {
   res.sendFile(path.join(__dirname, '..', '..', 'dist', 'index.html'))
 })
+
+//Cron
+cron.schedule('0 1 * * *', backUpDB)
+cron.schedule('0 1 1 * *', moveBackUp)
 
 // Authenicate
 app.post('/api/login', postLogin)

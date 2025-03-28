@@ -5,6 +5,7 @@ WORKDIR /app
 
 ENV NODE_ENV=development
 RUN apt-get update && apt-get install -y openssl
+RUN apt update && apt install -y mysql-client
 RUN apt update && apt install file -y
 RUN apt update && apt install ffmpeg -y
 RUN apt update && apt install python3 -y
