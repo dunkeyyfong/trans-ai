@@ -26,6 +26,7 @@ import { getTranscribe } from './controller/scripts/getTranscribe'
 import { postTranslate } from './controller/scripts/postTranslate'
 import { backUpDB } from './util/backUpDB'
 import { moveBackUp } from './util/moveBackUp'
+import { getInfoUser } from './controller/admin/getInfoUser'
 
 const app = express()
 const server = http.createServer(app)
@@ -80,6 +81,7 @@ app.post('/api/update-history', authenicateToken, postUpdateHistory)
 // Admin
 app.get('/api/get-all-user', authenicateToken, getAllUser)
 app.post('/api/update-user', authenicateToken, postUpdateUser) // Thêm route
+app.get('/api/get-info-user', authenicateToken, getInfoUser)
 
 // Visit Count
 app.post('/api/visit-count', postVisitCount)

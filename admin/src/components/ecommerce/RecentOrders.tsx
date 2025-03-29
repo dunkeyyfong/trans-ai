@@ -22,6 +22,7 @@ interface User {
 }
 
 export default function RecentOrders({token} : RecentOrdersProp) {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [tableData, setTableData] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -35,7 +36,7 @@ export default function RecentOrders({token} : RecentOrdersProp) {
     const fetchUsers = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://localhost:8085/api/get-all-user', {
+        const response = await fetch(`${API_URL}/api/get-all-user`, {
           headers: {
           'Authorization': `Bearer ${token}`
           }

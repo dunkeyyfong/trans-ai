@@ -30,7 +30,7 @@ const navItems: NavItem[] = [
   {
     icon: <GridIcon />,
     name: "Dashboard",
-    path: `/home?accessToken=${accessToken?.replace(/^"(.*)"$/, '$1')}`,
+    path: `/home?accessToken=${accessToken!}`,
     // subItems: [{ name: "Ecommerce", path: "/", pro: false }],
   },
   {

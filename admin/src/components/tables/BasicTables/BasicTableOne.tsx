@@ -29,6 +29,8 @@ export default function BasicTableOne({token} : BasicTableOneProp) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
 
     if (!token) {
@@ -38,7 +40,7 @@ export default function BasicTableOne({token} : BasicTableOneProp) {
     const fetchUsers = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://localhost:8085/api/get-all-user', {
+        const response = await fetch(`${API_URL}/api/get-all-user`, {
           headers: {
           'Authorization': `Bearer ${token}`
           }
@@ -149,7 +151,7 @@ export default function BasicTableOne({token} : BasicTableOneProp) {
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
                     <Link
-                      to={`/edit-profile?user=${encodeURIComponent(JSON.stringify(user))}`}
+                      to={`/edit-profile?userId=${user.id}`}
                     >
                       <Button size="sm" variant="outline">
                         View
