@@ -252,6 +252,7 @@ const HomePage: React.FC = () => {
       return;
     }
     
+    setResultTranscript('')
     setIsProcessing(true);
 
     const urlObj = new URL(link);
@@ -262,18 +263,8 @@ const HomePage: React.FC = () => {
       alert("Invalid YouTube URL.");
       return;
     }
-  
-    const data = {
-      video_id: videoId,
-      lang: selectedLanguage,
-    };
-
-    console.log(data)
 
     if (typeof videoId === 'string') {
-
-      setResultTranscript('')
-      setIsProcessing(true)
 
       await fetch(`${API_URL}/api/update-history`, {
         method: "POST",
@@ -291,7 +282,7 @@ const HomePage: React.FC = () => {
 
       const transcriptInJapanese = await processVideo(videoId, (message: string) => {
         setProgressOutput(prev => prev + message)
-      }, accessToken.current, API_URL)
+      }, accessToken.current, API_URL, selectedLanguage)
 
       if (transcriptInJapanese) {
         setResultTranscript(transcriptInJapanese);
@@ -315,6 +306,7 @@ const HomePage: React.FC = () => {
       setIsProcessing(false)
     } else {
       alert('Invalid URL')
+      setIsProcessing(false)
     }
   };
 

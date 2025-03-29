@@ -2,7 +2,8 @@ export async function processVideo(
   videoId: string,
   callback: ProgressCallback,
   accessToken: string,
-  API_URL: string
+  API_URL: string,
+  lang: string
 ): Promise<false | string> {
   callback('Downloading audio...\n')
   await download(videoId, callback, accessToken, API_URL)
@@ -12,7 +13,7 @@ export async function processVideo(
 
   if (srt) {
     callback('\nTranslating text...\n')
-    const result = await translate(srt, callback, accessToken, API_URL)
+    const result = await translate(srt, callback, accessToken, API_URL, lang)
     callback('\nDone!\n')
     return result
   }
@@ -56,8 +57,8 @@ export async function transcribe(videoId: string, onProgress: ProgressCallback, 
   }
 }
 
-export async function translate(srt: string, onProgress: ProgressCallback, accessToken: string, API_URL: string) {
-  const response = await fetch(`${API_URL}/api/translate`, {
+export async function translate(srt: string, onProgress: ProgressCallback, accessToken: string, API_URL: string, lang: string) {
+  const response = await fetch(`${API_URL}/api/translate?lang=${lang}`, {
     method: "POST",
     headers: { 
       'Content-Type': 'text/plain; charset=utf-8',
