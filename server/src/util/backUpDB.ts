@@ -15,7 +15,7 @@ ensureBackupDirExists();
 export const backUpDB = () => {
   const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
   const backupFile = path.join(BACKUP_DIR, `${DB_NAME}-${timestamp}.sql`);
-  const dumpCommand = `mysqldump -u${DB_USER} -p${DB_PASSWORD} -h${DB_HOST} -P${DB_PORT} ${DB_NAME} > "${backupFile}"`;
+  const dumpCommand = `mysqldump -u ${DB_USER} -p ${DB_PASSWORD} -h ${DB_HOST} -P ${DB_PORT} ${DB_NAME} > "${backupFile}"`;
 
   exec(dumpCommand, (error) => {
     if (error) {
