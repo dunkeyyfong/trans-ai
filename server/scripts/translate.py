@@ -143,7 +143,7 @@ def translate_text(text):
     prompt += text + "\n[END]"
 
     response = client.completions.create(
-        model="gpt-4o-mini",
+        model="gpt-3.5-turbo-instruct",
         prompt=prompt,
         max_tokens=3000,
         temperature=0,

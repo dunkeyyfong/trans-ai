@@ -4,9 +4,10 @@ import { transferChildProcessOutput } from '~/util/shell'
 
 export const postTranslate = async (req: Request, res: Response): Promise<void> => {
   try {
-    const srt = req.body
+    const srt = req.body as string
+    const lang = req.query.lang as string
 
-    if (typeof srt !== 'string') {
+    if (typeof srt !== 'string' || typeof lang !== 'string') {
         res.status(400).json({ error: 'Invalid request' })
         return
       }
@@ -15,7 +16,7 @@ export const postTranslate = async (req: Request, res: Response): Promise<void> 
 
     const cmd = spawn(
         'python3',
-        [scriptPath],
+        [scriptPath, '-L', lang],
         {
         cwd: process.cwd()
         }
