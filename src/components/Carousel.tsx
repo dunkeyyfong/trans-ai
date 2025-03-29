@@ -1,5 +1,3 @@
-import React from "react";
-
 interface CarouselProps {
     testimonials: { quote: string; author: string }[];
     index: number;

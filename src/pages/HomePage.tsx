@@ -268,6 +268,8 @@ const HomePage: React.FC = () => {
       lang: selectedLanguage,
     };
 
+    console.log(data)
+
     if (typeof videoId === 'string') {
 
       setResultTranscript('')
