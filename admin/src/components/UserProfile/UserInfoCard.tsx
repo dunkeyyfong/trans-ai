@@ -21,19 +21,19 @@ export default function UserInfoCard({name, email, role ,createdAt, idUser}:User
 
   const accessToken = localStorage.getItem("accessToken")
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const handleSave =async () => {
     // Handle save logic here
     console.log("Saving changes...");
     try {
-      const response = await fetch(`http://localhost:8085/api/update-user`, {
+      await fetch(`${API_URL}/api/update-user`, {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${JSON.parse(accessToken!)}` },
         body: JSON.stringify({ idUser, email: emailUpdate, name: nameUpdate })
       });
 
-      const data = await response.json();
-
-      console.log(data)
+      window.location.reload();
 
     } catch (err) {
       console.error(err)

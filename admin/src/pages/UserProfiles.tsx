@@ -17,14 +17,35 @@ interface UserData {
 
 export default function UserProfiles() {
   const [userData, setUserData] = useState<UserData | null>(null);
+  const API_URL = import.meta.env.VITE_API_URL;
+  const accessToken = localStorage.getItem("accessToken");
 
   useEffect(() => {
-    const queryUser = new URLSearchParams(window.location.search).get("user");
+    const queryUser = new URLSearchParams(window.location.search).get("userId");
 
-    if (queryUser) {
+    if (queryUser && accessToken) {
       try {
-        const parsedUser = JSON.parse(decodeURIComponent(queryUser));
-        setUserData(parsedUser);
+        
+        const fetchUserData = async () => {
+          const response = await fetch(`${API_URL}/api/get-info-user?userId=${queryUser}`, {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${JSON.parse(accessToken)}`,
+              'Content-Type': 'application/json'
+            }
+          });
+          
+          if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Error response:', errorText);
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          
+          const data = await response.json();
+          setUserData(data.data);
+        }
+
+        fetchUserData();
       } catch (error) {
         console.error("Error parsing user data:", error);
       }

@@ -13,7 +13,7 @@ export default function Home() {
   
   useEffect(() => {
     localStorage.setItem('user', JSON.stringify(decodedToken));
-    localStorage.setItem('accessToken', JSON.stringify(accessToken));
+    localStorage.setItem('accessToken', accessToken!);
   }, [accessToken]);
 
   if (!accessToken) {
@@ -21,12 +21,6 @@ export default function Home() {
   }
 
   const decodedToken = jwtDecode(accessToken);
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  useEffect(() => {
-    localStorage.setItem('user', JSON.stringify(decodedToken));
-    localStorage.setItem('accessToken', JSON.stringify(accessToken));
-  }, [accessToken]);
 
   // if (decodedToken?.role !== 'ADMIN') {
   //   return <Navigate to="/not-found" replace />;
@@ -40,7 +34,7 @@ export default function Home() {
       />
       <div className="grid grid-cols-12 gap-4 md:gap-6">
         <div className="col-span-12 space-y-6">
-          <EcommerceMetrics />
+          <EcommerceMetrics token={accessToken}/>
           <MonthlySalesChart />
         </div>
 
