@@ -22,7 +22,6 @@ export const transferChildProcessOutput = (cmd: ChildProcessWithoutNullStreams, 
 
     cmd.on('close', (code) => {
         sendLine(code?.toString() || 'Unknown error')
-        res.end()
     })
 
     res.writeHead(200, {
@@ -30,4 +29,6 @@ export const transferChildProcessOutput = (cmd: ChildProcessWithoutNullStreams, 
         'Connection': 'keep-alive',
         'Cache-Control': 'no-cache',
     })
+
+    cmd.stdout.pipe(res)
 }
