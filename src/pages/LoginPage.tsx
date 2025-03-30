@@ -43,7 +43,6 @@ const LoginPage = () => {
         } 
 
       const data = await response.json();
-      localStorage.setItem("user", JSON.stringify(data));
 
       // Decode token
       const decodedToken = jwtDecode<DecodedToken>(data.accessToken);
@@ -58,6 +57,7 @@ const LoginPage = () => {
       if (decodedToken.role === "ADMIN") {
         window.open(`${ADMIN_URL}/home?accessToken=${data.accessToken}`);
       } else {
+        await localStorage.setItem("user", JSON.stringify(data));
         navigate("/home");
       }
     } catch (err) {
