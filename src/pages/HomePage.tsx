@@ -452,7 +452,7 @@ const HomePage: React.FC = () => {
               )}
               {activeTab === 'result' && (
               <>
-                <div className="flex justify-end mb-2">
+                <div className="flex justify-end items-end mb-2">
                   <Button
                     onClick={handleDownloadSrt}
                     className="bg-blue-500 hover:bg-blue-600 text-white"
