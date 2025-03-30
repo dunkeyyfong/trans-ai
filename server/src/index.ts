@@ -28,6 +28,7 @@ import { backUpDB } from './util/backUpDB'
 import { moveBackUp } from './util/moveBackUp'
 import { getInfoUser } from './controller/admin/getInfoUser'
 import { getAllVisit } from './controller/admin/getAllVisit'
+import { postResendEmail } from './controller/authenicate/postResendEmail'
 
 const app = express()
 const server = http.createServer(app)
@@ -64,7 +65,7 @@ app.post('/api/login', postLogin)
 app.post('/api/register', postRegister)
 app.post('/api/update-password', postUpdatePassword)
 app.post('/api/find-email', postFindEmail)
-
+app.post('/api/resend-email', postResendEmail)
 // Verify email
 app.post('/api/verify-email', postVerifyEmail)
 
