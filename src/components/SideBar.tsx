@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { FaPlus, FaTrash } from "react-icons/fa";
 import { Modal, Input, Button } from "antd";
 import { useNavigate } from "react-router-dom";
+import { CloseOutlined } from '@ant-design/icons';
 
 interface Chat {
   title: string;
@@ -89,11 +90,15 @@ const SideBar: React.FC<SideBarProps> = ({ chatHistory, onNewChat, onRestoreChat
                   key={chat.id}
                   className="p-2 rounded-md hover:bg-gray-200 cursor-pointer transition flex items-center justify-between"
                 >
-                  <span onClick={() => handleChatClick(chat.id)} className="flex-1 cursor-pointer">
+                  <span
+                    onClick={() => handleChatClick(chat.id)}
+                    className="flex-1 cursor-pointer truncate overflow-hidden whitespace-nowrap max-w-[200px]"
+                    title={chat.title}
+                  >
                     {chat.title}
                   </span>
                   <FaTrash
-                    className="text-red-500 hover:text-red-700 cursor-pointer"
+                    className="text-red-500 hover:text-red-700 cursor-pointer flex-shrink-0 ml-2"
                     onClick={() => handleOpenDeleteModal(chat.id)}
                   />
                 </li>
@@ -104,46 +109,58 @@ const SideBar: React.FC<SideBarProps> = ({ chatHistory, onNewChat, onRestoreChat
           </ul>
         </div>
 
+
         {/* User Info & Dropdown */}
         <div className="p-4 relative">
           <div
             onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
             className="flex items-center gap-2 p-2 rounded-lg bg-gray-100 hover:bg-gray-200 cursor-pointer transition-all"
           >
-            <div className="w-8 h-8 bg-indigo-500 text-white flex items-center justify-center rounded-full font-semibold uppercase">
+            <div className="w-8 h-8 bg-indigo-500 text-white flex items-center justify-center rounded-full font-semibold uppercase flex-shrink-0">
               {userEmail?.charAt(0)}
             </div>
-            <span className="text-sm font-medium text-gray-800">{userEmail}</span>
+
+            <span className="text-sm font-medium text-gray-800 truncate max-w-[160px]">
+              {userEmail}
+            </span>
           </div>
 
           {isUserMenuOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
-            <div className="w-[400px] bg-white text-black rounded-2xl p-6 shadow-2xl space-y-4">
-              {/* Header */}
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60"
+            onClick={() => setIsUserMenuOpen(false)}
+          >
+            <div
+              className="relative w-[400px] bg-white text-black rounded-2xl p-6 shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Close Button */}
+              <Button
+                type="text"
+                icon={<CloseOutlined />}
+                onClick={() => setIsUserMenuOpen(false)}
+                className="absolute top-4 right-4 text-xl text-gray-500 hover:text-black"
+              />
+
               <h1 className="text-lg font-semibold">Tài khoản của bạn</h1>
 
               {/* Avatar + Name + Email + Edit */}
-              <div className="flex items-start gap-4">
+              <div className="flex items-center gap-4 my-4">
                 <div className="w-14 h-14 rounded-full bg-indigo-500 text-white flex items-center justify-center text-2xl font-bold uppercase">
                   {userEmail?.charAt(0)}
                 </div>
-                <div className="flex-1">
-                  <div className="flex flex-col sm:flex-row items-center md:items-center justify-between gap-4">
-                    <div>
-                      <h3 className="text-base font-semibold">{userName || "Người dùng"}</h3>
-                      <p className="text-sm">{userEmail}</p>
-                    </div>
-                    <button
-                      className="px-3 py-1 border border-blue-600 text-blue-600 rounded-md text-sm hover:bg-blue-600 hover:text-white transition"
-                    >
-                      Edit
-                    </button>
+
+                <div className="flex-1 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                  <div>
+                    <h3 className="text-base font-semibold text-gray-900">
+                      {userName || "Người dùng"}
+                    </h3>
+                    <p className="text-sm text-gray-600">{userEmail}</p>
                   </div>
                 </div>
-
               </div>
 
-              {/* Action Buttons */}
+              {/* Log out*/}
               <div className="flex justify-end border-gray-300">
                 <button
                   onClick={handleOpenLogoutModal}
