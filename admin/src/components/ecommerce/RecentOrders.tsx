@@ -47,7 +47,6 @@ export default function RecentOrders({token} : RecentOrdersProp) {
         }
         
         const data = await response.json();
-        console.log(data.data)
 
         await setTableData(data.data)
       } catch (err) {
