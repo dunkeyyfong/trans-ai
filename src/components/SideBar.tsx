@@ -176,17 +176,19 @@ const SideBar: React.FC<SideBarProps> = ({ chatHistory, onNewChat, onRestoreChat
       </div>
 
       {/* Sidebar trên mobile */}
-      <div className="md:hidden bg-white w-full flex flex-col">
-        <div>
+      <div className="md:hidden bg-white w-full h-screen flex flex-col">
+        {/* New Chat Button */}
+        <div className="px-4 pb-4">
           <button
             onClick={handleOpenModal}
-            className="w-full flex items-center gap-2 p-2 bg-blue-500 text-white rounded-md mb-4"
+            className="w-full flex items-center gap-2 p-2 bg-blue-500 text-white rounded-md"
           >
             <FaPlus /> New Chat
           </button>
         </div>
 
-        <div className="p-4 flex-1 overflow-y-auto">
+        {/* Chat History */}
+        <div className="px-4 flex-1 overflow-y-auto">
           <h2 className="text-gray-500 text-sm mb-2">Today</h2>
           <ul className="space-y-2">
             {chatHistory.length > 0 ? (
@@ -195,11 +197,15 @@ const SideBar: React.FC<SideBarProps> = ({ chatHistory, onNewChat, onRestoreChat
                   key={chat.id}
                   className="p-2 rounded-md hover:bg-gray-200 cursor-pointer transition flex items-center justify-between"
                 >
-                  <span onClick={() => handleChatClick(chat.id)} className="flex-1 cursor-pointer">
+                  <span
+                    onClick={() => handleChatClick(chat.id)}
+                    className="flex-1 cursor-pointer truncate overflow-hidden whitespace-nowrap max-w-[200px]"
+                    title={chat.title}
+                  >
                     {chat.title}
                   </span>
                   <FaTrash
-                    className="text-red-500 hover:text-red-700 cursor-pointer"
+                    className="text-red-500 hover:text-red-700 cursor-pointer flex-shrink-0 ml-2"
                     onClick={() => handleOpenDeleteModal(chat.id)}
                   />
                 </li>
@@ -210,15 +216,29 @@ const SideBar: React.FC<SideBarProps> = ({ chatHistory, onNewChat, onRestoreChat
           </ul>
         </div>
 
-        {/* Mobile logout riêng biệt */}
-        <div className="p-4">
-          <button
-            onClick={handleOpenLogoutModal}
-            className="w-full flex items-center gap-2 p-2 bg-red-500 text-white rounded-md"
-          >
-            Logout
-          </button>
+        <div
+          className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 rounded-lg p-2 cursor-pointer"
+          onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+        >
+          <div className="w-8 h-8 bg-indigo-500 text-white flex items-center justify-center rounded-full font-semibold uppercase flex-shrink-0">
+            {userEmail?.charAt(0)}
+          </div>
+          <span className="text-sm font-medium text-gray-800 truncate max-w-[200px]">
+            {userEmail}
+          </span>
         </div>
+
+        {/* User dropdown menu (Logout) */}
+        {isUserMenuOpen && (
+          <div className="px-4 py-2">
+            <button
+              onClick={handleOpenLogoutModal}
+              className="w-full flex items-center gap-2 p-2 bg-red-500 text-white rounded-md justify-center"
+            >
+              Logout
+            </button>
+          </div>
+        )}
       </div>
 
       <Modal
