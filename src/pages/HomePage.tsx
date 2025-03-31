@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import SideBar from "../components/SideBar";
 import LanguageSelector from "../components/LanguageSelector";
 import { Breadcrumb, Button, Drawer, message } from "antd";
-import { MenuOutlined } from "@ant-design/icons";
+import { MenuOutlined, CloseOutlined } from "@ant-design/icons";
 import { useDynamicTitle } from "../hooks/useDynamicTitle";
 import { fetchYouTubeTitle, processVideo } from "../utils/api-client";
 import { useChatHistory } from "../hooks/useChatHistory";
@@ -334,8 +334,8 @@ const HomePage: React.FC = () => {
               <Button
                 type="text"
                 onClick={() => setDrawerOpen(false)}
-                icon={<span className="text-xl">✖</span>}
-                className="text-gray-200 hover:text-gray-800"
+                icon={<CloseOutlined className="text-xl" />}
+                className="text-gray-500 hover:text-black"
               />
             </div>
           }
@@ -446,22 +446,25 @@ const HomePage: React.FC = () => {
               </button>
             </div>
 
-            <div className="bg-white rounded-md shadow-sm p-4 min-h-[200px] max-h-[400px] overflow-auto">
+            <div className="bg-white rounded-md shadow-sm p-4 min-h-[200px] max-h-[400px] overflow-auto relative">
               {activeTab === 'progress' && (
                 <pre className="whitespace-pre-wrap text-gray-800 text-base">{progressOutput}</pre>
               )}
               {activeTab === 'result' && (
-              <>
-                <div className="flex justify-end items-end mb-2">
-                  <Button
-                    onClick={handleDownloadSrt}
-                    className="bg-blue-500 hover:bg-blue-600 text-white"
-                  >
-                    Download SRT
-                  </Button>
-                </div>
-                <pre className="whitespace-pre-wrap text-gray-800 text-base">{resultTranscript}</pre>
-              </>
+                <>
+                  <div className="absolute bottom-4 right-4 z-10">
+                    <Button
+                      onClick={handleDownloadSrt}
+                      className="bg-blue-500 hover:bg-blue-600 text-white"
+                    >
+                      Download SRT
+                    </Button>
+                  </div>
+
+                  <pre className="whitespace-pre-wrap text-gray-800 text-base pr-24">
+                    {resultTranscript}
+                  </pre>
+                </>
               )}
             </div>
           </div>
