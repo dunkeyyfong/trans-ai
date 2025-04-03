@@ -39,7 +39,7 @@ const Contact = () => {
                 </div>
             </div>
             
-            <div className="bg-white shadow-md rounded-lg p-6">
+            <div className="p-6">
                 <h3 className="text-xl font-semibold">Contact</h3>
                 <p className="text-gray-600 mb-4">You can reach us anytime</p>
                 <form className="space-y-4">
