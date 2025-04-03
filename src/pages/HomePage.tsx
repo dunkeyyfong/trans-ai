@@ -257,41 +257,7 @@ const HomePage: React.FC = () => {
   const handleLanguageChange = (language: string) => {
     setSelectedLanguage(language);
   };
-
-  const handleFileSummary = async (file: File) => {
-    const formData = new FormData();
-    formData.append("file", file);
-
-    const res = await fetch(`${API_URL}/api/summary`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${accessToken.current}`,
-      },
-      body: formData,
-    });
-
-    const data = await res.json();
-    setResultTranscript(data?.summary || "Không có kết quả");
-    setActiveTab("result");
-  };
-
-  const handleFileTranslate = async (file: File) => {
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("targetLanguage", selectedLanguage);
-
-    const res = await fetch(`${API_URL}/api/translate`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${accessToken.current}`,
-      },
-      body: formData,
-    });
-
-    const data = await res.json();
-    setResultTranscript(data?.translated || "Không có kết quả");
-    setActiveTab("result");
-  };
+ 
 
   const handleFileSelected = (file: File) => {
     if (file) {
@@ -582,26 +548,6 @@ const HomePage: React.FC = () => {
                   className="flex-1 px-2 py-1 bg-transparent focus:outline-none text-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
                 />
 
-                {mode === "file" && selectedFile && (
-                  <div className="flex flex-col sm:flex-row gap-4">
-                    <Button
-                      type="primary"
-                      onClick={() => handleFileSummary(selectedFile)}
-                      className="bg-indigo-600 hover:bg-indigo-700"
-                      block
-                    >
-                      Tóm tắt file
-                    </Button>
-
-                    <Button
-                      onClick={() => handleFileTranslate(selectedFile)}
-                      className="bg-green-600 hover:bg-green-700 text-white"
-                      block
-                    >
-                      Dịch file
-                    </Button>
-                  </div>
-                )}
               </div>
             </div>
 
