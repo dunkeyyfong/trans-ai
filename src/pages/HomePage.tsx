@@ -3,7 +3,11 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import SideBar from "../components/SideBar";
 import LanguageSelector from "../components/LanguageSelector";
 import { Breadcrumb, Button, Drawer, message } from "antd";
-import { MenuOutlined, CloseOutlined, PaperClipOutlined } from "@ant-design/icons";
+import {
+  MenuOutlined,
+  CloseOutlined,
+  PaperClipOutlined,
+} from "@ant-design/icons";
 import { useDynamicTitle } from "../hooks/useDynamicTitle";
 import { fetchYouTubeTitle, processVideo } from "../utils/api-client";
 import { useChatHistory } from "../hooks/useChatHistory";
@@ -21,7 +25,7 @@ interface User {
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const [link, setLink] = useState<string>("");
-  const accessToken = useRef<string>("")
+  const accessToken = useRef<string>("");
   const currentUserId = useRef<number>(0);
   const [userEmail, setUserEmail] = useState<string>("");
   const [userName, setUserName] = useState<string>("");
@@ -31,12 +35,12 @@ const HomePage: React.FC = () => {
   const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
   const [selectedLanguage, setSelectedLanguage] = useState<string>("en");
   const { title, setTitle } = useDynamicTitle();
-  const [activeTab, setActiveTab] = useState('progress')
-  const [progressOutput, setProgressOutput] = useState('')
-  const [resultTranscript, setResultTranscript] = useState('')
+  const [activeTab, setActiveTab] = useState("progress");
+  const [progressOutput, setProgressOutput] = useState("");
+  const [resultTranscript, setResultTranscript] = useState('');
   const [showAttachModal, setShowAttachModal] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [mode, setMode] = useState<'youtube' | 'file' | null>(null);
+  const [mode, setMode] = useState<"youtube" | "file" | null>(null);
 
   useEffect(() => {
     const userString = localStorage.getItem("user");
@@ -46,17 +50,20 @@ const HomePage: React.FC = () => {
         accessToken.current = user.accessToken;
         currentUserId.current = user.id;
         setUserEmail(user.email);
-        setUserName(user.name || "")
-        console.log(user)
+        setUserName(user.name || "");
+        console.log(user);
       } catch (error) {
         console.error("Error parsing user from localStorage", error);
       }
     } else {
-      navigate('/login')
+      navigate("/login");
     }
   }, []);
-  
-  const { chatHistory, setChatHistory, fetchChatHistory } = useChatHistory(currentUserId.current, accessToken.current);
+
+  const { chatHistory, setChatHistory, fetchChatHistory } = useChatHistory(
+    currentUserId.current,
+    accessToken.current
+  );
   const API_URL = import.meta.env.VITE_API_URL;
 
   // 🔹 Load chat history từ localStorage khi component mount
@@ -66,58 +73,56 @@ const HomePage: React.FC = () => {
     setTimeout(() => {
       setIsPageLoading(false);
     }, 1500);
-  
-  }, [])
+  }, []);
 
-    // Tự động tắt Drawer nếu đang mở trên desktop
-    useEffect(() => {
-      const handleResize = () => {
-        if (window.innerWidth >= 768) {
-          setDrawerOpen(false);
-        }
-      };
-    
-      window.addEventListener("resize", handleResize);
-      return () => window.removeEventListener("resize", handleResize);
-    }, []);
-  
+  // Tự động tắt Drawer nếu đang mở trên desktop
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setDrawerOpen(false);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   // 🔹 Tạo cuộc trò chuyện mới
   const handleNewChat = async (newChatTitle: string) => {
     setLink("");
     setTitle(newChatTitle);
-  
+
     try {
       const response = await fetch(`${API_URL}/api/create-history`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${accessToken.current}`
+          Authorization: `Bearer ${accessToken.current}`,
         },
         body: JSON.stringify({
           name: newChatTitle,
           id: currentUserId.current,
         }),
       });
-  
+
       if (!response.ok) {
         throw new Error("Failed to save chat history");
       }
 
-      const data = await response.json()
+      const data = await response.json();
 
       const newChat = { title: newChatTitle, id: data.id, url: "" };
-  
+
       setChatHistory((prev) => {
         const updatedChats = [newChat, ...prev];
         return updatedChats;
       });
-  
+
       navigate(`/home?id=${newChat.id}`);
     } catch (error) {
       console.error("Error saving chat to database:", error);
     }
   };
-  
 
   // xóa chat
   const handleDeleteChat = async (chatId: number) => {
@@ -126,75 +131,78 @@ const HomePage: React.FC = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${accessToken.current}`
+          Authorization: `Bearer ${accessToken.current}`,
         },
         body: JSON.stringify({
           idHistory: chatId,
           id: currentUserId.current,
         }),
       });
-  
+
       if (!response.ok) {
         throw new Error("Failed to save chat history");
       }
 
-      const data = await response.json()
+      const data = await response.json();
 
-      message.success(data)
+      message.success(data);
 
-      await fetchChatHistory()
-      
-      await navigate('/home')
+      await fetchChatHistory();
 
-      await window.location.reload()
+      await navigate("/home");
 
+      await window.location.reload();
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   };
-  
 
   // 🔹 Khôi phục cuộc trò chuyện cũ
   const handleRestoreChat = async (chatId: number) => {
     navigate(`/home?id=${chatId}`);
 
-    const response = await fetch(`${API_URL}/api/get-data-history?id=${encodeURIComponent(currentUserId.current)}&idHistory=${chatId}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${accessToken.current}`
+    const response = await fetch(
+      `${API_URL}/api/get-data-history?id=${encodeURIComponent(
+        currentUserId.current
+      )}&idHistory=${chatId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken.current}`,
+        },
       }
-    });
+    );
 
     if (!response.ok) {
       throw new Error("Failed to fetch history data");
     }
 
     const data = await response.json();
-    
-    setTitle(data.data.title)
-    setLink(data.data.message[0]?.url || '');
-    setResultTranscript(data.data.message[0]?.content || '');
-    setActiveTab('result');
+
+    setTitle(data.data.title);
+    setLink(data.data.message[0]?.url || "");
+    setResultTranscript(data.data.message[0]?.content || "");
+    setActiveTab("result");
   };
 
   // 🔹 Xác thực link YouTube
   const isValidYouTubeUrl = (url: string) => {
-    const regex = /^(https?:\/\/)?(www\.)?(youtube\.com\/(watch\?v=|embed\/|v\/)|youtu\.be\/)[a-zA-Z0-9_-]+/;
+    const regex =
+      /^(https?:\/\/)?(www\.)?(youtube\.com\/(watch\?v=|embed\/|v\/)|youtu\.be\/)[a-zA-Z0-9_-]+/;
     return regex.test(url);
   };
 
   // 🔹 Xử lý nhập URL video
   const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const url = e.target.value;
-    setMode('youtube');
+    setMode("youtube");
     setLink(url);
     setSelectedFile(null);
 
     if (isValidYouTubeUrl(url)) {
-  
       const chatId = searchParams.get("id");
-  
+
       if (chatId) {
         // 🔹 Nếu đã có chat hiện tại, chỉ cập nhật URL của nó, không thay đổi tiêu đề chat
         setChatHistory((prev) =>
@@ -203,30 +211,29 @@ const HomePage: React.FC = () => {
           )
         );
       } else {
-
         const titleVideo = await fetchYouTubeTitle(url);
 
         const response = await fetch(`${API_URL}/api/create-history`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${accessToken.current}`
+            Authorization: `Bearer ${accessToken.current}`,
           },
           body: JSON.stringify({ name: titleVideo, id: currentUserId.current }),
-        })
-  
-        const data = await response.json()
+        });
+
+        const data = await response.json();
 
         const newChat = { title: titleVideo, id: data.id, url: "" };
-  
+
         setChatHistory((prev) => {
           const updatedChats = [newChat, ...prev];
           return updatedChats;
         });
-  
+
         navigate(`/home?id=${newChat.id}`);
 
-        setTitle(titleVideo)
+        setTitle(titleVideo);
       }
     }
   };
@@ -234,13 +241,13 @@ const HomePage: React.FC = () => {
   const handleDownloadSrt = () => {
     // Nếu không có transcript, dùng chuỗi rỗng
     const content = resultTranscript || "";
-  
+
     // Tạo và tải file
-    const blob = new Blob([content], { type: 'text/srt' });
+    const blob = new Blob([content], { type: "text/srt" });
     const url = window.URL.createObjectURL(blob);
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = url;
-    link.download = `${title || 'transcript'}.srt`;
+    link.download = `${title || "transcript"}.srt`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -254,7 +261,7 @@ const HomePage: React.FC = () => {
   const handleFileSummary = async (file: File) => {
     const formData = new FormData();
     formData.append("file", file);
-  
+
     const res = await fetch(`${API_URL}/api/summary`, {
       method: "POST",
       headers: {
@@ -262,7 +269,7 @@ const HomePage: React.FC = () => {
       },
       body: formData,
     });
-  
+
     const data = await res.json();
     setResultTranscript(data?.summary || "Không có kết quả");
     setActiveTab("result");
@@ -272,7 +279,7 @@ const HomePage: React.FC = () => {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("targetLanguage", selectedLanguage);
-  
+
     const res = await fetch(`${API_URL}/api/translate`, {
       method: "POST",
       headers: {
@@ -280,7 +287,7 @@ const HomePage: React.FC = () => {
       },
       body: formData,
     });
-  
+
     const data = await res.json();
     setResultTranscript(data?.translated || "Không có kết quả");
     setActiveTab("result");
@@ -292,93 +299,107 @@ const HomePage: React.FC = () => {
       const newSearchParams = new URLSearchParams(searchParams);
       newSearchParams.set("file", file.name);
       navigate(`/home?${newSearchParams.toString()}`, { replace: true });
-  
+
       // Lưu vào state để xử lý ngoài modal
       setSelectedFile(file);
-      setMode('file');
+      setMode("file");
       setShowAttachModal(false); // tự động đóng modal nếu muốn
     }
   };
 
   const handleProcess = async () => {
     // Trường hợp user đã chọn file thì không được dùng "Start Processing"
-    if (mode === 'file') {
-      alert("You have selected a file. Please use the 'Summarize File' or 'Translate File' buttons instead.");
+    if (mode === "file") {
+      alert(
+        "You have selected a file. Please use the 'Summarize File' or 'Translate File' buttons instead."
+      );
       return;
     }
 
-    setResultTranscript('');
+    setResultTranscript("");
     setIsProcessing(true);
 
     const urlObj = new URL(link);
     const params = new URLSearchParams(urlObj.search);
     const videoId = params.get("v") || urlObj.pathname.split("/").pop();
-  
+
     if (!videoId) {
       alert("Invalid YouTube URL.");
       return;
     }
 
-    if (typeof videoId === 'string') {
-
+    if (typeof videoId === "string") {
       await fetch(`${API_URL}/api/update-history`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${accessToken.current}`
+          Authorization: `Bearer ${accessToken.current}`,
         },
         body: JSON.stringify({
           id: currentUserId.current,
           idHistory: searchParams.get("id"),
           url: link,
-          content: ""
-        })
+          content: "",
+        }),
       });
 
-      const transcriptInJapanese = await processVideo(videoId, (message: string) => {
-        setProgressOutput(prev => prev + message)
-      }, accessToken.current, API_URL, selectedLanguage)
+      const transcriptInJapanese = await processVideo(
+        videoId,
+        (message: string) => {
+          setProgressOutput((prev) => prev + message);
+        },
+        accessToken.current,
+        API_URL,
+        selectedLanguage
+      );
 
       if (transcriptInJapanese) {
         setResultTranscript(transcriptInJapanese);
-  
-        setActiveTab('result');
+
+        setActiveTab("result");
 
         await fetch(`${API_URL}/api/update-history`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${accessToken.current}`
+            Authorization: `Bearer ${accessToken.current}`,
           },
           body: JSON.stringify({
             id: currentUserId.current,
             idHistory: searchParams.get("id"),
             url: link,
-            content: resultTranscript
-          })
+            content: resultTranscript,
+          }),
         });
       }
-      setIsProcessing(false)
+      setIsProcessing(false);
     } else {
-      alert('Invalid URL')
-      setIsProcessing(false)
+      alert("Invalid URL");
+      setIsProcessing(false);
     }
   };
 
   // 🔹 Xử lý đăng xuất
   const handleLogout = () => {
     console.log("Logging out...");
-    localStorage.removeItem("user")
+    localStorage.removeItem("user");
     navigate("/login");
   };
-
 
   return (
     <div className="flex flex-col min-h-screen relative">
       <div className="flex flex-1 bg-gray-100">
         {/* Sidebar (Hiển thị trên laptop) */}
         <aside className="hidden md:block w-64 bg-white border-r">
-          <SideBar chatHistory={chatHistory} onNewChat={handleNewChat} onRestoreChat={handleRestoreChat} onDeleteChat={handleDeleteChat} onLogout={handleLogout} userEmail={userEmail} userName={userName}/>
+          <SideBar
+            chatHistory={chatHistory}
+            onNewChat={handleNewChat}
+            onRestoreChat={handleRestoreChat}
+            onDeleteChat={handleDeleteChat}
+            onLogout={handleLogout}
+            userEmail={userEmail}
+            userName={userName}
+          />
         </aside>
 
         {/* Drawer (Hiển thị trên mobile) */}
@@ -401,7 +422,15 @@ const HomePage: React.FC = () => {
           width={280}
           className="md:hidden"
         >
-          <SideBar chatHistory={chatHistory} onNewChat={handleNewChat} onRestoreChat={handleRestoreChat} onDeleteChat={handleDeleteChat} onLogout={handleLogout} userEmail={userEmail} userName={userName}/>
+          <SideBar
+            chatHistory={chatHistory}
+            onNewChat={handleNewChat}
+            onRestoreChat={handleRestoreChat}
+            onDeleteChat={handleDeleteChat}
+            onLogout={handleLogout}
+            userEmail={userEmail}
+            userName={userName}
+          />
         </Drawer>
 
         {/* Main Content */}
@@ -409,7 +438,9 @@ const HomePage: React.FC = () => {
           {/* Màn hình loading cho phần main */}
           {isPageLoading && (
             <div className="absolute inset-0 bg-white/70 backdrop-blur-md flex items-center justify-center z-50">
-              <h1 className="text-3xl font-semibold text-gray-800 animate-pulse">Loading...</h1>
+              <h1 className="text-3xl font-semibold text-gray-800 animate-pulse">
+                Loading...
+              </h1>
             </div>
           )}
 
@@ -424,37 +455,40 @@ const HomePage: React.FC = () => {
               />
             </div>
 
-          <div className="w-full max-w-6xl">
-            {searchParams.get("id") && (
-              <Breadcrumb className="mb-4 md:block hidden">
-                <Breadcrumb.Item>
-                  <span 
-                    onClick={() => {
-                      navigate('/home')
-                      window.location.reload()
-                    }} 
-                    className="cursor-pointer hover:text-gray-600"
-                  >
-                    Home
-                  </span>
-                </Breadcrumb.Item>
-                <Breadcrumb.Item>{title}</Breadcrumb.Item>
-              </Breadcrumb>
-            )}
+            <div className="w-full max-w-6xl">
+              {searchParams.get("id") && (
+                <Breadcrumb className="mb-4 md:block hidden">
+                  <Breadcrumb.Item>
+                    <span
+                      onClick={() => {
+                        navigate("/home");
+                        window.location.reload();
+                      }}
+                      className="cursor-pointer hover:text-gray-600"
+                    >
+                      Home
+                    </span>
+                  </Breadcrumb.Item>
+                  <Breadcrumb.Item>{title}</Breadcrumb.Item>
+                </Breadcrumb>
+              )}
 
-            {/* Tiêu đề video */}
-            <div className="w-full max-w-6xl bg-white py-4 px-6 shadow-md rounded-md text-center">
-              <h1 className="text-2xl font-semibold text-gray-800">{title}</h1>
-            </div>
+              {/* Tiêu đề video */}
+              <div className="w-full max-w-6xl bg-white py-4 px-6 shadow-md rounded-md text-center">
+                <h1 className="text-2xl font-semibold text-gray-800">
+                  {title}
+                </h1>
+              </div>
             </div>
           </div>
 
           {/* Nhập URL video */}
           <div className="flex flex-col md:flex-row md:items-center md:space-x-4 w-full max-w-6xl mt-6">
             <div className="w-full md:w-3/4">
-              <label className="block text-gray-700 font-medium mb-2">Video URL</label>
+              <label className="block text-gray-700 font-medium mb-2">
+                Video URL
+              </label>
               <div className="flex flex-wrap items-center gap-2 bg-white rounded-md shadow-md px-3 py-2 border focus-within:ring-2 focus-within:ring-indigo-500">
-
                 {/* Nút Ghim - Attach */}
                 <button
                   onClick={() => setShowAttachModal(true)}
@@ -468,7 +502,9 @@ const HomePage: React.FC = () => {
                 {selectedFile && (
                   <div className="flex items-center bg-gray-200 text-gray-700 px-2 py-1 rounded-md text-sm font-medium gap-1">
                     <FileIcon fileName={selectedFile.name} />
-                    <span className="truncate max-w-[150px]">{selectedFile.name}</span>
+                    <span className="truncate max-w-[150px]">
+                      {selectedFile.name}
+                    </span>
                     <button
                       onClick={() => {
                         setSelectedFile(null);
@@ -479,14 +515,12 @@ const HomePage: React.FC = () => {
                     >
                       <CloseOutlined className="text-xs" />
                     </button>
-
                   </div>
                 )}
 
                 {showAttachModal && (
                   <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center px-4">
                     <div className="bg-white dark:bg-[#1e1e1e] p-6 rounded-xl w-full max-w-md shadow-2xl relative">
-
                       {/* Nút đóng */}
                       <button
                         className="absolute top-3 right-3 text-gray-500 hover:text-red-500 text-lg"
@@ -498,8 +532,12 @@ const HomePage: React.FC = () => {
 
                       {/* Tiêu đề */}
                       <div className="text-center mb-6">
-                        <h2 className="text-2xl font-semibold text-gray-800 dark:text-white">Attach File</h2>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Drag and drop or select a file to upload</p>
+                        <h2 className="text-2xl font-semibold text-gray-800 dark:text-white">
+                          Attach File
+                        </h2>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          Drag and drop or select a file to upload
+                        </p>
                       </div>
 
                       {/* Khu vực drag/drop */}
@@ -540,16 +578,16 @@ const HomePage: React.FC = () => {
                   placeholder="https://www.youtube.com/watch?v=..."
                   value={link}
                   onChange={handleInputChange}
-                  disabled={mode === 'file'}
+                  disabled={mode === "file"}
                   className="flex-1 px-2 py-1 bg-transparent focus:outline-none text-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
                 />
 
-                {mode === 'file' && selectedFile && (
+                {mode === "file" && selectedFile && (
                   <div className="flex flex-col sm:flex-row gap-4">
                     <Button
                       type="primary"
                       onClick={() => handleFileSummary(selectedFile)}
-                      className="bg-blue-600 hover:bg-blue-700"
+                      className="bg-indigo-600 hover:bg-indigo-700"
                       block
                     >
                       Tóm tắt file
@@ -576,7 +614,9 @@ const HomePage: React.FC = () => {
           <button
             onClick={handleProcess}
             className={`mt-4 px-6 py-3 rounded-md shadow-md font-medium transition duration-300 ${
-              isProcessing ? "bg-gray-400 cursor-not-allowed" : "bg-indigo-600 text-white hover:bg-indigo-700"
+              isProcessing
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-indigo-600 text-white hover:bg-indigo-700"
             }`}
             disabled={isProcessing}
           >
@@ -584,46 +624,49 @@ const HomePage: React.FC = () => {
           </button>
 
           {/* Khung xử lý */}
-          <div className="w-full max-w-6xl mt-6">
-            <div className="flex border-b border-gray-300 mb-4">
-              <button
-                onClick={() => setActiveTab('progress')}
-                className={`px-4 py-2 font-medium text-sm border-b-2 transition-all ${
-                  activeTab === 'progress'
-                    ? 'border-indigo-600 text-indigo-600'
-                    : 'border-transparent text-gray-600 hover:text-indigo-500'
-                }`}
-              >
-                Progress
-              </button>
-              <button
-                onClick={() => setActiveTab('result')}
-                className={`ml-4 px-4 py-2 font-medium text-sm border-b-2 transition-all ${
-                  activeTab === 'result'
-                    ? 'border-indigo-600 text-indigo-600'
-                    : 'border-transparent text-gray-600 hover:text-indigo-500'
-                }`}
-              >
-                Result
-              </button>
+          <div className="w-full max-w-6xl mt-6 ">
+            <div className="flex border-b border-gray-300 mb-4 justify-between">
+              <div>
+                <button
+                  onClick={() => setActiveTab("progress")}
+                  className={`px-4 py-2 font-medium text-sm border-b-2 transition-all ${
+                    activeTab === "progress"
+                      ? "border-indigo-600 text-indigo-600"
+                      : "border-transparent text-gray-600 hover:text-indigo-500"
+                  }`}
+                >
+                  Progress
+                </button>
+                <button
+                  onClick={() => setActiveTab("result")}
+                  className={`ml-4 px-4 py-2 font-medium text-sm border-b-2 transition-all ${
+                    activeTab === "result"
+                      ? "border-indigo-600 text-indigo-600"
+                      : "border-transparent text-gray-600 hover:text-indigo-500"
+                  }`}
+                >
+                  Result
+                </button>
+              </div>
+              <div className="sticky bottom-0 right-0 z-10">
+                <Button
+                  onClick={handleDownloadSrt}
+                  className="bg-blue-500 hover:bg-blue-600 text-white"
+                >
+                  Download SRT
+                </Button>
+              </div>
             </div>
 
             <div className="bg-white rounded-md shadow-sm p-4 min-h-[200px] max-h-[400px] overflow-auto relative">
-              {activeTab === 'progress' && (
-                <pre className="whitespace-pre-wrap text-gray-800 text-base">{progressOutput}</pre>
+              {activeTab === "progress" && (
+                <pre className="whitespace-pre-wrap text-gray-800 text-base">
+                  {progressOutput}
+                </pre>
               )}
-              {activeTab === 'result' && (
+              {activeTab === "result" && (
                 <>
-                  <div className="absolute bottom-4 right-4 z-10">
-                    <Button
-                      onClick={handleDownloadSrt}
-                      className="bg-blue-500 hover:bg-blue-600 text-white"
-                    >
-                      Download SRT
-                    </Button>
-                  </div>
-
-                  <pre className="whitespace-pre-wrap text-gray-800 text-base pr-24">
+                  <pre className="whitespace-pre-wrap text-gray-800 text-base pr-24 pb-5">
                     {resultTranscript}
                   </pre>
                 </>
