@@ -3,10 +3,11 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import SideBar from "../components/SideBar";
 import LanguageSelector from "../components/LanguageSelector";
 import { Breadcrumb, Button, Drawer, message } from "antd";
-import { MenuOutlined, CloseOutlined } from "@ant-design/icons";
+import { MenuOutlined, CloseOutlined, PaperClipOutlined } from "@ant-design/icons";
 import { useDynamicTitle } from "../hooks/useDynamicTitle";
 import { fetchYouTubeTitle, processVideo } from "../utils/api-client";
 import { useChatHistory } from "../hooks/useChatHistory";
+import FileIcon from "../components/FileIcon";
 
 interface User {
   accessToken: string;
@@ -33,7 +34,10 @@ const HomePage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('progress')
   const [progressOutput, setProgressOutput] = useState('')
   const [resultTranscript, setResultTranscript] = useState('')
-  
+  const [showAttachModal, setShowAttachModal] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [mode, setMode] = useState<'youtube' | 'file' | null>(null);
+
   useEffect(() => {
     const userString = localStorage.getItem("user");
     if (userString) {
@@ -183,8 +187,10 @@ const HomePage: React.FC = () => {
   // 🔹 Xử lý nhập URL video
   const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const url = e.target.value;
+    setMode('youtube');
     setLink(url);
-  
+    setSelectedFile(null);
+
     if (isValidYouTubeUrl(url)) {
   
       const chatId = searchParams.get("id");
@@ -245,14 +251,63 @@ const HomePage: React.FC = () => {
     setSelectedLanguage(language);
   };
 
+  const handleFileSummary = async (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+  
+    const res = await fetch(`${API_URL}/api/summary`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken.current}`,
+      },
+      body: formData,
+    });
+  
+    const data = await res.json();
+    setResultTranscript(data?.summary || "Không có kết quả");
+    setActiveTab("result");
+  };
+
+  const handleFileTranslate = async (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("targetLanguage", selectedLanguage);
+  
+    const res = await fetch(`${API_URL}/api/translate`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken.current}`,
+      },
+      body: formData,
+    });
+  
+    const data = await res.json();
+    setResultTranscript(data?.translated || "Không có kết quả");
+    setActiveTab("result");
+  };
+
+  const handleFileSelected = (file: File) => {
+    if (file) {
+      // Cập nhật URL
+      const newSearchParams = new URLSearchParams(searchParams);
+      newSearchParams.set("file", file.name);
+      navigate(`/home?${newSearchParams.toString()}`, { replace: true });
+  
+      // Lưu vào state để xử lý ngoài modal
+      setSelectedFile(file);
+      setMode('file');
+      setShowAttachModal(false); // tự động đóng modal nếu muốn
+    }
+  };
+
   const handleProcess = async () => {
-    
-    if (!link || !isValidYouTubeUrl(link)) {
-      alert("Please enter a valid YouTube URL.");
+    // Trường hợp user đã chọn file thì không được dùng "Start Processing"
+    if (mode === 'file') {
+      alert("You have selected a file. Please use the 'Summarize File' or 'Translate File' buttons instead.");
       return;
     }
-    
-    setResultTranscript('')
+
+    setResultTranscript('');
     setIsProcessing(true);
 
     const urlObj = new URL(link);
@@ -398,16 +453,122 @@ const HomePage: React.FC = () => {
           <div className="flex flex-col md:flex-row md:items-center md:space-x-4 w-full max-w-6xl mt-6">
             <div className="w-full md:w-3/4">
               <label className="block text-gray-700 font-medium mb-2">Video URL</label>
-              <input
-                type="text"
-                placeholder="https://www.youtube.com/watch?v=..."
-                value={link}
-                onChange={handleInputChange}
-                className="w-full p-3 border rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+              <div className="flex flex-wrap items-center gap-2 bg-white rounded-md shadow-md px-3 py-2 border focus-within:ring-2 focus-within:ring-indigo-500">
+
+                {/* Nút Ghim - Attach */}
+                <button
+                  onClick={() => setShowAttachModal(true)}
+                  className="text-gray-600 hover:text-indigo-600"
+                  title="Attach file"
+                >
+                  <PaperClipOutlined className="text-xl transform rotate-[135deg]" />
+                </button>
+
+                {/* Chip hiển thị file nếu có */}
+                {selectedFile && (
+                  <div className="flex items-center bg-gray-200 text-gray-700 px-2 py-1 rounded-md text-sm font-medium gap-1">
+                    <FileIcon fileName={selectedFile.name} />
+                    <span className="truncate max-w-[150px]">{selectedFile.name}</span>
+                    <button
+                      onClick={() => {
+                        setSelectedFile(null);
+                        setMode(null);
+                      }}
+                      className="ml-1 hover:text-red-500"
+                      title="Remove file"
+                    >
+                      <CloseOutlined className="text-xs" />
+                    </button>
+
+                  </div>
+                )}
+
+                {showAttachModal && (
+                  <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center px-4">
+                    <div className="bg-white dark:bg-[#1e1e1e] p-6 rounded-xl w-full max-w-md shadow-2xl relative">
+
+                      {/* Nút đóng */}
+                      <button
+                        className="absolute top-3 right-3 text-gray-500 hover:text-red-500 text-lg"
+                        onClick={() => setShowAttachModal(false)}
+                        aria-label="Close"
+                      >
+                        <CloseOutlined />
+                      </button>
+
+                      {/* Tiêu đề */}
+                      <div className="text-center mb-6">
+                        <h2 className="text-2xl font-semibold text-gray-800 dark:text-white">Attach File</h2>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">Drag and drop or select a file to upload</p>
+                      </div>
+
+                      {/* Khu vực drag/drop */}
+                      <label
+                        htmlFor="file-upload"
+                        className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg h-40 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:border-indigo-500 hover:text-indigo-500 cursor-pointer transition-all duration-200"
+                        onDragOver={(e) => e.preventDefault()}
+                        onDrop={(e) => {
+                          e.preventDefault();
+                          const files = e.dataTransfer.files;
+                          if (files.length > 0) {
+                            handleFileSelected(files[0]);
+                          }
+                        }}
+                      >
+                        <div className="text-center">
+                          <p className="font-medium">Drag your file here</p>
+                          <p className="text-sm mt-1">or click to select</p>
+                        </div>
+                        <input
+                          id="file-upload"
+                          type="file"
+                          className="hidden"
+                          onChange={(e) => {
+                            const files = e.target.files;
+                            if (files && files.length > 0) {
+                              handleFileSelected(files[0]);
+                            }
+                          }}
+                        />
+                      </label>
+                    </div>
+                  </div>
+                )}
+
+                <input
+                  type="text"
+                  placeholder="https://www.youtube.com/watch?v=..."
+                  value={link}
+                  onChange={handleInputChange}
+                  disabled={mode === 'file'}
+                  className="flex-1 px-2 py-1 bg-transparent focus:outline-none text-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
+                />
+
+                {mode === 'file' && selectedFile && (
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <Button
+                      type="primary"
+                      onClick={() => handleFileSummary(selectedFile)}
+                      className="bg-blue-600 hover:bg-blue-700"
+                      block
+                    >
+                      Tóm tắt file
+                    </Button>
+
+                    <Button
+                      onClick={() => handleFileTranslate(selectedFile)}
+                      className="bg-green-600 hover:bg-green-700 text-white"
+                      block
+                    >
+                      Dịch file
+                    </Button>
+                  </div>
+                )}
+              </div>
             </div>
+
             <div className="w-full md:w-1/4 mt-4 md:mt-0">
-            <LanguageSelector onLanguageChange={handleLanguageChange} />
+              <LanguageSelector onLanguageChange={handleLanguageChange} />
             </div>
           </div>
 
@@ -422,6 +583,7 @@ const HomePage: React.FC = () => {
             {isProcessing ? "Processing..." : "Start Processing"}
           </button>
 
+          {/* Khung xử lý */}
           <div className="w-full max-w-6xl mt-6">
             <div className="flex border-b border-gray-300 mb-4">
               <button
