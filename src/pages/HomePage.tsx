@@ -189,7 +189,7 @@ const HomePage: React.FC = () => {
   // 🔹 Xác thực link YouTube
   const isValidYouTubeUrl = (url: string) => {
     const regex =
-      /^(https?:\/\/)?(www\.)?(youtube\.com\/(watch\?v=|embed\/|v\/)|youtu\.be\/)[a-zA-Z0-9_-]+/;
+      /^(https?:\/\/)?((www|m)\.)?(youtube\.com\/(watch\?v=|embed\/|v\/)|youtu\.be\/)[a-zA-Z0-9_-]+/;
     return regex.test(url);
   };
 
