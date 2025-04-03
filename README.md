@@ -80,4 +80,4 @@ chỉnh phần `transai_db:3306` thành `localhost:3306`. Chạy xong thì phả
 docker buildx build --platform linux/amd64 --target production -t dunkeyyfong/kotoba:v1 . --push
 
 ## Tài liệu đặc tả hệ thông 
-https://drive.google.com/drive/folders/1IBY4jVh2WVUUqnRhoy6FbzF0qN06-fzu?usp=drive_link
+https://drive.google.com/file/d/1j0OGfwGl4HFmdM5mQlwl3NqNeHlCJCf_/view?usp=drive_link
