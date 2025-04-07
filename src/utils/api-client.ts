@@ -70,7 +70,7 @@ export async function translate(srt: string, onProgress: ProgressCallback, acces
   const reader = response.body?.getReader()
 
   if (reader) {
-    const result = await streamResponse(reader, onProgress)
+    const result = await streamResponse(reader, () => {});
     return result
       .split('\n')
       .filter(line => {
@@ -88,26 +88,34 @@ export async function streamResponse(
     reader: ReadableStreamDefaultReader<Uint8Array>,
     onProgress: ProgressCallback
   ): Promise<string> {
-    return await new Promise(resolve => {
-      const decoder = new TextDecoder()
-      let result = ''
+    return await new Promise((resolve) => {
+      const decoder = new TextDecoder();
+      let result = '';
+      let lastChunk = '';
+
       const readChunk = ({
         done,
-        value
+        value,
       }: ReadableStreamReadResult<Uint8Array>) => {
         if (done) {
-          resolve(result)
-          return
+          resolve(result);
+          return;
         }
-  
-        const output = decoder.decode(value)
-        result += output
-        onProgress(output)
-        reader.read().then(readChunk)
-      }
-  
-      reader.read().then(readChunk)
-    })
+
+        const output = decoder.decode(value);
+        // lastChunk lưu lại phần nội dung đã đọc gần nhất.
+        // Nếu chunk mới giống hoàn toàn chunk trước (===), thì không gộp thêm vào result.
+        if (output !== lastChunk) {
+          result += output;
+          onProgress(output);
+          lastChunk = output;
+        }
+
+        reader.read().then(readChunk);
+      };
+
+      reader.read().then(readChunk);
+    });
   }
 
   export const fetchYouTubeTitle = async (url: string) => {

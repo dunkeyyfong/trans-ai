@@ -116,7 +116,7 @@ const SideBar: React.FC<SideBarProps> = ({ chatHistory, onNewChat, onRestoreChat
             onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
             className="flex items-center gap-2 p-2 rounded-lg bg-gray-100 hover:bg-gray-200 cursor-pointer transition-all"
           >
-            <div className="w-8 h-8 bg-indigo-500 text-white flex items-center justify-center rounded-full font-semibold uppercase flex-shrink-0">
+            <div className="w-8 h-8 bg-blue-500 text-white flex items-center justify-center rounded-full font-semibold uppercase flex-shrink-0">
               {userEmail?.charAt(0)}
             </div>
 
@@ -146,7 +146,7 @@ const SideBar: React.FC<SideBarProps> = ({ chatHistory, onNewChat, onRestoreChat
 
               {/* Avatar + Name + Email + Edit */}
               <div className="flex items-center gap-4 my-4">
-                <div className="w-14 h-14 rounded-full bg-indigo-500 text-white flex items-center justify-center text-2xl font-bold uppercase">
+                <div className="w-14 h-14 rounded-full bg-blue-500 text-white flex items-center justify-center text-2xl font-bold uppercase">
                   {userEmail?.charAt(0)}
                 </div>
 
@@ -220,7 +220,7 @@ const SideBar: React.FC<SideBarProps> = ({ chatHistory, onNewChat, onRestoreChat
           className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 rounded-lg p-2 cursor-pointer"
           onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
         >
-          <div className="w-8 h-8 bg-indigo-500 text-white flex items-center justify-center rounded-full font-semibold uppercase flex-shrink-0">
+          <div className="w-8 h-8 bg-blue-500 text-white flex items-center justify-center rounded-full font-semibold uppercase flex-shrink-0">
             {userEmail?.charAt(0)}
           </div>
           <span className="text-sm font-medium text-gray-800 truncate max-w-[200px]">
