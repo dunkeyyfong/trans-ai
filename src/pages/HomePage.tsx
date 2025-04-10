@@ -12,6 +12,7 @@ import { useDynamicTitle } from "../hooks/useDynamicTitle";
 import { fetchYouTubeTitle, processVideo } from "../utils/api-client";
 import { useChatHistory } from "../hooks/useChatHistory";
 import FileIcon from "../components/FileIcon";
+import ReactMarkdown from "react-markdown";
 
 interface User {
   accessToken: string;
@@ -358,26 +359,39 @@ const HomePage: React.FC = () => {
 
   const handleSummarize = async () => {
     if (isProcessingVideo) return;
-    if (!resultTranscript.trim()) {
+
+    if (!link || !isValidYouTubeUrl(link)) {
       notification.warning({
-        message: "Inexperienced",
-        description: "There is no content to summarize.",
+        message: "Invalid URL",
+        description: "Please enter a valid YouTube link.",
+      });
+      return;
+    }
+
+    setResultTranscript("");
+    setIsProcessingVideo(false);
+    setIsSummarizing(true);
+    
+    const urlObj = new URL(link);
+    const params = new URLSearchParams(urlObj.search);
+    const videoId = params.get("v") || urlObj.pathname.split("/").pop();
+
+    if (!videoId) {
+      notification.error({
+        message: "URL error",
+        description: "YouTube links are invalid.",
       });
       return;
     }
   
     setIsSummarizing(true);
     try {
-      const response = await fetch(`${API_URL}/api/summarize`, {
-        method: "POST",
+      const response = await fetch(`${API_URL}/api/summary?videoUrl=${videoId}`, {
+        method: "GET",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${accessToken.current}`,
         },
-        body: JSON.stringify({
-          content: resultTranscript,
-          language: selectedLanguage,
-        }),
       });
   
       if (!response.ok) throw new Error("Failed to summarize content");
@@ -616,7 +630,7 @@ const HomePage: React.FC = () => {
               }`}
               disabled={isProcessingVideo || isSummarizing}
             >
-              {isProcessingVideo ? "Processing..." : "Start Processing"}
+              {isProcessingVideo ? "Translating..." : "Translate"}
             </button>
 
             <button
@@ -675,9 +689,9 @@ const HomePage: React.FC = () => {
               )}
               {activeTab === "result" && (
                 <>
-                  <pre className="whitespace-pre-wrap text-gray-800 text-base pr-24 pb-5">
-                    {resultTranscript}
-                  </pre>
+                  <div className="whitespace-pre-wrap text-gray-800 text-base pr-24 pb-5">
+                    <ReactMarkdown>{resultTranscript}</ReactMarkdown>
+                  </div>
                 </>
               )}
             </div>

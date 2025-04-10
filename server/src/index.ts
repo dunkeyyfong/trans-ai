@@ -29,6 +29,7 @@ import { moveBackUp } from './util/moveBackUp'
 import { getInfoUser } from './controller/admin/getInfoUser'
 import { getAllVisit } from './controller/admin/getAllVisit'
 import { postResendEmail } from './controller/authenicate/postResendEmail'
+import { getSummary } from './controller/scripts/getSummary'
 
 const app = express()
 const server = http.createServer(app)
@@ -96,3 +97,6 @@ app.get('/api/transcribe', authenicateToken, getTranscribe)
 
 // Translate
 app.post('/api/translate', authenicateToken, postTranslate)
+
+// Summary
+app.get('/api/summary', authenicateToken, getSummary)
