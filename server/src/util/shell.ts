@@ -2,33 +2,25 @@ import { ChildProcessWithoutNullStreams } from "child_process";
 import { Response } from "express";
 
 export const transferChildProcessOutput = (cmd: ChildProcessWithoutNullStreams, res: Response) => {
-    const sendLine = (message: string) => {
-        message.toString().split('\n').forEach(line => {
-            if (line.trim() !== '') {
-                res.write(line + '\n')
-            }
-        })
-    }
-
-    cmd.stdout.on('data', (data) => {
-        console.log(`stdout: ${data}`)
-        sendLine(data)
-    })
-
-    cmd.stderr.on('data', (data) => {
-        console.error(`stderr: ${data}`)
-        sendLine(data)
-    })
-
-    cmd.on('close', (code) => {
-        sendLine(code?.toString() || 'Unknown error')
-    })
-
+    // Thiết lập response headers trước
     res.writeHead(200, {
         'Content-Type': 'text/plain',
         'Connection': 'keep-alive',
         'Cache-Control': 'no-cache',
     })
 
-    cmd.stdout.pipe(res)
+    // Sử dụng pipe thay vì xử lý thủ công để tránh trùng lặp
+    cmd.stdout.pipe(res, { end: false })
+    
+    // Xử lý các lỗi và log cho debug
+    cmd.stderr.on('data', (data) => {
+        console.error(`stderr: ${data}`)
+        // Chỉ ghi lỗi ra console, không gửi đến client để tránh trùng lặp
+    })
+
+    // Khi child process kết thúc
+    cmd.on('close', (code) => {
+        console.log(`Child process exited with code ${code}`)
+        res.end() // Kết thúc response khi process hoàn tất
+    })
 }

@@ -334,7 +334,7 @@ const HomePage: React.FC = () => {
             id: currentUserId.current,
             idHistory: searchParams.get("id"),
             url: link,
-            content: resultTranscript,
+            content: transcriptInJapanese,
           }),
         });
       }
