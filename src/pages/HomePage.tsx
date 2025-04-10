@@ -29,7 +29,6 @@ const HomePage: React.FC = () => {
   const currentUserId = useRef<number>(0);
   const [userEmail, setUserEmail] = useState<string>("");
   const [userName, setUserName] = useState<string>("");
-  const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [searchParams] = useSearchParams();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
@@ -40,7 +39,9 @@ const HomePage: React.FC = () => {
   const [resultTranscript, setResultTranscript] = useState('');
   const [showAttachModal, setShowAttachModal] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-
+  const [isProcessingVideo, setIsProcessingVideo] = useState(false);
+  const [isSummarizing, setIsSummarizing] = useState(false);
+  
   useEffect(() => {
     const userString = localStorage.getItem("user");
     if (userString) {
@@ -286,8 +287,9 @@ const HomePage: React.FC = () => {
     }
 
     setResultTranscript("");
-    setIsProcessing(true);
-
+    setIsProcessingVideo(true);
+    setIsSummarizing(false);
+    
     const urlObj = new URL(link);
     const params = new URLSearchParams(urlObj.search);
     const videoId = params.get("v") || urlObj.pathname.split("/").pop();
@@ -345,18 +347,18 @@ const HomePage: React.FC = () => {
           }),
         });
       }
-      setIsProcessing(false);
+      setIsProcessingVideo(false);
     } else {
       notification.error({
         message: "URL error",
         description: "Video pathway is invalid.",
       });
-      setIsProcessing(false);
+      setIsProcessingVideo(false);
     }
   };
 
   const handleSummarize = async () => {
-    if (isProcessing) return;
+    if (isProcessingVideo) return;
     if (!resultTranscript.trim()) {
       notification.warning({
         message: "Inexperienced",
@@ -365,8 +367,7 @@ const HomePage: React.FC = () => {
       return;
     }
   
-    setIsProcessing(true);
-  
+    setIsSummarizing(true);
     try {
       const response = await fetch(`${API_URL}/api/summarize`, {
         method: "POST",
@@ -380,9 +381,7 @@ const HomePage: React.FC = () => {
         }),
       });
   
-      if (!response.ok) {
-        throw new Error("Failed to summarize content");
-      }
+      if (!response.ok) throw new Error("Failed to summarize content");
   
       const data = await response.json();
       setResultTranscript(data.summary);
@@ -393,7 +392,7 @@ const HomePage: React.FC = () => {
         description: "Can not summarize the content. Please try again.",
       });
     } finally {
-      setIsProcessing(false);
+      setIsSummarizing(false);
     }
   };
 
@@ -612,25 +611,25 @@ const HomePage: React.FC = () => {
             <button
               onClick={handleProcess}
               className={`px-6 py-3 rounded-md shadow-md font-medium transition duration-300 ${
-                isProcessing
+                isProcessingVideo || isSummarizing
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-blue-600 text-white hover:bg-blue-700"
               }`}
-              disabled={isProcessing}
+              disabled={isProcessingVideo || isSummarizing}
             >
-              {isProcessing ? "Processing..." : "Start Processing"}
+              {isProcessingVideo ? "Processing..." : "Start Processing"}
             </button>
 
             <button
               onClick={handleSummarize}
               className={`px-6 py-3 rounded-md shadow-md font-medium transition duration-300 ${
-                isProcessing
+                isProcessingVideo || isSummarizing
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-green-600 text-white hover:bg-green-700"
               }`}
-              disabled={isProcessing}
+              disabled={isProcessingVideo || isSummarizing}
             >
-              {isProcessing ? "Summarizing..." : "Summarize"}
+              {isSummarizing ? "Summarizing..." : "Summarize"}
             </button>
           </div>
 
