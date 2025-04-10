@@ -12,6 +12,7 @@ import { useDynamicTitle } from "../hooks/useDynamicTitle";
 import { fetchYouTubeTitle, processVideo } from "../utils/api-client";
 import { useChatHistory } from "../hooks/useChatHistory";
 import FileIcon from "../components/FileIcon";
+import ReactMarkdown from "react-markdown";
 
 interface User {
   accessToken: string;
@@ -358,13 +359,6 @@ const HomePage: React.FC = () => {
 
   const handleSummarize = async () => {
     if (isProcessingVideo) return;
-    if (!resultTranscript.trim()) {
-      notification.warning({
-        message: "Inexperienced",
-        description: "There is no content to summarize.",
-      });
-      return;
-    }
 
     if (!link || !isValidYouTubeUrl(link)) {
       notification.warning({
@@ -636,7 +630,7 @@ const HomePage: React.FC = () => {
               }`}
               disabled={isProcessingVideo || isSummarizing}
             >
-              {isProcessingVideo ? "Processing..." : "Start Processing"}
+              {isProcessingVideo ? "Translating..." : "Translate"}
             </button>
 
             <button
@@ -695,9 +689,9 @@ const HomePage: React.FC = () => {
               )}
               {activeTab === "result" && (
                 <>
-                  <pre className="whitespace-pre-wrap text-gray-800 text-base pr-24 pb-5">
-                    {resultTranscript}
-                  </pre>
+                  <div className="whitespace-pre-wrap text-gray-800 text-base pr-24 pb-5">
+                    <ReactMarkdown>{resultTranscript}</ReactMarkdown>
+                  </div>
                 </>
               )}
             </div>

@@ -8,7 +8,7 @@ export const encoder = encoding_for_model('gpt-4');
 
 export async function summarizeTranscript(transcript: string) {
   const MAX_TOKENS = 8192; // Tổng giới hạn cho GPT-4
-  const promptTemplate = 'Đây là phụ đề của một video. Dựa hoàn toàn vào nội dung sau đây, tóm tắt chính xác: "{chunk}". Nội dung nói về cái gì, các yếu tố chính (chủ đề kinh tế, thương mại, thị trường tài chính), và timeline quan trọng (nếu có). Không thêm thông tin suy diễn ngoài dữ liệu cung cấp.';
+  const promptTemplate = 'Đây là nội dung của một video. Dựa hoàn toàn vào nội dung sau đây, tóm tắt chính xác: "{chunk}". Nội dung nói về cái gì, các yếu tố chính (chủ đề kinh tế, thương mại, thị trường tài chính), và timeline quan trọng (nếu có). Không thêm thông tin suy diễn ngoài dữ liệu cung cấp.';
   const promptTokens = encoder.encode(promptTemplate.replace('{chunk}', '')).length;
 
   // Áp dụng giới hạn an toàn 80% để tránh overflow

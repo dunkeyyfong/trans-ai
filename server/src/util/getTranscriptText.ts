@@ -10,7 +10,7 @@ export async function getTranscriptText(link: string) {
     const textNodes = result.transcript.text || []
 
     const transcript = textNodes
-      .map((node) => node._ || '')
+      .map((node: { _: string }) => node._ || '')
       .join(' ')
       .trim()
       .replace(/\n/g, ' ')

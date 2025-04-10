@@ -12,8 +12,7 @@ export const getSummary = async (req: Request, res: Response): Promise<void> => 
       return
     }
 
-    const videoId = videoUrl.split('v=')[1].split('&')[0]
-    const url = `https://www.youtube.com/watch?v=${videoId}`
+    const url = `https://www.youtube.com/watch?v=${videoUrl}`
 
     try {
       const response = await fetch(url)
@@ -25,7 +24,7 @@ export const getSummary = async (req: Request, res: Response): Promise<void> => 
         return
       }
 
-      const selectedCaption = captionsData.find((c) => c.language === 'English') || captionsData[0]
+      const selectedCaption = captionsData.find((c: { language: string }) => c.language === 'English') || captionsData[0]
       const transcript = await getTranscriptText(selectedCaption.link)
 
       if (!transcript) {
