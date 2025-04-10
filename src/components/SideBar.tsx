@@ -22,7 +22,6 @@ interface SideBarProps {
 const SideBar: React.FC<SideBarProps> = ({ chatHistory, onNewChat, onRestoreChat, onDeleteChat, onLogout, userEmail, userName }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [chatTitle, setChatTitle] = useState("");
-  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [deleteChatId, setDeleteChatId] = useState<number | null>(null);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const navigate = useNavigate();
@@ -55,12 +54,6 @@ const SideBar: React.FC<SideBarProps> = ({ chatHistory, onNewChat, onRestoreChat
   };
 
   const handleOpenLogoutModal = () => {
-    setIsUserMenuOpen(false);
-    setIsLogoutModalOpen(true);
-  };
-
-  const handleConfirmLogout = () => {
-    setIsLogoutModalOpen(false);
     localStorage.removeItem("user");
     onLogout();
     navigate("/login");
@@ -277,21 +270,6 @@ const SideBar: React.FC<SideBarProps> = ({ chatHistory, onNewChat, onRestoreChat
         <p>Are you sure you want to delete this chat?</p>
       </Modal>
 
-      <Modal
-        title="Confirm Logout"
-        open={isLogoutModalOpen}
-        onCancel={() => setIsLogoutModalOpen(false)}
-        footer={[
-          <Button key="cancel" onClick={() => setIsLogoutModalOpen(false)}>
-            Cancel
-          </Button>,
-          <Button key="logout" type="primary" danger onClick={handleConfirmLogout}>
-            Logout
-          </Button>,
-        ]}
-      >
-        <p>Are you sure you want to log out?</p>
-      </Modal>
     </>
   );
 };

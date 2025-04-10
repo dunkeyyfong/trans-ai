@@ -169,7 +169,7 @@ export async function streamResponse(
       let result = ''
       const readChunk = ({
         done,
-        value
+        value,
       }: ReadableStreamReadResult<Uint8Array>) => {
         if (done) {
           console.log(`[streamResponse] Stream completed: ${chunkCount} chunks, ${totalBytes} bytes total, result length: ${result.length} characters`)
