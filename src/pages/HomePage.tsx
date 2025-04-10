@@ -365,19 +365,39 @@ const HomePage: React.FC = () => {
       });
       return;
     }
+
+    if (!link || !isValidYouTubeUrl(link)) {
+      notification.warning({
+        message: "Invalid URL",
+        description: "Please enter a valid YouTube link.",
+      });
+      return;
+    }
+
+    setResultTranscript("");
+    setIsProcessingVideo(false);
+    setIsSummarizing(true);
+    
+    const urlObj = new URL(link);
+    const params = new URLSearchParams(urlObj.search);
+    const videoId = params.get("v") || urlObj.pathname.split("/").pop();
+
+    if (!videoId) {
+      notification.error({
+        message: "URL error",
+        description: "YouTube links are invalid.",
+      });
+      return;
+    }
   
     setIsSummarizing(true);
     try {
-      const response = await fetch(`${API_URL}/api/summarize`, {
-        method: "POST",
+      const response = await fetch(`${API_URL}/api/summary?videoUrl=${videoId}`, {
+        method: "GET",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${accessToken.current}`,
         },
-        body: JSON.stringify({
-          content: resultTranscript,
-          language: selectedLanguage,
-        }),
       });
   
       if (!response.ok) throw new Error("Failed to summarize content");
