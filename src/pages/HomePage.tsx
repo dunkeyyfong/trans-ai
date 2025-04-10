@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import SideBar from "../components/SideBar";
 import LanguageSelector from "../components/LanguageSelector";
-import { Breadcrumb, Button, Drawer, message } from "antd";
+import { Breadcrumb, Button, Drawer, notification } from "antd";
 import {
   MenuOutlined,
   CloseOutlined,
@@ -40,7 +40,6 @@ const HomePage: React.FC = () => {
   const [resultTranscript, setResultTranscript] = useState('');
   const [showAttachModal, setShowAttachModal] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [mode, setMode] = useState<"youtube" | "file" | null>(null);
 
   useEffect(() => {
     const userString = localStorage.getItem("user");
@@ -145,13 +144,19 @@ const HomePage: React.FC = () => {
 
       const data = await response.json();
 
-      message.success(data);
+      notification.success({
+        message: "Xóa thành công",
+        description: typeof data === "string" ? data : data.message || "Thành công",
+      });
 
+      // await fetchChatHistory();
+
+      // await navigate("/home");
+
+      // await window.location.reload();
+      navigate("/home", { replace: true });
       await fetchChatHistory();
 
-      await navigate("/home");
-
-      await window.location.reload();
     } catch (error) {
       console.log(error);
     }
@@ -196,7 +201,6 @@ const HomePage: React.FC = () => {
   // 🔹 Xử lý nhập URL video
   const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const url = e.target.value;
-    setMode("youtube");
     setLink(url);
     setSelectedFile(null);
 
@@ -266,19 +270,18 @@ const HomePage: React.FC = () => {
       newSearchParams.set("file", file.name);
       navigate(`/home?${newSearchParams.toString()}`, { replace: true });
 
-      // Lưu vào state để xử lý ngoài modal
       setSelectedFile(file);
-      setMode("file");
-      setShowAttachModal(false); // tự động đóng modal nếu muốn
+      setShowAttachModal(false);
     }
   };
 
   const handleProcess = async () => {
-    // Trường hợp user đã chọn file thì không được dùng "Start Processing"
-    if (mode === "file") {
-      alert(
-        "You have selected a file. Please use the 'Summarize File' or 'Translate File' buttons instead."
-      );
+
+    if (!link || !isValidYouTubeUrl(link)) {
+      notification.warning({
+        message: "Invalid URL",
+        description: "Please enter a valid YouTube link.",
+      });
       return;
     }
 
@@ -290,7 +293,10 @@ const HomePage: React.FC = () => {
     const videoId = params.get("v") || urlObj.pathname.split("/").pop();
 
     if (!videoId) {
-      alert("Invalid YouTube URL.");
+      notification.error({
+        message: "URL error",
+        description: "YouTube links are invalid.",
+      });
       return;
     }
 
@@ -340,7 +346,52 @@ const HomePage: React.FC = () => {
       }
       setIsProcessing(false);
     } else {
-      alert("Invalid URL");
+      notification.error({
+        message: "URL error",
+        description: "Video pathway is invalid.",
+      });
+      setIsProcessing(false);
+    }
+  };
+
+  const handleSummarize = async () => {
+    if (isProcessing) return;
+    if (!resultTranscript.trim()) {
+      notification.warning({
+        message: "Inexperienced",
+        description: "There is no content to summarize.",
+      });
+      return;
+    }
+  
+    setIsProcessing(true);
+  
+    try {
+      const response = await fetch(`${API_URL}/api/summarize`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken.current}`,
+        },
+        body: JSON.stringify({
+          content: resultTranscript,
+          language: selectedLanguage,
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to summarize content");
+      }
+  
+      const data = await response.json();
+      setResultTranscript(data.summary);
+      setActiveTab("result");
+    } catch {
+      notification.error({
+        message: "Summary of failure",
+        description: "Can not summarize the content. Please try again.",
+      });
+    } finally {
       setIsProcessing(false);
     }
   };
@@ -454,11 +505,11 @@ const HomePage: React.FC = () => {
               <label className="block text-gray-700 font-medium mb-2">
                 Video URL
               </label>
-              <div className="flex flex-wrap items-center gap-2 bg-white rounded-md shadow-md px-3 py-2 border focus-within:ring-2 focus-within:ring-indigo-500">
+              <div className="flex flex-wrap items-center gap-2 bg-white rounded-md shadow-md px-3 py-2 border focus-within:ring-2 focus-within:ring-blue-500">
                 {/* Nút Ghim - Attach */}
                 <button
                   onClick={() => setShowAttachModal(true)}
-                  className="text-gray-600 hover:text-indigo-600"
+                  className="text-gray-600 hover:text-blue-600"
                   title="Attach file"
                 >
                   <PaperClipOutlined className="text-xl transform rotate-[135deg]" />
@@ -474,7 +525,6 @@ const HomePage: React.FC = () => {
                     <button
                       onClick={() => {
                         setSelectedFile(null);
-                        setMode(null);
                       }}
                       className="ml-1 hover:text-red-500"
                       title="Remove file"
@@ -509,7 +559,7 @@ const HomePage: React.FC = () => {
                       {/* Khu vực drag/drop */}
                       <label
                         htmlFor="file-upload"
-                        className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg h-40 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:border-indigo-500 hover:text-indigo-500 cursor-pointer transition-all duration-200"
+                        className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg h-40 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:border-blue-500 hover:text-blue-500 cursor-pointer transition-all duration-200"
                         onDragOver={(e) => e.preventDefault()}
                         onDrop={(e) => {
                           e.preventDefault();
@@ -544,7 +594,7 @@ const HomePage: React.FC = () => {
                   placeholder="https://www.youtube.com/watch?v=..."
                   value={link}
                   onChange={handleInputChange}
-                  disabled={mode === "file"}
+                  disabled={!!selectedFile}
                   className="flex-1 px-2 py-1 bg-transparent focus:outline-none text-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
                 />
 
@@ -557,17 +607,31 @@ const HomePage: React.FC = () => {
           </div>
 
           {/* Nút xử lý */}
-          <button
-            onClick={handleProcess}
-            className={`mt-4 px-6 py-3 rounded-md shadow-md font-medium transition duration-300 ${
-              isProcessing
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-indigo-600 text-white hover:bg-indigo-700"
-            }`}
-            disabled={isProcessing}
-          >
-            {isProcessing ? "Processing..." : "Start Processing"}
-          </button>
+          <div className="flex flex-wrap gap-4 mt-4">
+            <button
+              onClick={handleProcess}
+              className={`px-6 py-3 rounded-md shadow-md font-medium transition duration-300 ${
+                isProcessing
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-blue-600 text-white hover:bg-blue-700"
+              }`}
+              disabled={isProcessing}
+            >
+              {isProcessing ? "Processing..." : "Start Processing"}
+            </button>
+
+            <button
+              onClick={handleSummarize}
+              className={`px-6 py-3 rounded-md shadow-md font-medium transition duration-300 ${
+                isProcessing
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-green-600 text-white hover:bg-green-700"
+              }`}
+              disabled={isProcessing}
+            >
+              {isProcessing ? "Summarizing..." : "Summarize"}
+            </button>
+          </div>
 
           {/* Khung xử lý */}
           <div className="w-full max-w-6xl mt-6 ">
@@ -577,8 +641,8 @@ const HomePage: React.FC = () => {
                   onClick={() => setActiveTab("progress")}
                   className={`px-4 py-2 font-medium text-sm border-b-2 transition-all ${
                     activeTab === "progress"
-                      ? "border-indigo-600 text-indigo-600"
-                      : "border-transparent text-gray-600 hover:text-indigo-500"
+                      ? "border-blue-600 text-blue-600"
+                      : "border-transparent text-gray-600 hover:text-blue-500"
                   }`}
                 >
                   Progress
@@ -587,8 +651,8 @@ const HomePage: React.FC = () => {
                   onClick={() => setActiveTab("result")}
                   className={`ml-4 px-4 py-2 font-medium text-sm border-b-2 transition-all ${
                     activeTab === "result"
-                      ? "border-indigo-600 text-indigo-600"
-                      : "border-transparent text-gray-600 hover:text-indigo-500"
+                      ? "border-blue-600 text-blue-600"
+                      : "border-transparent text-gray-600 hover:text-blue-500"
                   }`}
                 >
                   Result
