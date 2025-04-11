@@ -147,18 +147,19 @@ const HomePage: React.FC = () => {
       const data = await response.json();
 
       notification.success({
-        message: "Xóa thành công",
+        message: "Delete success ",
         description:
-          typeof data === "string" ? data : data.message || "Thành công",
+          typeof data === "string" ? data : data.message || "Success",
       });
 
-      // await fetchChatHistory();
-
-      // await navigate("/home");
-
-      // await window.location.reload();
+      setChatHistory([]);
+      localStorage.removeItem("chatHistory");
+      await fetchChatHistory()
       navigate("/home", { replace: true });
-      await fetchChatHistory();
+      setLink("");
+      setTitle("YouTube Subtitle Processor");
+      setResultTranscript("");
+      setActiveTab("progress");
     } catch (error) {
       console.log(error);
     }
@@ -188,15 +189,21 @@ const HomePage: React.FC = () => {
     const data = await response.json();
 
     setTitle(data.data.title);
-    setLink(data.data.message[0]?.url || "");
-    if (!data.data || data.data.message.length === 0) {
+
+    const latestMessage = data.data.message?.[data.data.message.length - 1];
+
+    if (latestMessage) {
+      setLink(latestMessage.url || "");
+      setResultTranscript(latestMessage.message || "");
+      setActiveTab("result");
+    } else {
+      setLink("");
+      setResultTranscript("");
       notification.warning({
         message: "No data found",
         description: "This chat does not contain any content yet.",
       });
-      return;
     }
-    setActiveTab("result");
   };
 
   // 🔹 Xác thực link YouTube
@@ -216,7 +223,6 @@ const HomePage: React.FC = () => {
       const chatId = searchParams.get("id");
 
       if (chatId) {
-        // 🔹 Nếu đã có chat hiện tại, chỉ cập nhật URL của nó, không thay đổi tiêu đề chat
         setChatHistory((prev) =>
           prev.map((chat) =>
             chat.id.toString() === chatId ? { ...chat, url } : chat
@@ -334,23 +340,8 @@ const HomePage: React.FC = () => {
 
       if (transcriptInJapanese) {
         setResultTranscript(transcriptInJapanese);
-        if (!transcriptInJapanese.trim()) {
-          notification.error({
-            message: "Nội dung rỗng",
-            description: "Không thể lưu vì không có nội dung transcript.",
-          });
-          return;
-        }
         setActiveTab("result");
-        const historyId = searchParams.get("id");
 
-        if (!historyId) {
-          notification.error({
-            message: "Missing chat ID",
-            description: "Cannot save without chat ID.",
-          });
-          return;
-        }
         await fetch(`${API_URL}/api/update-history`, {
           method: "POST",
           headers: {
@@ -365,7 +356,6 @@ const HomePage: React.FC = () => {
           }),
         });
       }
-      console.log("🟢 content to save:", transcriptInJapanese);
       setIsProcessingVideo(false);
     } else {
       notification.error({
@@ -388,23 +378,22 @@ const HomePage: React.FC = () => {
     }
 
     setResultTranscript("");
+    setIsSummarizing(true);
     setIsProcessingVideo(false);
-    setIsSummarizing(true);
 
-    const urlObj = new URL(link);
-    const params = new URLSearchParams(urlObj.search);
-    const videoId = params.get("v") || urlObj.pathname.split("/").pop();
-
-    if (!videoId) {
-      notification.error({
-        message: "URL error",
-        description: "YouTube links are invalid.",
-      });
-      return;
-    }
-
-    setIsSummarizing(true);
     try {
+      const urlObj = new URL(link);
+      const params = new URLSearchParams(urlObj.search);
+      const videoId = params.get("v") || urlObj.pathname.split("/").pop();
+
+      if (!videoId) {
+        notification.error({
+          message: "URL error",
+          description: "YouTube link is invalid or missing video ID.",
+        });
+        return;
+      }
+
       const response = await fetch(
         `${API_URL}/api/summary?videoUrl=${videoId}`,
         {
@@ -416,15 +405,52 @@ const HomePage: React.FC = () => {
         }
       );
 
-      if (!response.ok) throw new Error("Failed to summarize content");
+      if (!response.ok) {
+        throw new Error("Failed to summarize content");
+      }
 
       const data = await response.json();
-      setResultTranscript(data.summary);
+      const summary = data.summary || "";
+
+      setResultTranscript(summary);
       setActiveTab("result");
-    } catch {
+
+      if (!summary.trim()) {
+        notification.warning({
+          message: "Empty Summary",
+          description: "The summarized content is empty. Nothing to save.",
+        });
+        return;
+      }
+
+      const historyId = searchParams.get("id");
+
+      if (!historyId) {
+        notification.error({
+          message: "Missing Chat ID",
+          description: "Cannot save summary without a valid chat ID.",
+        });
+        return;
+      }
+
+      await fetch(`${API_URL}/api/update-history`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken.current}`,
+        },
+        body: JSON.stringify({
+          id: currentUserId.current,
+          idHistory: historyId,
+          url: link,
+          content: summary,
+        }),
+      });
+    } catch (error) {
+      console.error("Error during summarization:", error);
       notification.error({
-        message: "Summary of failure",
-        description: "Can not summarize the content. Please try again.",
+        message: "Summary Failed",
+        description: "Unable to summarize the video content. Please try again.",
       });
     } finally {
       setIsSummarizing(false);
