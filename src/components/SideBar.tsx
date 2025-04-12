@@ -251,6 +251,11 @@ const SideBar: React.FC<SideBarProps> = ({ chatHistory, onNewChat, onRestoreChat
           placeholder="Enter chat name"
           value={chatTitle}
           onChange={(e) => setChatTitle(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleCreateChat();
+            }
+          }}
         />
       </Modal>
 
@@ -262,14 +267,19 @@ const SideBar: React.FC<SideBarProps> = ({ chatHistory, onNewChat, onRestoreChat
           <Button key="cancel" onClick={() => setDeleteChatId(null)}>
             Cancel
           </Button>,
-          <Button key="delete" type="primary" danger onClick={handleConfirmDeleteChat}>
+          <Button
+            key="delete"
+            type="primary"
+            danger
+            onClick={handleConfirmDeleteChat}
+            autoFocus
+          >
             Delete
           </Button>,
         ]}
       >
         <p>Are you sure you want to delete this chat?</p>
       </Modal>
-
     </>
   );
 };

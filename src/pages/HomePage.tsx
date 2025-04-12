@@ -92,6 +92,8 @@ const HomePage: React.FC = () => {
   const handleNewChat = async (newChatTitle: string) => {
     setLink("");
     setTitle(newChatTitle);
+    setResultTranscript("");
+    setActiveTab("progress");
 
     try {
       const response = await fetch(`${API_URL}/api/create-history`, {
@@ -199,10 +201,6 @@ const HomePage: React.FC = () => {
     } else {
       setLink("");
       setResultTranscript("");
-      notification.warning({
-        message: "No data found",
-        description: "This chat does not contain any content yet.",
-      });
     }
   };
 
