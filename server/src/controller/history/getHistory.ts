@@ -26,7 +26,7 @@ export const getHistory = async (req: Request, res: Response): Promise<void> => 
       }
     })
 
-    res.status(201).json({ message: 'Get History Successful', data: dataHistory })
+    res.status(200).json({ message: 'Get History Successful', data: dataHistory })
   } catch (error) {
     res.sendStatus(500)
     console.log(error)

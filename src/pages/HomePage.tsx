@@ -6,12 +6,12 @@ import { Breadcrumb, Button, Drawer, notification } from "antd";
 import {
   MenuOutlined,
   CloseOutlined,
-  PaperClipOutlined,
+  // PaperClipOutlined,
 } from "@ant-design/icons";
 import { useDynamicTitle } from "../hooks/useDynamicTitle";
 import { fetchYouTubeTitle, processVideo } from "../utils/api-client";
 import { useChatHistory } from "../hooks/useChatHistory";
-import FileIcon from "../components/FileIcon";
+// import FileIcon from "../components/FileIcon";
 import ReactMarkdown from "react-markdown";
 
 interface User {
@@ -37,12 +37,12 @@ const HomePage: React.FC = () => {
   const { title, setTitle } = useDynamicTitle();
   const [activeTab, setActiveTab] = useState("progress");
   const [progressOutput, setProgressOutput] = useState("");
-  const [resultTranscript, setResultTranscript] = useState('');
-  const [showAttachModal, setShowAttachModal] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [resultTranscript, setResultTranscript] = useState("");
+  // const [showAttachModal, setShowAttachModal] = useState(false);
+  // const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isProcessingVideo, setIsProcessingVideo] = useState(false);
   const [isSummarizing, setIsSummarizing] = useState(false);
-  
+
   useEffect(() => {
     const userString = localStorage.getItem("user");
     if (userString) {
@@ -147,18 +147,19 @@ const HomePage: React.FC = () => {
       const data = await response.json();
 
       notification.success({
-        message: "Xóa thành công",
-        description: typeof data === "string" ? data : data.message || "Thành công",
+        message: "Delete success ",
+        description:
+          typeof data === "string" ? data : data.message || "Success",
       });
 
-      // await fetchChatHistory();
-
-      // await navigate("/home");
-
-      // await window.location.reload();
+      setChatHistory([]);
+      localStorage.removeItem("chatHistory");
+      await fetchChatHistory()
       navigate("/home", { replace: true });
-      await fetchChatHistory();
-
+      setLink("");
+      setTitle("YouTube Subtitle Processor");
+      setResultTranscript("");
+      setActiveTab("progress");
     } catch (error) {
       console.log(error);
     }
@@ -188,9 +189,21 @@ const HomePage: React.FC = () => {
     const data = await response.json();
 
     setTitle(data.data.title);
-    setLink(data.data.message[0]?.url || "");
-    setResultTranscript(data.data.message[0]?.content || "");
-    setActiveTab("result");
+
+    const latestMessage = data.data.message?.[data.data.message.length - 1];
+
+    if (latestMessage) {
+      setLink(latestMessage.url || "");
+      setResultTranscript(latestMessage.message || "");
+      setActiveTab("result");
+    } else {
+      setLink("");
+      setResultTranscript("");
+      notification.warning({
+        message: "No data found",
+        description: "This chat does not contain any content yet.",
+      });
+    }
   };
 
   // 🔹 Xác thực link YouTube
@@ -204,13 +217,12 @@ const HomePage: React.FC = () => {
   const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const url = e.target.value;
     setLink(url);
-    setSelectedFile(null);
+    // setSelectedFile(null);
 
     if (isValidYouTubeUrl(url)) {
       const chatId = searchParams.get("id");
 
       if (chatId) {
-        // 🔹 Nếu đã có chat hiện tại, chỉ cập nhật URL của nó, không thay đổi tiêu đề chat
         setChatHistory((prev) =>
           prev.map((chat) =>
             chat.id.toString() === chatId ? { ...chat, url } : chat
@@ -263,22 +275,20 @@ const HomePage: React.FC = () => {
   const handleLanguageChange = (language: string) => {
     setSelectedLanguage(language);
   };
- 
 
-  const handleFileSelected = (file: File) => {
-    if (file) {
-      // Cập nhật URL
-      const newSearchParams = new URLSearchParams(searchParams);
-      newSearchParams.set("file", file.name);
-      navigate(`/home?${newSearchParams.toString()}`, { replace: true });
+  // const handleFileSelected = (file: File) => {
+  //   if (file) {
+  //     // Cập nhật URL
+  //     const newSearchParams = new URLSearchParams(searchParams);
+  //     newSearchParams.set("file", file.name);
+  //     navigate(`/home?${newSearchParams.toString()}`, { replace: true });
 
-      setSelectedFile(file);
-      setShowAttachModal(false);
-    }
-  };
+  //     setSelectedFile(file);
+  //     setShowAttachModal(false);
+  //   }
+  // };
 
   const handleProcess = async () => {
-
     if (!link || !isValidYouTubeUrl(link)) {
       notification.warning({
         message: "Invalid URL",
@@ -290,7 +300,7 @@ const HomePage: React.FC = () => {
     setResultTranscript("");
     setIsProcessingVideo(true);
     setIsSummarizing(false);
-    
+
     const urlObj = new URL(link);
     const params = new URLSearchParams(urlObj.search);
     const videoId = params.get("v") || urlObj.pathname.split("/").pop();
@@ -330,7 +340,6 @@ const HomePage: React.FC = () => {
 
       if (transcriptInJapanese) {
         setResultTranscript(transcriptInJapanese);
-
         setActiveTab("result");
 
         await fetch(`${API_URL}/api/update-history`, {
@@ -369,40 +378,79 @@ const HomePage: React.FC = () => {
     }
 
     setResultTranscript("");
+    setIsSummarizing(true);
     setIsProcessingVideo(false);
-    setIsSummarizing(true);
-    
-    const urlObj = new URL(link);
-    const params = new URLSearchParams(urlObj.search);
-    const videoId = params.get("v") || urlObj.pathname.split("/").pop();
 
-    if (!videoId) {
-      notification.error({
-        message: "URL error",
-        description: "YouTube links are invalid.",
-      });
-      return;
-    }
-  
-    setIsSummarizing(true);
     try {
-      const response = await fetch(`${API_URL}/api/summary?videoUrl=${videoId}`, {
-        method: "GET",
+      const urlObj = new URL(link);
+      const params = new URLSearchParams(urlObj.search);
+      const videoId = params.get("v") || urlObj.pathname.split("/").pop();
+
+      if (!videoId) {
+        notification.error({
+          message: "URL error",
+          description: "YouTube link is invalid or missing video ID.",
+        });
+        return;
+      }
+
+      const response = await fetch(
+        `${API_URL}/api/summary?videoUrl=${videoId}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken.current}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to summarize content");
+      }
+
+      const data = await response.json();
+      const summary = data.summary || "";
+
+      setResultTranscript(summary);
+      setActiveTab("result");
+
+      if (!summary.trim()) {
+        notification.warning({
+          message: "Empty Summary",
+          description: "The summarized content is empty. Nothing to save.",
+        });
+        return;
+      }
+
+      const historyId = searchParams.get("id");
+
+      if (!historyId) {
+        notification.error({
+          message: "Missing Chat ID",
+          description: "Cannot save summary without a valid chat ID.",
+        });
+        return;
+      }
+
+      await fetch(`${API_URL}/api/update-history`, {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${accessToken.current}`,
         },
+        body: JSON.stringify({
+          id: currentUserId.current,
+          idHistory: historyId,
+          url: link,
+          content: summary,
+        }),
       });
-  
-      if (!response.ok) throw new Error("Failed to summarize content");
-  
-      const data = await response.json();
-      setResultTranscript(data.summary);
-      setActiveTab("result");
-    } catch {
+    } catch (error) {
+      console.error("Error during summarization:", error);
       notification.error({
-        message: "Summary of failure",
-        description: "Can not summarize the content. Please try again.",
+        message: "Summary Failed",
+        description: "Unable to summarize the video content. Please try again.",
       });
     } finally {
       setIsSummarizing(false);
@@ -519,17 +567,15 @@ const HomePage: React.FC = () => {
                 Video URL
               </label>
               <div className="flex flex-wrap items-center gap-2 bg-white rounded-md shadow-md px-3 py-2 border focus-within:ring-2 focus-within:ring-blue-500">
-                {/* Nút Ghim - Attach */}
-                <button
+                {/* <button
                   onClick={() => setShowAttachModal(true)}
                   className="text-gray-600 hover:text-blue-600"
                   title="Attach file"
                 >
                   <PaperClipOutlined className="text-xl transform rotate-[135deg]" />
-                </button>
+                </button> */}
 
-                {/* Chip hiển thị file nếu có */}
-                {selectedFile && (
+                {/* {selectedFile && (
                   <div className="flex items-center bg-gray-200 text-gray-700 px-2 py-1 rounded-md text-sm font-medium gap-1">
                     <FileIcon fileName={selectedFile.name} />
                     <span className="truncate max-w-[150px]">
@@ -545,12 +591,11 @@ const HomePage: React.FC = () => {
                       <CloseOutlined className="text-xs" />
                     </button>
                   </div>
-                )}
+                )} */}
 
-                {showAttachModal && (
+                {/* {showAttachModal && (
                   <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center px-4">
                     <div className="bg-white dark:bg-[#1e1e1e] p-6 rounded-xl w-full max-w-md shadow-2xl relative">
-                      {/* Nút đóng */}
                       <button
                         className="absolute top-3 right-3 text-gray-500 hover:text-red-500 text-lg"
                         onClick={() => setShowAttachModal(false)}
@@ -559,7 +604,6 @@ const HomePage: React.FC = () => {
                         <CloseOutlined />
                       </button>
 
-                      {/* Tiêu đề */}
                       <div className="text-center mb-6">
                         <h2 className="text-2xl font-semibold text-gray-800 dark:text-white">
                           Attach File
@@ -569,7 +613,6 @@ const HomePage: React.FC = () => {
                         </p>
                       </div>
 
-                      {/* Khu vực drag/drop */}
                       <label
                         htmlFor="file-upload"
                         className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg h-40 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:border-blue-500 hover:text-blue-500 cursor-pointer transition-all duration-200"
@@ -600,17 +643,16 @@ const HomePage: React.FC = () => {
                       </label>
                     </div>
                   </div>
-                )}
+                )} */}
 
                 <input
                   type="text"
                   placeholder="https://www.youtube.com/watch?v=..."
                   value={link}
                   onChange={handleInputChange}
-                  disabled={!!selectedFile}
+                  // disabled={!!selectedFile}
                   className="flex-1 px-2 py-1 bg-transparent focus:outline-none text-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
                 />
-
               </div>
             </div>
 

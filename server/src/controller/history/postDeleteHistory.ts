@@ -15,6 +15,7 @@ export const postDeleteHistory = async (req: Request, res: Response): Promise<vo
 
     if (!existUser) {
       res.status(404).json({ error: 'Login or Register please' })
+      return
     }
 
     const existHistory = await prisma.history.findUnique({
@@ -25,7 +26,12 @@ export const postDeleteHistory = async (req: Request, res: Response): Promise<vo
 
     if (!existHistory) {
       res.status(404).json({ error: 'History not found' })
+      return
     }
+
+    await prisma.message.deleteMany({
+      where: { historyId: parseInt(idHistory) }
+    })
 
     await prisma.history.delete({
       where: {

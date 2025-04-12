@@ -42,7 +42,7 @@ model Message {
   id Int @id @default(autoincrement())
   historyId Int
   history History @relation(fields: [historyId], references: [id])
-  message String
+  message   String   @db.Text
   url String
 
   createdAt DateTime @default(now())
