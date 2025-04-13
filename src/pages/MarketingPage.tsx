@@ -3,9 +3,19 @@ import Footer from "../components/Footer";
 import Navbar from "../components/NavBar";
 import Contact from "./Contact";
 import Carousel from "../components/Carousel";
+import { useNavigate } from "react-router-dom";
 
 const MarketingPage = () => {
   const [index, setIndex] = useState(0);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const user = localStorage.getItem("user");
+    if (user) {
+      navigate("/home");
+    }
+  }, [navigate]);
 
   const testimonials = [
     {
